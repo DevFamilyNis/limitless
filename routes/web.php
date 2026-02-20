@@ -1,11 +1,12 @@
 <?php
 
-use App\Http\Controllers\MagicLoginController;
 use App\Http\Controllers\Auth\SendMagicLoginLinkController;
+use App\Http\Controllers\MagicLoginController;
 use App\Livewire\Auth\MagicLoginRequest;
 use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', '/magic-login')->name('home');
+Route::redirect('/login', '/magic-login')->name('login');
 
 Route::middleware('guest')->group(function () {
     Route::post('/magic-login', SendMagicLoginLinkController::class)
