@@ -2,11 +2,11 @@
     <div class="mb-6 flex items-center justify-between">
         <div>
             <flux:heading size="xl">{{ $isEditing ? 'Izmena projekta' : 'Novi projekat' }}</flux:heading>
-            <flux:text>Unesi podatke projekta i sačuvaj izmene.</flux:text>
+            <flux:text>@lang('messages.form.editTitle')</flux:text>
         </div>
 
         <flux:button variant="ghost" :href="route('projects.index')" wire:navigate>
-            Nazad
+            @lang('messages.buttons.back')
         </flux:button>
     </div>
 
@@ -20,7 +20,7 @@
 
         <div class="flex items-center gap-3">
             <flux:button variant="primary" type="submit">
-                Sačuvaj
+                @lang('messages.buttons.save')
             </flux:button>
         </div>
     </form>

@@ -3,12 +3,12 @@
 
     <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
-            <flux:heading size="xl">Projekti</flux:heading>
-            <flux:text>Pregled, pretraga i upravljanje projektima.</flux:text>
+            <flux:heading size="xl">@lang('messages.text.projects')</flux:heading>
+            <flux:text>@lang('messages.text.projectSubTitle')</flux:text>
         </div>
 
         <flux:button variant="primary" :href="route('projects.create')" wire:navigate>
-            Dodaj
+            @lang('messages.buttons.add')
         </flux:button>
     </div>
 
@@ -20,9 +20,9 @@
         <flux:input wire:model.live.debounce.300ms="search" label="Pretraga" placeholder="Kod, naziv ili opis" />
 
         <flux:select wire:model.live="statusFilter" label="Status">
-            <option value="all">Svi</option>
-            <option value="active">Aktivni</option>
-            <option value="inactive">Neaktivni</option>
+            <option value="all">@lang('messages.text.all')</option>
+            <option value="active">@lang('messages.text.active')</option>
+            <option value="inactive">@lang('messages.text.inactive')</option>
         </flux:select>
     </div>
 
@@ -30,11 +30,11 @@
         <table class="w-full text-sm">
             <thead class="bg-zinc-50 dark:bg-zinc-900/40">
                 <tr>
-                    <th class="px-4 py-3 text-left">Kod</th>
-                    <th class="px-4 py-3 text-left">Naziv</th>
-                    <th class="px-4 py-3 text-left">Opis</th>
-                    <th class="px-4 py-3 text-left">Status</th>
-                    <th class="px-4 py-3 text-right">Akcija</th>
+                    <th class="px-4 py-3 text-left">@lang('messages.table.code')</th>
+                    <th class="px-4 py-3 text-left">@lang('messages.table.name')</th>
+                    <th class="px-4 py-3 text-left">@lang('messages.form.note')</th>
+                    <th class="px-4 py-3 text-left">@lang('messages.table.status')</th>
+                    <th class="px-4 py-3 text-right">@lang('messages.table.action')</th>
                 </tr>
             </thead>
             <tbody>
@@ -88,7 +88,7 @@
                 @empty
                     <tr>
                         <td class="px-4 py-6 text-center text-zinc-500" colspan="5">
-                            Nema projekata za prikaz.
+                            @lang('messages.table.noResults')
                         </td>
                     </tr>
                 @endforelse

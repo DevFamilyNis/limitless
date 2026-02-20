@@ -15,6 +15,7 @@ return [
         'magicLoginTitle' => 'Prijava bez lozinke',
         'magicLoginEmail' => 'Email za link',
         'magicLoginSubmit' => 'Pošalji link za prijavu',
+        'formTitle' => 'Unesi podatke projekta i sačuvaj izmene.',
     ],
     'menu' => [
         'dashboard' => 'Početna strana',
@@ -26,10 +27,13 @@ return [
         'active' => 'Aktivan',
         'inactive' => 'Neaktivan',
         'infoAboutClient' => 'Unesi osnovne podatke i sačuvaj klijenta',
+        'projects' => 'Projekti',
+        'projectSubTitle' => 'Pregled, pretraga i upravljanje projektima.',
     ],
     'buttons' => [
         'add' => 'Dodaj',
         'back' => 'Nazad',
+        'save' => 'Sačuvaj',
     ],
     'table' => [
         'name' => 'Naziv',
@@ -38,5 +42,6 @@ return [
         'status' => 'Status',
         'action' => 'Akcija',
         'noResults' => 'Nema klijenata za prikaz..',
+        'code' => 'Šifra',
     ],
 ];

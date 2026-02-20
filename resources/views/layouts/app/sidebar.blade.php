@@ -21,6 +21,9 @@
                     <flux:sidebar.item icon="layout-grid" :href="route('projects.index')" :current="request()->routeIs('projects.*')" wire:navigate>
                         Projekti
                     </flux:sidebar.item>
+                    <flux:sidebar.item icon="receipt-percent" :href="route('client-project-rates.index')" :current="request()->routeIs('client-project-rates.*')" wire:navigate>
+                        Cene klijenata
+                    </flux:sidebar.item>
                 </flux:sidebar.group>
             </flux:sidebar.nav>
 
