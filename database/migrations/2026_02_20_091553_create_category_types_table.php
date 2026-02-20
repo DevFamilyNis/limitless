@@ -12,7 +12,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('payment_methods', function (Blueprint $table) {
+        Schema::create('category_types', function (Blueprint $table) {
             $table->id();
             $table->string('key')->unique();
             $table->string('name');
@@ -21,22 +21,16 @@ return new class extends Migration
 
         $now = now();
 
-        DB::table('payment_methods')->insert([
+        DB::table('category_types')->insert([
             [
-                'key' => 'bank',
-                'name' => 'Račun',
+                'key' => 'income',
+                'name' => 'Prihod',
                 'created_at' => $now,
                 'updated_at' => $now,
             ],
             [
-                'key' => 'cash',
-                'name' => 'Gotovina',
-                'created_at' => $now,
-                'updated_at' => $now,
-            ],
-            [
-                'key' => 'card',
-                'name' => 'Kartica',
+                'key' => 'expense',
+                'name' => 'Trošak',
                 'created_at' => $now,
                 'updated_at' => $now,
             ],
@@ -48,6 +42,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('payment_methods');
+        Schema::dropIfExists('category_types');
     }
 };
