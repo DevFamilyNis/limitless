@@ -8,3 +8,6 @@
 /storage/logs
 /storage/framework
 .phpunit.result.cache
+.env
+.env.*
+.env_testing
