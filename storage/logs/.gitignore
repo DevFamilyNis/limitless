@@ -1,0 +1,10 @@
+*
+!.gitignore
+/vendor
+/node_modules
+.env
+/public/storage
+/storage/*.key
+/storage/logs
+/storage/framework
+.phpunit.result.cache
