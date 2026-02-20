@@ -5,6 +5,8 @@ use App\Http\Controllers\MagicLoginController;
 use App\Livewire\Auth\MagicLoginRequest;
 use App\Livewire\Clients\Form as ClientForm;
 use App\Livewire\Clients\Index as ClientIndex;
+use App\Livewire\Projects\Form as ProjectForm;
+use App\Livewire\Projects\Index as ProjectIndex;
 use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', '/magic-login')->name('home');
@@ -28,6 +30,9 @@ Route::middleware('auth')->group(function () {
     Route::livewire('clients', ClientIndex::class)->name('clients.index');
     Route::livewire('clients/create', ClientForm::class)->name('clients.create');
     Route::livewire('clients/{client}/edit', ClientForm::class)->name('clients.edit');
+    Route::livewire('projects', ProjectIndex::class)->name('projects.index');
+    Route::livewire('projects/create', ProjectForm::class)->name('projects.create');
+    Route::livewire('projects/{project}/edit', ProjectForm::class)->name('projects.edit');
 });
 
 require __DIR__.'/settings.php';

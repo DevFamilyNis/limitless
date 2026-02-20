@@ -95,7 +95,7 @@
                                     wire:click="toggleActive({{ $client->id }})"
                                     :title="$client->is_active ? 'Deaktiviraj klijenta' : 'Aktiviraj klijenta'"
                                 >
-                                    <x-ui.icons.user-minus :class="$actionIconClass" />
+                                    <x-ui.icons.disable :class="$actionIconClass" />
                                 </flux:button>
 
                                 <flux:button
