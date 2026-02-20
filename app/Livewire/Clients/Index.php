@@ -59,14 +59,19 @@ class Index extends Component
     public function render(): View
     {
         $clients = Client::query()
-            ->with(['type', 'company'])
+            ->with(['type', 'company', 'person'])
             ->where('user_id', Auth::id())
             ->when($this->search !== '', function ($query): void {
                 $query->where(function ($innerQuery): void {
                     $innerQuery
                         ->where('display_name', 'like', '%'.$this->search.'%')
                         ->orWhere('email', 'like', '%'.$this->search.'%')
-                        ->orWhere('phone', 'like', '%'.$this->search.'%');
+                        ->orWhere('phone', 'like', '%'.$this->search.'%')
+                        ->orWhereHas('person', function ($personQuery): void {
+                            $personQuery
+                                ->where('first_name', 'like', '%'.$this->search.'%')
+                                ->orWhere('last_name', 'like', '%'.$this->search.'%');
+                        });
                 });
             })
             ->when($this->statusFilter === 'active', fn ($query) => $query->where('is_active', true))

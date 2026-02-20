@@ -1,4 +1,6 @@
 <div class="flex h-full w-full flex-1 flex-col gap-6">
+    @php($actionIconClass = 'size-4')
+
     <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
             <flux:heading size="xl">@lang('messages.text.clients')</flux:heading>
@@ -26,9 +28,9 @@
         />
 
         <flux:select wire:model.live="statusFilter" label="Status">
-            <option value="all">Svi</option>
-            <option value="active">Aktivni</option>
-            <option value="inactive">Neaktivni</option>
+            <option value="all">@lang('messages.text.all')</option>
+            <option value="active">@lang('messages.text.active')</option>
+            <option value="inactive">@lang('messages.text.inactive')</option>
         </flux:select>
     </div>
 
@@ -36,20 +38,29 @@
         <table class="w-full text-sm">
             <thead class="bg-zinc-50 dark:bg-zinc-900/40">
                 <tr>
-                    <th class="px-4 py-3 text-left">Naziv</th>
-                    <th class="px-4 py-3 text-left">Tip</th>
-                    <th class="px-4 py-3 text-left">Kontakt</th>
-                    <th class="px-4 py-3 text-left">Status</th>
-                    <th class="px-4 py-3 text-right">Akcije</th>
+                    <th class="px-4 py-3 text-left">@lang('messages.table.name')</th>
+                    <th class="px-4 py-3 text-left">@lang('messages.table.type')</th>
+                    <th class="px-4 py-3 text-left">@lang('messages.table.contact')</th>
+                    <th class="px-4 py-3 text-left">@lang('messages.table.status')</th>
+                    <th class="px-4 py-3 text-right">@lang('messages.table.action')</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse ($clients as $client)
                     <tr wire:key="client-{{ $client->id }}" class="border-t border-zinc-200 dark:border-zinc-700">
                         <td class="px-4 py-3">
-                            <div class="font-medium">{{ $client->display_name }}</div>
+                            <div class="font-medium">
+                                @if ($client->type?->key === 'person' && $client->person)
+                                    {{ trim($client->person->first_name.' '.$client->person->last_name) }}
+                                @else
+                                    {{ $client->display_name }}
+                                @endif
+                            </div>
                             @if ($client->company && $client->company->pib)
                                 <div class="text-xs text-zinc-500">PIB: {{ $client->company->pib }}</div>
+                            @endif
+                            @if ($client->type?->key !== 'person' && $client->person)
+                                <div class="text-xs text-zinc-500">{{ $client->person->first_name }} {{ $client->person->last_name }}</div>
                             @endif
                         </td>
                         <td class="px-4 py-3">{{ $client->type->name }}</td>
@@ -66,24 +77,35 @@
                         </td>
                         <td class="px-4 py-3">
                             <div class="flex items-center justify-end gap-2">
-                                <flux:button size="sm" variant="ghost" :href="route('clients.edit', $client)" wire:navigate>
-                                    Izmeni
+                                <flux:button
+                                    size="sm"
+                                    variant="filled"
+                                    class="size-9 p-0"
+                                    :href="route('clients.edit', $client)"
+                                    wire:navigate
+                                    title="Izmeni klijenta"
+                                >
+                                    <x-ui.icons.pen :class="$actionIconClass" />
                                 </flux:button>
 
                                 <flux:button
                                     size="sm"
-                                    variant="subtle"
+                                    variant="filled"
+                                    class="size-9 p-0"
                                     wire:click="toggleActive({{ $client->id }})"
+                                    :title="$client->is_active ? 'Deaktiviraj klijenta' : 'Aktiviraj klijenta'"
                                 >
-                                    {{ $client->is_active ? 'Deaktiviraj' : 'Aktiviraj' }}
+                                    <x-ui.icons.user-minus :class="$actionIconClass" />
                                 </flux:button>
 
                                 <flux:button
                                     size="sm"
                                     variant="danger"
+                                    class="size-9 p-0"
                                     wire:click="deleteClient({{ $client->id }})"
+                                    title="Obriši klijenta"
                                 >
-                                    Obriši
+                                    <x-ui.icons.trash :class="$actionIconClass" />
                                 </flux:button>
                             </div>
                         </td>
@@ -91,7 +113,7 @@
                 @empty
                     <tr>
                         <td class="px-4 py-6 text-center text-zinc-500" colspan="5">
-                            Nema klijenata za prikaz.
+                            @lang('messages.table.noResults')
                         </td>
                     </tr>
                 @endforelse

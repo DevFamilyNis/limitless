@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -42,6 +43,16 @@ class Client extends Model
     public function company(): HasOne
     {
         return $this->hasOne(ClientCompany::class);
+    }
+
+    public function person(): HasOne
+    {
+        return $this->hasOne(ClientPerson::class);
+    }
+
+    public function contacts(): HasMany
+    {
+        return $this->hasMany(ClientContact::class);
     }
 
     public function canBeDeleted(): bool
