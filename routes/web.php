@@ -3,6 +3,8 @@
 use App\Http\Controllers\Auth\SendMagicLoginLinkController;
 use App\Http\Controllers\MagicLoginController;
 use App\Livewire\Auth\MagicLoginRequest;
+use App\Livewire\Clients\Form as ClientForm;
+use App\Livewire\Clients\Index as ClientIndex;
 use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', '/magic-login')->name('home');
@@ -21,5 +23,11 @@ Route::middleware('guest')->group(function () {
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
+
+Route::middleware('auth')->group(function () {
+    Route::livewire('clients', ClientIndex::class)->name('clients.index');
+    Route::livewire('clients/create', ClientForm::class)->name('clients.create');
+    Route::livewire('clients/{client}/edit', ClientForm::class)->name('clients.edit');
+});
 
 require __DIR__.'/settings.php';

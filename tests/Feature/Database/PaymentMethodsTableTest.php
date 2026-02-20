@@ -10,7 +10,7 @@ test('payment methods table has expected structure', function () {
 });
 
 test('payment methods table contains expected default values', function () {
-    $this->assertDatabaseHas('payment_methods', ['key' => 'bank', 'name' => 'Banka']);
+    $this->assertDatabaseHas('payment_methods', ['key' => 'bank', 'name' => 'Račun']);
     $this->assertDatabaseHas('payment_methods', ['key' => 'cash', 'name' => 'Gotovina']);
     $this->assertDatabaseHas('payment_methods', ['key' => 'card', 'name' => 'Kartica']);
 
@@ -21,7 +21,7 @@ test('payment method key must be unique', function () {
     expect(function (): void {
         DB::table('payment_methods')->insert([
             'key' => 'bank',
-            'name' => 'Banka 2',
+            'name' => 'Račun 2',
             'created_at' => now(),
             'updated_at' => now(),
         ]);

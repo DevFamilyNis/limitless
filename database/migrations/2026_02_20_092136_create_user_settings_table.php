@@ -27,14 +27,14 @@ return new class extends Migration
         });
 
         $defaultUserId = DB::table('users')
-            ->where('email', 'dev.family.nis@gmail.com')
+            ->where('email', 'dev.famil.nis@gmail.com')
             ->value('id');
 
         if ($defaultUserId) {
             DB::table('user_settings')->insert([
                 'user_id' => $defaultUserId,
                 'display_name' => 'Dev-Family',
-                'address' => 'Branka Radičevića 26a',
+                'address' => 'Branka Radicevica 26a',
                 'pib' => '113101530',
                 'mb' => '66579484',
                 'bank_account' => '160-6000001451121-46',
