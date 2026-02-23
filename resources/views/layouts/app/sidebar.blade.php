@@ -36,6 +36,23 @@
                     <flux:sidebar.item icon="calendar-days" :href="route('tax-years.index')" :current="request()->routeIs('tax-years.*')" wire:navigate>
                         Poreske godine
                     </flux:sidebar.item>
+                    <flux:sidebar.item icon="layout-grid" :href="route('issues.board')" :current="request()->routeIs('issues.board')" wire:navigate>
+                        Issue board
+                    </flux:sidebar.item>
+                    <flux:sidebar.item icon="document-text" :href="route('issues.index')" :current="request()->routeIs('issues.*') && ! request()->routeIs('issues.board')" wire:navigate>
+                        Issues
+                    </flux:sidebar.item>
+                </flux:sidebar.group>
+                <flux:sidebar.group :heading="'Settings'" class="grid">
+                    <flux:sidebar.item icon="bars-2" :href="route('settings.issue-statuses.index')" :current="request()->routeIs('settings.issue-statuses.*')" wire:navigate>
+                        Statusi
+                    </flux:sidebar.item>
+                    <flux:sidebar.item icon="receipt-percent" :href="route('settings.issue-priorities.index')" :current="request()->routeIs('settings.issue-priorities.*')" wire:navigate>
+                        Prioriteti
+                    </flux:sidebar.item>
+                    <flux:sidebar.item icon="tag" :href="route('settings.issue-categories.index')" :current="request()->routeIs('settings.issue-categories.*')" wire:navigate>
+                        Kategorije
+                    </flux:sidebar.item>
                 </flux:sidebar.group>
             </flux:sidebar.nav>
 

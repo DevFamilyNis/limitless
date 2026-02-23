@@ -70,6 +70,11 @@ class Client extends Model
         return $this->hasMany(Transaction::class);
     }
 
+    public function issues(): HasMany
+    {
+        return $this->hasMany(Issue::class);
+    }
+
     public function canBeDeleted(): bool
     {
         foreach (['invoices', 'transactions'] as $table) {

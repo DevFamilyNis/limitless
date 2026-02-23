@@ -77,4 +77,19 @@ class User extends Authenticatable
     {
         return $this->hasMany(TaxYear::class);
     }
+
+    public function authoredIssues(): HasMany
+    {
+        return $this->hasMany(Issue::class, 'author_id');
+    }
+
+    public function assignedIssues(): HasMany
+    {
+        return $this->hasMany(Issue::class, 'assignee_id');
+    }
+
+    public function issueComments(): HasMany
+    {
+        return $this->hasMany(IssueComment::class, 'author_id');
+    }
 }
