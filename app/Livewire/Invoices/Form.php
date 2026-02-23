@@ -151,8 +151,14 @@ class Form extends Component
         $this->recalculateAllItems();
     }
 
-    public function updatedItems(mixed $value, string $name): void
+    public function updatedItems(mixed $value, ?string $name = null): void
     {
+        if ($name === null) {
+            $this->recalculateAllItems();
+
+            return;
+        }
+
         $segments = explode('.', $name);
 
         if (count($segments) < 3) {
