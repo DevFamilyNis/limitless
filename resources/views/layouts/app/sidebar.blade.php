@@ -27,6 +27,15 @@
                     <flux:sidebar.item icon="document-text" :href="route('invoices.index')" :current="request()->routeIs('invoices.*')" wire:navigate>
                         Fakture
                     </flux:sidebar.item>
+                    <flux:sidebar.item icon="tag" :href="route('categories.index')" :current="request()->routeIs('categories.*')" wire:navigate>
+                        Kategorije
+                    </flux:sidebar.item>
+                    <flux:sidebar.item icon="arrows-right-left" :href="route('transactions.index')" :current="request()->routeIs('transactions.*')" wire:navigate>
+                        Transakcije
+                    </flux:sidebar.item>
+                    <flux:sidebar.item icon="calendar-days" :href="route('tax-years.index')" :current="request()->routeIs('tax-years.*')" wire:navigate>
+                        Poreske godine
+                    </flux:sidebar.item>
                 </flux:sidebar.group>
             </flux:sidebar.nav>
 
