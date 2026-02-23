@@ -1,5 +1,5 @@
 <div class="flex h-full w-full flex-1 flex-col gap-6">
-    @php($actionIconClass = 'size-4')
+    @php($actionIconClass = 'size-3.5')
 
     <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
@@ -27,43 +27,43 @@
         </flux:select>
     </div>
 
-    <div class="overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-700">
-        <table class="w-full text-sm">
-            <thead class="bg-zinc-50 dark:bg-zinc-900/40">
-                <tr>
-                    <th class="px-4 py-3 text-left">Broj</th>
-                    <th class="px-4 py-3 text-left">Klijent</th>
-                    <th class="px-4 py-3 text-left">Datumi</th>
-                    <th class="px-4 py-3 text-left">Iznosi</th>
-                    <th class="px-4 py-3 text-left">Status</th>
-                    <th class="px-4 py-3 text-right">Akcija</th>
-                </tr>
-            </thead>
-            <tbody>
+    <x-ui.table>
+        <x-ui.table.head>
+            <tr>
+                <x-ui.table.th>Broj</x-ui.table.th>
+                <x-ui.table.th>Klijent</x-ui.table.th>
+                <x-ui.table.th>Datumi</x-ui.table.th>
+                <x-ui.table.th>Iznosi</x-ui.table.th>
+                <x-ui.table.th>Status</x-ui.table.th>
+                <x-ui.table.th align="right">Akcija</x-ui.table.th>
+            </tr>
+        </x-ui.table.head>
+        <x-ui.table.body>
                 @forelse ($invoices as $invoice)
-                    <tr wire:key="invoice-{{ $invoice->id }}" class="border-t border-zinc-200 dark:border-zinc-700">
-                        <td class="px-4 py-3">
+                    @php($isOverdue = $invoice->due_date && $invoice->due_date->isPast() && ! in_array($invoice->status?->key, ['paid', 'canceled'], true))
+                    <x-ui.table.row wire:key="invoice-{{ $invoice->id }}" :highlight="$isOverdue">
+                        <x-ui.table.td>
                             <div class="font-medium">{{ $invoice->invoice_number }}</div>
                             <div class="text-xs text-zinc-500">#{{ $invoice->invoice_seq }} / {{ $invoice->invoice_year }}</div>
-                        </td>
-                        <td class="px-4 py-3">
+                        </x-ui.table.td>
+                        <x-ui.table.td>
                             @if ($invoice->client?->type?->key === 'person' && $invoice->client?->person)
                                 {{ trim($invoice->client->person->first_name.' '.$invoice->client->person->last_name) }}
                             @else
                                 {{ $invoice->client?->display_name }}
                             @endif
-                        </td>
-                        <td class="px-4 py-3">
+                        </x-ui.table.td>
+                        <x-ui.table.td>
                             <div>Promet: {{ $invoice->issue_date?->format('d.m.Y') }}</div>
                             <div class="text-xs text-zinc-500">
                                 Dospeće: {{ $invoice->due_date?->format('d.m.Y') ?? '-' }}
                             </div>
-                        </td>
-                        <td class="px-4 py-3">
+                        </x-ui.table.td>
+                        <x-ui.table.td>
                             <div>Ukupno: {{ number_format((float) $invoice->total, 2, ',', '.') }}</div>
                             <div class="text-xs text-zinc-500">Stavki: {{ $invoice->items_count }}</div>
-                        </td>
-                        <td class="px-4 py-3">
+                        </x-ui.table.td>
+                        <x-ui.table.td>
                             @php($statusKey = $invoice->status?->key)
                             @php($statusClasses = match ($statusKey) {
                                 'paid' => 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300',
@@ -74,53 +74,45 @@
                             <span class="inline-flex rounded-full px-2 py-1 text-xs font-medium {{ $statusClasses }}">
                                 {{ $invoice->status?->name ?? '-' }}
                             </span>
-                        </td>
-                        <td class="px-4 py-3">
-                            <div class="flex items-center justify-end gap-2">
+                        </x-ui.table.td>
+                        <x-ui.table.td align="right">
+                            <x-ui.table.actions>
                                 @if ($statusKey !== 'paid')
-                                    <flux:button
-                                        size="sm"
-                                        variant="filled"
+                                    <x-ui.buttons.icon-action
                                         wire:click="markAsPaid({{ $invoice->id }})"
                                         title="Označi kao plaćenu"
+                                        color="success"
                                     >
-                                        Plaćena
-                                    </flux:button>
+                                        <x-ui.icons.check :class="$actionIconClass" />
+                                    </x-ui.buttons.icon-action>
                                 @endif
 
-                                <flux:button
-                                    size="sm"
-                                    variant="filled"
-                                    class="size-9 p-0"
+                                <x-ui.buttons.icon-action
                                     :href="route('invoices.edit', $invoice)"
-                                    wire:navigate
                                     title="Izmeni fakturu"
+                                    color="primary"
+                                    navigate
                                 >
                                     <x-ui.icons.pen :class="$actionIconClass" />
-                                </flux:button>
+                                </x-ui.buttons.icon-action>
 
-                                <flux:button
-                                    size="sm"
-                                    variant="danger"
-                                    class="size-9 p-0"
+                                <x-ui.buttons.icon-action
                                     wire:click="deleteInvoice({{ $invoice->id }})"
                                     title="Obriši fakturu"
+                                    color="danger"
                                 >
                                     <x-ui.icons.trash :class="$actionIconClass" />
-                                </flux:button>
-                            </div>
-                        </td>
-                    </tr>
+                                </x-ui.buttons.icon-action>
+                            </x-ui.table.actions>
+                        </x-ui.table.td>
+                    </x-ui.table.row>
                 @empty
-                    <tr>
-                        <td class="px-4 py-6 text-center text-zinc-500" colspan="6">
-                            Nema unetih faktura.
-                        </td>
-                    </tr>
+                    <x-ui.table.empty colspan="6">
+                        Nema unetih faktura.
+                    </x-ui.table.empty>
                 @endforelse
-            </tbody>
-        </table>
-    </div>
+        </x-ui.table.body>
+    </x-ui.table>
 
     <div>
         {{ $invoices->links() }}

@@ -1,5 +1,5 @@
 <div class="flex h-full w-full flex-1 flex-col gap-6">
-    @php($actionIconClass = 'size-4')
+    @php($actionIconClass = 'size-3.5')
 
     <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
@@ -34,21 +34,20 @@
         </flux:select>
     </div>
 
-    <div class="overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-700">
-        <table class="w-full text-sm">
-            <thead class="bg-zinc-50 dark:bg-zinc-900/40">
-                <tr>
-                    <th class="px-4 py-3 text-left">@lang('messages.table.name')</th>
-                    <th class="px-4 py-3 text-left">@lang('messages.table.type')</th>
-                    <th class="px-4 py-3 text-left">@lang('messages.table.contact')</th>
-                    <th class="px-4 py-3 text-left">@lang('messages.table.status')</th>
-                    <th class="px-4 py-3 text-right">@lang('messages.table.action')</th>
-                </tr>
-            </thead>
-            <tbody>
+    <x-ui.table>
+        <x-ui.table.head>
+            <tr>
+                <x-ui.table.th>@lang('messages.table.name')</x-ui.table.th>
+                <x-ui.table.th>@lang('messages.table.type')</x-ui.table.th>
+                <x-ui.table.th>@lang('messages.table.contact')</x-ui.table.th>
+                <x-ui.table.th>@lang('messages.table.status')</x-ui.table.th>
+                <x-ui.table.th align="right">@lang('messages.table.action')</x-ui.table.th>
+            </tr>
+        </x-ui.table.head>
+        <x-ui.table.body>
                 @forelse ($clients as $client)
-                    <tr wire:key="client-{{ $client->id }}" class="border-t border-zinc-200 dark:border-zinc-700">
-                        <td class="px-4 py-3">
+                    <x-ui.table.row wire:key="client-{{ $client->id }}">
+                        <x-ui.table.td>
                             <div class="font-medium">
                                 @if ($client->type?->key === 'person' && $client->person)
                                     {{ trim($client->person->first_name.' '.$client->person->last_name) }}
@@ -62,64 +61,55 @@
                             @if ($client->type?->key !== 'person' && $client->person)
                                 <div class="text-xs text-zinc-500">{{ $client->person->first_name }} {{ $client->person->last_name }}</div>
                             @endif
-                        </td>
-                        <td class="px-4 py-3">{{ $client->type->name }}</td>
-                        <td class="px-4 py-3">
+                        </x-ui.table.td>
+                        <x-ui.table.td>{{ $client->type->name }}</x-ui.table.td>
+                        <x-ui.table.td>
                             <div>{{ $client->email ?: '-' }}</div>
                             <div class="text-xs text-zinc-500">{{ $client->phone ?: '-' }}</div>
-                        </td>
-                        <td class="px-4 py-3">
+                        </x-ui.table.td>
+                        <x-ui.table.td>
                             @if ($client->is_active)
                                 <span class="inline-flex rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-700 dark:bg-green-900/40 dark:text-green-300">Aktivan</span>
                             @else
                                 <span class="inline-flex rounded-full bg-zinc-100 px-2 py-1 text-xs font-medium text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">Neaktivan</span>
                             @endif
-                        </td>
-                        <td class="px-4 py-3">
-                            <div class="flex items-center justify-end gap-2">
-                                <flux:button
-                                    size="sm"
-                                    variant="filled"
-                                    class="size-9 p-0"
+                        </x-ui.table.td>
+                        <x-ui.table.td align="right">
+                            <x-ui.table.actions>
+                                <x-ui.buttons.icon-action
                                     :href="route('clients.edit', $client)"
-                                    wire:navigate
                                     title="Izmeni klijenta"
+                                    color="primary"
+                                    navigate
                                 >
                                     <x-ui.icons.pen :class="$actionIconClass" />
-                                </flux:button>
+                                </x-ui.buttons.icon-action>
 
-                                <flux:button
-                                    size="sm"
-                                    variant="filled"
-                                    class="size-9 p-0"
+                                <x-ui.buttons.icon-action
                                     wire:click="toggleActive({{ $client->id }})"
                                     :title="$client->is_active ? 'Deaktiviraj klijenta' : 'Aktiviraj klijenta'"
+                                    color="warning"
                                 >
                                     <x-ui.icons.disable :class="$actionIconClass" />
-                                </flux:button>
+                                </x-ui.buttons.icon-action>
 
-                                <flux:button
-                                    size="sm"
-                                    variant="danger"
-                                    class="size-9 p-0"
+                                <x-ui.buttons.icon-action
                                     wire:click="deleteClient({{ $client->id }})"
                                     title="Obriši klijenta"
+                                    color="danger"
                                 >
                                     <x-ui.icons.trash :class="$actionIconClass" />
-                                </flux:button>
-                            </div>
-                        </td>
-                    </tr>
+                                </x-ui.buttons.icon-action>
+                            </x-ui.table.actions>
+                        </x-ui.table.td>
+                    </x-ui.table.row>
                 @empty
-                    <tr>
-                        <td class="px-4 py-6 text-center text-zinc-500" colspan="5">
-                            @lang('messages.table.noResults')
-                        </td>
-                    </tr>
+                    <x-ui.table.empty colspan="5">
+                        @lang('messages.table.noResults')
+                    </x-ui.table.empty>
                 @endforelse
-            </tbody>
-        </table>
-    </div>
+        </x-ui.table.body>
+    </x-ui.table>
 
     <div>
         {{ $clients->links() }}

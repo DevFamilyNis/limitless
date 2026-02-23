@@ -23,7 +23,7 @@
             <flux:input wire:model="invoiceSeq" label="Sekvenca" readonly />
         </div>
 
-        <div class="grid gap-4 md:grid-cols-2">
+        <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <flux:select wire:model.live="clientId" label="Klijent" required>
                 <option value="">Izaberi klijenta</option>
                 @foreach ($clients as $client)
@@ -43,9 +43,6 @@
                     <option value="{{ $status->id }}">{{ $status->name }}</option>
                 @endforeach
             </flux:select>
-        </div>
-
-        <div class="grid gap-4 md:grid-cols-2">
             <flux:input wire:model="issueDate" label="Datum prometa" type="date" required />
             <flux:input wire:model="dueDate" label="Datum dospeća" type="date" />
         </div>
@@ -58,45 +55,45 @@
                     Izabrani klijent nema cenovnik. Prvo dodaj usluge u cenovnik klijenta.
                 </flux:callout>
             @else
-                <div class="overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-700">
-                    <table class="w-full text-sm">
-                        <thead class="bg-zinc-50 dark:bg-zinc-900/40">
-                            <tr>
-                                <th class="px-4 py-3 text-left">Usluga</th>
-                                <th class="px-4 py-3 text-left">Količina</th>
-                                <th class="px-4 py-3 text-left">Cena</th>
-                                <th class="px-4 py-3 text-left">Iznos</th>
-                                <th class="px-4 py-3 text-right">Akcija</th>
-                            </tr>
-                        </thead>
-                        <tbody>
+                <x-ui.table rounded="lg">
+                    <x-ui.table.head>
+                        <tr>
+                            <x-ui.table.th>Usluga</x-ui.table.th>
+                            <x-ui.table.th>Količina</x-ui.table.th>
+                            <x-ui.table.th>Cena</x-ui.table.th>
+                            <x-ui.table.th>Iznos</x-ui.table.th>
+                            <x-ui.table.th align="right">Akcija</x-ui.table.th>
+                        </tr>
+                    </x-ui.table.head>
+                    <x-ui.table.body>
                             @foreach ($items as $index => $item)
-                                <tr wire:key="invoice-item-{{ $item['id'] ?? 'new-'.$index }}" class="border-t border-zinc-200 dark:border-zinc-700">
-                                    <td class="px-4 py-3">{{ $item['description'] }}</td>
-                                    <td class="px-4 py-3">{{ number_format((float) $item['quantity'], 2, ',', '.') }}</td>
-                                    <td class="px-4 py-3">{{ number_format((float) $item['unitPrice'], 2, ',', '.') }}</td>
-                                    <td class="px-4 py-3">{{ number_format((float) $item['amount'], 2, ',', '.') }}</td>
-                                    <td class="px-4 py-3 text-right">
-                                        <flux:button
-                                            type="button"
-                                            size="sm"
-                                            variant="danger"
-                                            class="size-9 p-0"
+                                <x-ui.table.row wire:key="invoice-item-{{ $item['id'] ?? 'new-'.$index }}">
+                                    <x-ui.table.td>{{ $item['description'] }}</x-ui.table.td>
+                                    <x-ui.table.td>{{ number_format((float) $item['quantity'], 2, ',', '.') }}</x-ui.table.td>
+                                    <x-ui.table.td>{{ number_format((float) $item['unitPrice'], 2, ',', '.') }}</x-ui.table.td>
+                                    <x-ui.table.td>{{ number_format((float) $item['amount'], 2, ',', '.') }}</x-ui.table.td>
+                                    <x-ui.table.td align="right">
+                                        <x-ui.buttons.icon-action
                                             wire:click="removeItem({{ $index }})"
                                             title="Ukloni stavku"
+                                            color="danger"
                                         >
                                             <x-ui.icons.trash class="size-4" />
-                                        </flux:button>
-                                    </td>
-                                </tr>
+                                        </x-ui.buttons.icon-action>
+                                    </x-ui.table.td>
+                                </x-ui.table.row>
                             @endforeach
-                        </tbody>
-                    </table>
-                </div>
+                    </x-ui.table.body>
+                        <tfoot class="bg-zinc-50 dark:bg-zinc-900/40">
+                            <tr>
+                                <td class="px-4 py-3 text-right font-medium" colspan="3">Ukupno</td>
+                                <td class="px-4 py-3 font-semibold">{{ number_format((float) $total, 2, ',', '.') }}</td>
+                                <td class="px-4 py-3"></td>
+                            </tr>
+                        </tfoot>
+                </x-ui.table>
             @endif
         </div>
-
-        <flux:input wire:model="total" label="Ukupno" readonly />
 
         <flux:textarea wire:model="note" label="Napomena" rows="3" />
 
