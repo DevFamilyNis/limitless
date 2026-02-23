@@ -12,11 +12,11 @@
 
     <form wire:submit="save" class="space-y-6 rounded-xl border border-zinc-200 p-6 dark:border-zinc-700">
         <div class="grid gap-4 md:grid-cols-2">
-            <flux:input wire:model="code" label="Kod" required />
-            <flux:input wire:model="name" label="Naziv" required />
+            <flux:input wire:model="code" :label="__('messages.table.code')" required />
+            <flux:input wire:model="name" :label="__('messages.table.name')" required />
         </div>
 
-        <flux:textarea wire:model="description" label="Opis" rows="4" />
+        <flux:textarea wire:model="description" :label="__('messages.form.note')" rows="4" />
 
         <div class="flex items-center gap-3">
             <flux:button variant="primary" type="submit">

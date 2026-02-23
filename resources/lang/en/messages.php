@@ -19,6 +19,9 @@ return [
     ],
     'menu' => [
         'dashboard' => 'Početna strana',
+        'clients' => 'Klienti',
+        'projects' => 'Projekti',
+        'projectsPrice' => 'Cenovnik',
     ],
     'text' => [
         'clients' => 'Klijenti',

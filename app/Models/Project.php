@@ -33,4 +33,9 @@ class Project extends Model
     {
         return $this->hasMany(ClientProjectRate::class);
     }
+
+    public function invoiceItems(): HasMany
+    {
+        return $this->hasMany(InvoiceItem::class);
+    }
 }

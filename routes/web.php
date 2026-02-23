@@ -7,6 +7,8 @@ use App\Livewire\ClientProjectRates\Form as ClientProjectRateForm;
 use App\Livewire\ClientProjectRates\Index as ClientProjectRateIndex;
 use App\Livewire\Clients\Form as ClientForm;
 use App\Livewire\Clients\Index as ClientIndex;
+use App\Livewire\Invoices\Form as InvoiceForm;
+use App\Livewire\Invoices\Index as InvoiceIndex;
 use App\Livewire\Projects\Form as ProjectForm;
 use App\Livewire\Projects\Index as ProjectIndex;
 use Illuminate\Support\Facades\Route;
@@ -38,6 +40,9 @@ Route::middleware('auth')->group(function () {
     Route::livewire('client-project-rates', ClientProjectRateIndex::class)->name('client-project-rates.index');
     Route::livewire('client-project-rates/create', ClientProjectRateForm::class)->name('client-project-rates.create');
     Route::livewire('client-project-rates/{clientProjectRate}/edit', ClientProjectRateForm::class)->name('client-project-rates.edit');
+    Route::livewire('invoices', InvoiceIndex::class)->name('invoices.index');
+    Route::livewire('invoices/create', InvoiceForm::class)->name('invoices.create');
+    Route::livewire('invoices/{invoice}/edit', InvoiceForm::class)->name('invoices.edit');
 });
 
 require __DIR__.'/settings.php';

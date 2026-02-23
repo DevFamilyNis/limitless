@@ -4,9 +4,9 @@ use App\Livewire\Clients\Form;
 use App\Livewire\Clients\Index;
 use App\Models\Client;
 use App\Models\ClientType;
+use App\Models\InvoiceStatus;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
 use Livewire\Livewire;
 
 test('clients page is displayed', function () {
@@ -250,14 +250,21 @@ test('client can be deleted only when there are no dependent documents', functio
         'is_active' => true,
     ]);
 
-    Schema::create('invoices', function ($table): void {
-        $table->id();
-        $table->unsignedBigInteger('client_id');
-        $table->timestamps();
-    });
+    $draftStatusId = InvoiceStatus::query()
+        ->where('key', 'draft')
+        ->value('id');
 
     DB::table('invoices')->insert([
         'client_id' => $client->id,
+        'status_id' => $draftStatusId,
+        'invoice_year' => (int) now()->year,
+        'invoice_seq' => 1,
+        'invoice_number' => '001/'.now()->year,
+        'issue_date' => now()->toDateString(),
+        'due_date' => null,
+        'subtotal' => 1000,
+        'total' => 1000,
+        'note' => null,
         'created_at' => now(),
         'updated_at' => now(),
     ]);

@@ -16,13 +16,16 @@
                         {{ __('messages.menu.dashboard') }}
                     </flux:sidebar.item>
                     <flux:sidebar.item icon="users" :href="route('clients.index')" :current="request()->routeIs('clients.*')" wire:navigate>
-                        Klijenti
+                        @lang('messages.menu.clients')
                     </flux:sidebar.item>
                     <flux:sidebar.item icon="layout-grid" :href="route('projects.index')" :current="request()->routeIs('projects.*')" wire:navigate>
-                        Projekti
+                        @lang('messages.menu.projects')
                     </flux:sidebar.item>
                     <flux:sidebar.item icon="receipt-percent" :href="route('client-project-rates.index')" :current="request()->routeIs('client-project-rates.*')" wire:navigate>
-                        Cene klijenata
+                        @lang('messages.menu.projectsPrice')
+                    </flux:sidebar.item>
+                    <flux:sidebar.item icon="document-text" :href="route('invoices.index')" :current="request()->routeIs('invoices.*')" wire:navigate>
+                        Fakture
                     </flux:sidebar.item>
                 </flux:sidebar.group>
             </flux:sidebar.nav>

@@ -60,6 +60,11 @@ class Client extends Model
         return $this->hasMany(ClientProjectRate::class);
     }
 
+    public function invoices(): HasMany
+    {
+        return $this->hasMany(Invoice::class);
+    }
+
     public function canBeDeleted(): bool
     {
         foreach (['invoices', 'transactions'] as $table) {

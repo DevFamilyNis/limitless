@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ClientProjectRate extends Model
 {
@@ -38,5 +39,10 @@ class ClientProjectRate extends Model
     public function billingPeriod(): BelongsTo
     {
         return $this->belongsTo(BillingPeriod::class);
+    }
+
+    public function invoiceItems(): HasMany
+    {
+        return $this->hasMany(InvoiceItem::class);
     }
 }
