@@ -2,6 +2,8 @@
 
 namespace App\Livewire\Projects;
 
+use App\Domain\Projects\Actions\UpsertProjectAction;
+use App\Domain\Projects\DTO\UpsertProjectData;
 use App\Models\Project;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
@@ -52,21 +54,15 @@ class Form extends Component
     {
         $validated = $this->validate();
 
-        $project = $this->projectId
-            ? Project::query()
-                ->where('user_id', Auth::id())
-                ->findOrFail($this->projectId)
-            : new Project;
-
-        $project->fill([
-            'user_id' => Auth::id(),
-            'code' => strtoupper(trim($validated['code'])),
-            'name' => $validated['name'],
-            'description' => $validated['description'] ?: null,
-            'is_active' => $project->exists ? $project->is_active : true,
-        ]);
-
-        $project->save();
+        $project = app(UpsertProjectAction::class)->execute(
+            UpsertProjectData::fromArray([
+                'user_id' => Auth::id(),
+                'project_id' => $this->projectId,
+                'code' => $validated['code'],
+                'name' => $validated['name'],
+                'description' => $validated['description'] ?? null,
+            ])
+        );
 
         session()->flash('status', $project->wasRecentlyCreated
             ? 'Projekat je uspešno dodat.'

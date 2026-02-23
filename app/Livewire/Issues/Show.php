@@ -2,8 +2,15 @@
 
 namespace App\Livewire\Issues;
 
+use App\Domain\Issues\Actions\AddIssueCommentAction;
+use App\Domain\Issues\Actions\DeleteIssueAttachmentAction;
+use App\Domain\Issues\Actions\DeleteIssueCommentAction;
+use App\Domain\Issues\Actions\UploadIssueAttachmentsAction;
+use App\Domain\Issues\DTO\AddIssueCommentData;
+use App\Domain\Issues\DTO\DeleteIssueAttachmentData;
+use App\Domain\Issues\DTO\DeleteIssueCommentData;
+use App\Domain\Issues\DTO\UploadIssueAttachmentsData;
 use App\Models\Issue;
-use App\Models\IssueComment;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
@@ -45,11 +52,13 @@ class Show extends Component
             'comment' => ['required', 'string', 'min:2'],
         ]);
 
-        IssueComment::query()->create([
-            'issue_id' => $this->issue->id,
-            'author_id' => Auth::id(),
-            'body' => trim($validated['comment']),
-        ]);
+        app(AddIssueCommentAction::class)->execute(
+            AddIssueCommentData::fromArray([
+                'user_id' => Auth::id(),
+                'issue_id' => $this->issue->id,
+                'body' => $validated['comment'],
+            ])
+        );
 
         $this->comment = '';
         $this->issue->refresh();
@@ -57,15 +66,13 @@ class Show extends Component
 
     public function deleteComment(int $commentId): void
     {
-        $comment = IssueComment::query()
-            ->where('issue_id', $this->issue->id)
-            ->findOrFail($commentId);
-
-        if ($comment->author_id !== Auth::id()) {
-            abort(403);
-        }
-
-        $comment->delete();
+        app(DeleteIssueCommentAction::class)->execute(
+            DeleteIssueCommentData::fromArray([
+                'user_id' => Auth::id(),
+                'issue_id' => $this->issue->id,
+                'comment_id' => $commentId,
+            ])
+        );
 
         $this->issue->refresh();
     }
@@ -76,11 +83,13 @@ class Show extends Component
             'attachments.*' => ['required', 'file', 'max:10240'],
         ]);
 
-        foreach ($this->attachments as $file) {
-            $this->issue->addMedia($file->getRealPath())
-                ->usingFileName($file->getClientOriginalName())
-                ->toMediaCollection('attachments');
-        }
+        app(UploadIssueAttachmentsAction::class)->execute(
+            UploadIssueAttachmentsData::fromArray([
+                'user_id' => Auth::id(),
+                'issue_id' => $this->issue->id,
+                'files' => $this->attachments,
+            ])
+        );
 
         $this->attachments = [];
         $this->issue->refresh();
@@ -88,8 +97,13 @@ class Show extends Component
 
     public function deleteAttachment(int $mediaId): void
     {
-        $media = $this->issue->media()->findOrFail($mediaId);
-        $media->delete();
+        app(DeleteIssueAttachmentAction::class)->execute(
+            DeleteIssueAttachmentData::fromArray([
+                'user_id' => Auth::id(),
+                'issue_id' => $this->issue->id,
+                'media_id' => $mediaId,
+            ])
+        );
         $this->issue->refresh();
     }
 

@@ -2,6 +2,10 @@
 
 namespace App\Livewire\TaxYears;
 
+use App\Domain\TaxYears\Actions\DeleteTaxYearAction;
+use App\Domain\TaxYears\Actions\EnsureCurrentTaxYearAction;
+use App\Domain\TaxYears\DTO\DeleteTaxYearData;
+use App\Domain\TaxYears\DTO\EnsureCurrentTaxYearData;
 use App\Models\TaxYear;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
@@ -16,15 +20,10 @@ class Index extends Component
 
     public function mount(): void
     {
-        TaxYear::query()->firstOrCreate(
-            [
+        app(EnsureCurrentTaxYearAction::class)->execute(
+            EnsureCurrentTaxYearData::fromArray([
                 'user_id' => Auth::id(),
-                'year' => now()->year,
-            ],
-            [
-                'first_threshold_amount' => 6000000,
-                'second_threshold_amount' => 8000000,
-            ]
+            ])
         );
     }
 
@@ -35,11 +34,12 @@ class Index extends Component
 
     public function deleteTaxYear(int $taxYearId): void
     {
-        $taxYear = TaxYear::query()
-            ->where('user_id', Auth::id())
-            ->findOrFail($taxYearId);
-
-        $taxYear->delete();
+        app(DeleteTaxYearAction::class)->execute(
+            DeleteTaxYearData::fromArray([
+                'user_id' => Auth::id(),
+                'tax_year_id' => $taxYearId,
+            ])
+        );
 
         session()->flash('status', 'Poreska godina je uspešno obrisana.');
     }

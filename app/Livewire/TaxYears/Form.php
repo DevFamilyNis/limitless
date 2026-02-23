@@ -2,6 +2,8 @@
 
 namespace App\Livewire\TaxYears;
 
+use App\Domain\TaxYears\Actions\UpsertTaxYearAction;
+use App\Domain\TaxYears\DTO\UpsertTaxYearData;
 use App\Models\TaxYear;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
@@ -61,20 +63,15 @@ class Form extends Component
     {
         $validated = $this->validate();
 
-        $taxYear = $this->taxYearId
-            ? TaxYear::query()
-                ->where('user_id', Auth::id())
-                ->findOrFail($this->taxYearId)
-            : new TaxYear;
-
-        $taxYear->fill([
-            'user_id' => Auth::id(),
-            'year' => (int) $validated['year'],
-            'first_threshold_amount' => $validated['firstThresholdAmount'],
-            'second_threshold_amount' => $validated['secondThresholdAmount'],
-        ]);
-
-        $taxYear->save();
+        $taxYear = app(UpsertTaxYearAction::class)->execute(
+            UpsertTaxYearData::fromArray([
+                'user_id' => Auth::id(),
+                'tax_year_id' => $this->taxYearId,
+                'year' => (int) $validated['year'],
+                'first_threshold_amount' => (float) $validated['firstThresholdAmount'],
+                'second_threshold_amount' => (float) $validated['secondThresholdAmount'],
+            ])
+        );
 
         session()->flash('status', $taxYear->wasRecentlyCreated
             ? 'Poreska godina je uspešno dodata.'

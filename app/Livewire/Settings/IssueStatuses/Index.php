@@ -2,6 +2,8 @@
 
 namespace App\Livewire\Settings\IssueStatuses;
 
+use App\Domain\Settings\Issues\Actions\DeleteIssueStatusAction;
+use App\Domain\Settings\Issues\DTO\DeleteIssueStatusData;
 use App\Models\IssueStatus;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
@@ -10,7 +12,11 @@ class Index extends Component
 {
     public function deleteStatus(int $statusId): void
     {
-        IssueStatus::query()->findOrFail($statusId)->delete();
+        app(DeleteIssueStatusAction::class)->execute(
+            DeleteIssueStatusData::fromArray([
+                'status_id' => $statusId,
+            ])
+        );
         session()->flash('status', 'Status je obrisan.');
     }
 

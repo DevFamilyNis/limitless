@@ -286,6 +286,54 @@ typing, and documentation rules. These rules are mandatory unless explicitly sta
 
 All new domain-level classes must declare strict types:
 
+## Livewire Architecture Rule (Strict)
+
+Livewire components are UI layer only.
+
+### Responsibilities of Livewire:
+- Hold state
+- Handle UI events
+- Perform UX-level validation
+- Call Domain Actions
+- Emit events / redirect / flash messages
+
+### Forbidden in Livewire:
+- Direct model create/update/delete with business rules
+- Invoice numbering logic
+- Status transition logic
+- Derived field calculations (e.g. completed_at rules)
+- Media upload logic
+- Complex financial calculations
+
+### Domain Layer Rules
+
+All write operations must go through:
+
+Request (optional) → DTO → Action
+
+- DTOs must be strictly typed
+- DTOs must expose `fromRequest()` or `fromArray()`
+- Actions must:
+  - Apply business rules
+  - Set derived fields (e.g. author_id, completed_at)
+  - Use transactions when needed
+  - Throw explicit domain exceptions on failure
+
+### Query Extraction Rule
+
+If a query:
+- Contains multiple filters
+- Contains aggregation logic
+- Is reused
+- Or exceeds simple Eloquent usage
+
+It must be extracted into a dedicated Query class.
+
+### Testing Rule
+
+- Actions must be covered by Pest tests.
+- Livewire tests should verify wiring only, not business rules.
+
 ## Exception Handling
 
 - Do not swallow exceptions silently.

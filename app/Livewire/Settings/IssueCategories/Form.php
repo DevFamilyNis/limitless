@@ -2,6 +2,8 @@
 
 namespace App\Livewire\Settings\IssueCategories;
 
+use App\Domain\Settings\Issues\Actions\UpsertIssueCategoryAction;
+use App\Domain\Settings\Issues\DTO\UpsertIssueCategoryData;
 use App\Models\IssueCategory;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
@@ -35,13 +37,13 @@ class Form extends Component
     {
         $validated = $this->validate();
 
-        $category = $this->categoryId ? IssueCategory::query()->findOrFail($this->categoryId) : new IssueCategory;
-
-        $category->fill([
-            'name' => trim($validated['name']),
-            'is_active' => (bool) $validated['isActive'],
-        ]);
-        $category->save();
+        app(UpsertIssueCategoryAction::class)->execute(
+            UpsertIssueCategoryData::fromArray([
+                'category_id' => $this->categoryId,
+                'name' => $validated['name'],
+                'is_active' => (bool) $validated['isActive'],
+            ])
+        );
 
         $this->redirectRoute('settings.issue-categories.index');
     }

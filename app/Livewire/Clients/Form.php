@@ -2,10 +2,13 @@
 
 namespace App\Livewire\Clients;
 
+use App\Domain\Clients\Actions\UpsertClientAction;
+use App\Domain\Clients\DTO\UpsertClientData;
 use App\Models\Client;
 use App\Models\ClientType;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 use Livewire\Component;
 
 class Form extends Component
@@ -149,105 +152,33 @@ class Form extends Component
     {
         $validated = $this->validate();
 
-        $client = $this->clientId
-            ? Client::query()
-                ->where('user_id', Auth::id())
-                ->findOrFail($this->clientId)
-            : new Client;
-
-        $client->fill([
-            'user_id' => Auth::id(),
-            'client_type_id' => (int) $validated['clientTypeId'],
-            'display_name' => $validated['displayName'],
-            'email' => $validated['email'] ?: null,
-            'phone' => $validated['phone'] ?: null,
-            'address' => $validated['address'] ?: null,
-            'note' => $validated['note'] ?: null,
-            'is_active' => $client->exists ? $client->is_active : true,
-        ]);
-
-        $client->save();
-
-        if ($this->isCompanyType()) {
-            $client->company()->updateOrCreate([], [
-                'pib' => $validated['pib'] ?: null,
-                'mb' => $validated['mb'] ?: null,
-                'bank_account' => $validated['bankAccount'] ?: null,
-            ]);
-
-            $contacts = collect($validated['contacts'] ?? [])
-                ->map(function (array $contact): array {
-                    return [
-                        'id' => $contact['id'] ?? null,
-                        'full_name' => trim((string) ($contact['full_name'] ?? '')),
-                        'email' => trim((string) ($contact['email'] ?? '')),
-                        'phone' => trim((string) ($contact['phone'] ?? '')),
-                        'position' => trim((string) ($contact['position'] ?? '')),
-                        'is_primary' => (bool) ($contact['is_primary'] ?? false),
-                        'note' => trim((string) ($contact['note'] ?? '')),
-                    ];
-                })
-                ->filter(fn (array $contact): bool => $contact['full_name'] !== ''
-                    || $contact['email'] !== ''
-                    || $contact['phone'] !== ''
-                    || $contact['position'] !== ''
-                    || $contact['note'] !== '')
-                ->values();
-
-            if ($contacts->contains(fn (array $contact): bool => $contact['full_name'] === '')) {
-                $this->addError('contacts', 'Kontakt mora imati ime i prezime.');
-
-                return;
-            }
-
-            if ($contacts->isNotEmpty() && ! $contacts->contains(fn (array $contact): bool => $contact['is_primary'])) {
-                $contacts[0]['is_primary'] = true;
-            }
-
-            $primaryAssigned = false;
-            $contacts = $contacts->map(function (array $contact) use (&$primaryAssigned): array {
-                if (! $contact['is_primary'] || $primaryAssigned) {
-                    $contact['is_primary'] = false;
-
-                    return $contact;
+        try {
+            $client = app(UpsertClientAction::class)->execute(
+                UpsertClientData::fromArray([
+                    'user_id' => Auth::id(),
+                    'client_id' => $this->clientId,
+                    'client_type_id' => (int) $validated['clientTypeId'],
+                    'display_name' => $validated['displayName'],
+                    'email' => $validated['email'] ?? null,
+                    'phone' => $validated['phone'] ?? null,
+                    'address' => $validated['address'] ?? null,
+                    'note' => $validated['note'] ?? null,
+                    'pib' => $validated['pib'] ?? null,
+                    'mb' => $validated['mb'] ?? null,
+                    'bank_account' => $validated['bankAccount'] ?? null,
+                    'first_name' => $validated['firstName'] ?? null,
+                    'last_name' => $validated['lastName'] ?? null,
+                    'contacts' => $validated['contacts'] ?? [],
+                ])
+            );
+        } catch (ValidationException $exception) {
+            foreach ($exception->errors() as $field => $messages) {
+                foreach ($messages as $message) {
+                    $this->addError($field, $message);
                 }
-
-                $primaryAssigned = true;
-
-                return $contact;
-            });
-
-            $existingContactIds = $client->contacts()->pluck('id')->all();
-            $incomingContactIds = $contacts->pluck('id')->filter()->map(fn ($id): int => (int) $id)->all();
-
-            $contactIdsForDeletion = array_diff($existingContactIds, $incomingContactIds);
-
-            if ($contactIdsForDeletion !== []) {
-                $client->contacts()->whereIn('id', $contactIdsForDeletion)->delete();
             }
 
-            foreach ($contacts as $contact) {
-                $contactId = $contact['id'] ? (int) $contact['id'] : null;
-                unset($contact['id']);
-
-                $client->contacts()->updateOrCreate(
-                    ['id' => $contactId],
-                    $contact
-                );
-            }
-
-            $client->person()->delete();
-        } elseif ($this->isPersonType()) {
-            $client->person()->updateOrCreate([], [
-                'first_name' => $validated['firstName'],
-                'last_name' => $validated['lastName'],
-            ]);
-            $client->company()->delete();
-            $client->contacts()->delete();
-        } else {
-            $client->company()->delete();
-            $client->person()->delete();
-            $client->contacts()->delete();
+            return;
         }
 
         $message = $client->wasRecentlyCreated ? 'Klijent je uspešno dodat.' : 'Klijent je uspešno izmenjen.';

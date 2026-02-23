@@ -2,6 +2,10 @@
 
 namespace App\Livewire\ClientProjectRates;
 
+use App\Domain\ClientProjectRates\Actions\DeleteClientProjectRateAction;
+use App\Domain\ClientProjectRates\Actions\ToggleClientProjectRateAction;
+use App\Domain\ClientProjectRates\DTO\DeleteClientProjectRateData;
+use App\Domain\ClientProjectRates\DTO\ToggleClientProjectRateData;
 use App\Models\ClientProjectRate;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
@@ -28,24 +32,24 @@ class Index extends Component
 
     public function toggleActive(int $rateId): void
     {
-        $rate = ClientProjectRate::query()
-            ->whereHas('client', fn ($query) => $query->where('user_id', Auth::id()))
-            ->findOrFail($rateId);
-
-        $rate->update([
-            'is_active' => ! $rate->is_active,
-        ]);
+        app(ToggleClientProjectRateAction::class)->execute(
+            ToggleClientProjectRateData::fromArray([
+                'user_id' => Auth::id(),
+                'rate_id' => $rateId,
+            ])
+        );
 
         session()->flash('status', 'Status cene je uspešno ažuriran.');
     }
 
     public function deleteRate(int $rateId): void
     {
-        $rate = ClientProjectRate::query()
-            ->whereHas('client', fn ($query) => $query->where('user_id', Auth::id()))
-            ->findOrFail($rateId);
-
-        $rate->delete();
+        app(DeleteClientProjectRateAction::class)->execute(
+            DeleteClientProjectRateData::fromArray([
+                'user_id' => Auth::id(),
+                'rate_id' => $rateId,
+            ])
+        );
 
         session()->flash('status', 'Cena klijenta je uspešno obrisana.');
     }

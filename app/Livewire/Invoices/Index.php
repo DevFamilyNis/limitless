@@ -2,6 +2,10 @@
 
 namespace App\Livewire\Invoices;
 
+use App\Domain\Invoices\Actions\DeleteInvoiceAction;
+use App\Domain\Invoices\Actions\MarkInvoicePaidAction;
+use App\Domain\Invoices\DTO\DeleteInvoiceData;
+use App\Domain\Invoices\DTO\MarkInvoicePaidData;
 use App\Models\Invoice;
 use App\Models\InvoiceStatus;
 use Illuminate\Contracts\View\View;
@@ -29,32 +33,24 @@ class Index extends Component
 
     public function markAsPaid(int $invoiceId): void
     {
-        $paidStatusId = InvoiceStatus::query()
-            ->where('key', 'paid')
-            ->value('id');
-
-        if ($paidStatusId === null) {
-            return;
-        }
-
-        $invoice = Invoice::query()
-            ->whereHas('client', fn ($query) => $query->where('user_id', Auth::id()))
-            ->findOrFail($invoiceId);
-
-        $invoice->update([
-            'status_id' => $paidStatusId,
-        ]);
+        app(MarkInvoicePaidAction::class)->execute(
+            MarkInvoicePaidData::fromArray([
+                'user_id' => Auth::id(),
+                'invoice_id' => $invoiceId,
+            ])
+        );
 
         session()->flash('status', 'Faktura je označena kao plaćena.');
     }
 
     public function deleteInvoice(int $invoiceId): void
     {
-        $invoice = Invoice::query()
-            ->whereHas('client', fn ($query) => $query->where('user_id', Auth::id()))
-            ->findOrFail($invoiceId);
-
-        $invoice->delete();
+        app(DeleteInvoiceAction::class)->execute(
+            DeleteInvoiceData::fromArray([
+                'user_id' => Auth::id(),
+                'invoice_id' => $invoiceId,
+            ])
+        );
 
         session()->flash('status', 'Faktura je uspešno obrisana.');
     }

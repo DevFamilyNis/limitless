@@ -2,7 +2,8 @@
 
 namespace App\Livewire\Invoices;
 
-use App\Actions\Invoices\GenerateInvoiceNumber;
+use App\Domain\Invoices\Actions\UpsertInvoiceAction;
+use App\Domain\Invoices\DTO\UpsertInvoiceData;
 use App\Models\Client;
 use App\Models\ClientProjectRate;
 use App\Models\Invoice;
@@ -12,7 +13,6 @@ use App\Models\Project;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class Form extends Component
@@ -50,7 +50,7 @@ class Form extends Component
      */
     public array $items = [];
 
-    public function mount(GenerateInvoiceNumber $generateInvoiceNumber, ?Invoice $invoice = null): void
+    public function mount(UpsertInvoiceAction $upsertInvoiceAction, ?Invoice $invoice = null): void
     {
         if ($invoice?->exists && $invoice->client->user_id !== Auth::id()) {
             abort(404);
@@ -97,7 +97,7 @@ class Form extends Component
         $this->issueDate = now()->startOfMonth()->subDay()->format('Y-m-d');
         $this->dueDate = now()->startOfMonth()->addDays(14)->format('Y-m-d');
 
-        $preview = $generateInvoiceNumber->preview();
+        $preview = $upsertInvoiceAction->preview();
         $this->invoiceYear = (string) $preview['invoice_year'];
         $this->invoiceSeq = (string) $preview['invoice_seq'];
         $this->invoiceNumber = $preview['invoice_number'];
@@ -208,94 +208,25 @@ class Form extends Component
         $this->recalculateAllItems();
     }
 
-    public function save(GenerateInvoiceNumber $generateInvoiceNumber): void
+    public function save(): void
     {
         $this->recalculateAllItems();
 
         $validated = $this->validate();
 
-        $client = Client::query()
-            ->where('user_id', Auth::id())
-            ->findOrFail((int) $validated['clientId']);
-
-        $status = InvoiceStatus::query()
-            ->findOrFail((int) $validated['statusId']);
-
-        $invoice = $this->invoiceId
-            ? Invoice::query()
-                ->with('items')
-                ->whereHas('client', fn ($query): mixed => $query->where('user_id', Auth::id()))
-                ->findOrFail($this->invoiceId)
-            : new Invoice;
-
-        $projectIds = collect($validated['items'])
-            ->map(fn (array $item): int => (int) $item['projectId'])
-            ->values();
-
-        $allowedProjectIds = Project::query()
-            ->where('user_id', Auth::id())
-            ->whereIn('id', $projectIds)
-            ->pluck('id')
-            ->map(fn (int $projectId): int => (int) $projectId)
-            ->all();
-
-        if ($projectIds->diff($allowedProjectIds)->isNotEmpty()) {
-            abort(403);
-        }
-
-        $rateIds = collect($validated['items'])
-            ->pluck('clientProjectRateId')
-            ->filter(fn (mixed $rateId): bool => $rateId !== null && $rateId !== '')
-            ->map(fn (mixed $rateId): int => (int) $rateId)
-            ->values();
-
-        if ($rateIds->isNotEmpty()) {
-            $allowedRateIds = ClientProjectRate::query()
-                ->where('client_id', $client->id)
-                ->whereIn('project_id', $projectIds)
-                ->whereIn('id', $rateIds)
-                ->pluck('id')
-                ->map(fn (int $rateId): int => (int) $rateId)
-                ->all();
-
-            if ($rateIds->diff($allowedRateIds)->isNotEmpty()) {
-                abort(403);
-            }
-        }
-
-        DB::transaction(function () use ($client, $generateInvoiceNumber, $invoice, $status, $validated): void {
-            if (! $invoice->exists) {
-                $generated = $generateInvoiceNumber->execute();
-                $invoice->invoice_year = $generated['invoice_year'];
-                $invoice->invoice_seq = $generated['invoice_seq'];
-                $invoice->invoice_number = $generated['invoice_number'];
-            }
-
-            $invoice->fill([
-                'client_id' => $client->id,
-                'status_id' => $status->id,
+        $invoice = app(UpsertInvoiceAction::class)->execute(
+            UpsertInvoiceData::fromArray([
+                'user_id' => Auth::id(),
+                'invoice_id' => $this->invoiceId,
+                'client_id' => (int) $validated['clientId'],
+                'status_id' => (int) $validated['statusId'],
                 'issue_date' => $validated['issueDate'],
                 'due_date' => $validated['dueDate'] ?: null,
-                'subtotal' => $validated['total'],
-                'total' => $validated['total'],
-                'note' => $validated['note'] ?: null,
-            ]);
-
-            $invoice->save();
-
-            $invoice->items()->delete();
-
-            $invoice->items()->createMany(
-                collect($validated['items'])->map(fn (array $item): array => [
-                    'project_id' => (int) $item['projectId'],
-                    'client_project_rate_id' => $item['clientProjectRateId'] !== '' ? (int) $item['clientProjectRateId'] : null,
-                    'description' => $item['description'],
-                    'quantity' => $item['quantity'],
-                    'unit_price' => $item['unitPrice'],
-                    'amount' => $item['amount'],
-                ])->all()
-            );
-        });
+                'total' => (float) $validated['total'],
+                'note' => $validated['note'] ?? null,
+                'items' => $validated['items'],
+            ])
+        );
 
         if ($this->invoiceId === null) {
             $this->invoiceYear = (string) $invoice->invoice_year;

@@ -2,6 +2,10 @@
 
 namespace App\Livewire\Clients;
 
+use App\Domain\Clients\Actions\DeleteClientAction;
+use App\Domain\Clients\Actions\ToggleClientActiveAction;
+use App\Domain\Clients\DTO\DeleteClientData;
+use App\Domain\Clients\DTO\ToggleClientActiveData;
 use App\Models\Client;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
@@ -28,30 +32,30 @@ class Index extends Component
 
     public function toggleActive(int $clientId): void
     {
-        $client = Client::query()
-            ->where('user_id', Auth::id())
-            ->findOrFail($clientId);
-
-        $client->update([
-            'is_active' => ! $client->is_active,
-        ]);
+        app(ToggleClientActiveAction::class)->execute(
+            ToggleClientActiveData::fromArray([
+                'user_id' => Auth::id(),
+                'client_id' => $clientId,
+            ])
+        );
 
         session()->flash('status', 'Status klijenta je uspešno ažuriran.');
     }
 
     public function deleteClient(int $clientId): void
     {
-        $client = Client::query()
-            ->where('user_id', Auth::id())
-            ->findOrFail($clientId);
+        $deleted = app(DeleteClientAction::class)->execute(
+            DeleteClientData::fromArray([
+                'user_id' => Auth::id(),
+                'client_id' => $clientId,
+            ])
+        );
 
-        if (! $client->canBeDeleted()) {
+        if (! $deleted) {
             session()->flash('error', 'Klijent ne može biti obrisan jer ima fakture ili transakcije.');
 
             return;
         }
-
-        $client->delete();
 
         session()->flash('status', 'Klijent je uspešno obrisan.');
     }

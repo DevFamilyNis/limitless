@@ -3,6 +3,8 @@
 namespace App\Livewire\Settings;
 
 use App\Concerns\ProfileValidationRules;
+use App\Domain\Settings\Profile\Actions\UpdateProfileAction;
+use App\Domain\Settings\Profile\DTO\UpdateProfileData;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
@@ -35,13 +37,13 @@ class Profile extends Component
 
         $validated = $this->validate($this->profileRules($user->id));
 
-        $user->fill($validated);
-
-        if ($user->isDirty('email')) {
-            $user->email_verified_at = null;
-        }
-
-        $user->save();
+        $user = app(UpdateProfileAction::class)->execute(
+            UpdateProfileData::fromArray([
+                'user_id' => $user->id,
+                'name' => $validated['name'],
+                'email' => $validated['email'],
+            ])
+        );
 
         $this->dispatch('profile-updated', name: $user->name);
     }

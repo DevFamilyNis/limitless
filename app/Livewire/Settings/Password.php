@@ -3,6 +3,8 @@
 namespace App\Livewire\Settings;
 
 use App\Concerns\PasswordValidationRules;
+use App\Domain\Settings\Security\Actions\UpdatePasswordAction;
+use App\Domain\Settings\Security\DTO\UpdatePasswordData;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use Livewire\Component;
@@ -33,9 +35,12 @@ class Password extends Component
             throw $e;
         }
 
-        Auth::user()->update([
-            'password' => $validated['password'],
-        ]);
+        app(UpdatePasswordAction::class)->execute(
+            UpdatePasswordData::fromArray([
+                'user_id' => Auth::id(),
+                'password' => $validated['password'],
+            ])
+        );
 
         $this->reset('current_password', 'password', 'password_confirmation');
 

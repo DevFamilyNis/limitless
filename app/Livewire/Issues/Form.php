@@ -2,6 +2,8 @@
 
 namespace App\Livewire\Issues;
 
+use App\Domain\Issues\Actions\UpsertIssueAction;
+use App\Domain\Issues\DTO\UpsertIssueData;
 use App\Models\Issue;
 use App\Models\IssueCategory;
 use App\Models\IssuePriority;
@@ -91,34 +93,22 @@ class Form extends Component
     {
         $validated = $this->validate();
 
-        $project = Project::query()
-            ->where('user_id', Auth::id())
-            ->findOrFail((int) $validated['projectId']);
-
-        $issue = $this->issueId
-            ? Issue::query()
-                ->whereHas('project', fn ($query) => $query->where('user_id', Auth::id()))
-                ->findOrFail($this->issueId)
-            : new Issue;
-
-        $status = IssueStatus::query()->findOrFail((int) $validated['statusId']);
-
-        $issue->fill([
-            'project_id' => $project->id,
-            'client_id' => $validated['clientId'] !== '' ? (int) $validated['clientId'] : null,
-            'client_contact_id' => $validated['clientContactId'] !== '' ? (int) $validated['clientContactId'] : null,
-            'status_id' => (int) $validated['statusId'],
-            'priority_id' => (int) $validated['priorityId'],
-            'category_id' => (int) $validated['categoryId'],
-            'author_id' => $issue->exists ? $issue->author_id : Auth::id(),
-            'assignee_id' => $validated['assigneeId'] !== '' ? (int) $validated['assigneeId'] : null,
-            'title' => trim($validated['title']),
-            'description' => $validated['description'] ?: null,
-            'due_date' => $validated['dueDate'] ?: null,
-            'completed_at' => $status->key === 'done' ? now() : null,
-        ]);
-
-        $issue->save();
+        $issue = app(UpsertIssueAction::class)->execute(
+            UpsertIssueData::fromArray([
+                'user_id' => Auth::id(),
+                'issue_id' => $this->issueId,
+                'project_id' => (int) $validated['projectId'],
+                'client_id' => $validated['clientId'] !== '' ? (int) $validated['clientId'] : null,
+                'client_contact_id' => $validated['clientContactId'] !== '' ? (int) $validated['clientContactId'] : null,
+                'status_id' => (int) $validated['statusId'],
+                'priority_id' => (int) $validated['priorityId'],
+                'category_id' => (int) $validated['categoryId'],
+                'assignee_id' => $validated['assigneeId'] !== '' ? (int) $validated['assigneeId'] : null,
+                'title' => $validated['title'],
+                'description' => $validated['description'] ?? null,
+                'due_date' => $validated['dueDate'] ?? null,
+            ])
+        );
 
         session()->flash('status', $issue->wasRecentlyCreated
             ? 'Issue je uspešno kreiran.'

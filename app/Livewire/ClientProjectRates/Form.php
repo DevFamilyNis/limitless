@@ -2,6 +2,8 @@
 
 namespace App\Livewire\ClientProjectRates;
 
+use App\Domain\ClientProjectRates\Actions\UpsertClientProjectRateAction;
+use App\Domain\ClientProjectRates\DTO\UpsertClientProjectRateData;
 use App\Models\BillingPeriod;
 use App\Models\Client;
 use App\Models\ClientProjectRate;
@@ -74,30 +76,17 @@ class Form extends Component
     {
         $validated = $this->validate();
 
-        $client = Client::query()
-            ->where('user_id', Auth::id())
-            ->findOrFail((int) $validated['clientId']);
-
-        Project::query()
-            ->where('user_id', Auth::id())
-            ->findOrFail((int) $validated['projectId']);
-
-        $rate = $this->rateId
-            ? ClientProjectRate::query()
-                ->whereHas('client', fn ($query) => $query->where('user_id', Auth::id()))
-                ->findOrFail($this->rateId)
-            : new ClientProjectRate;
-
-        $rate->fill([
-            'client_id' => $client->id,
-            'project_id' => (int) $validated['projectId'],
-            'billing_period_id' => (int) $validated['billingPeriodId'],
-            'price_amount' => $validated['priceAmount'],
-            'currency' => strtoupper(trim($validated['currency'])),
-            'is_active' => $rate->exists ? $rate->is_active : true,
-        ]);
-
-        $rate->save();
+        $rate = app(UpsertClientProjectRateAction::class)->execute(
+            UpsertClientProjectRateData::fromArray([
+                'user_id' => Auth::id(),
+                'rate_id' => $this->rateId,
+                'client_id' => (int) $validated['clientId'],
+                'project_id' => (int) $validated['projectId'],
+                'billing_period_id' => (int) $validated['billingPeriodId'],
+                'price_amount' => (float) $validated['priceAmount'],
+                'currency' => $validated['currency'],
+            ])
+        );
 
         session()->flash('status', $rate->wasRecentlyCreated
             ? 'Cena klijenta je uspešno dodata.'

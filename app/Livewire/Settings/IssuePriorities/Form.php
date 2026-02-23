@@ -2,6 +2,8 @@
 
 namespace App\Livewire\Settings\IssuePriorities;
 
+use App\Domain\Settings\Issues\Actions\UpsertIssuePriorityAction;
+use App\Domain\Settings\Issues\DTO\UpsertIssuePriorityData;
 use App\Models\IssuePriority;
 use Illuminate\Contracts\View\View;
 use Illuminate\Validation\Rule;
@@ -40,14 +42,14 @@ class Form extends Component
     {
         $validated = $this->validate();
 
-        $priority = $this->priorityId ? IssuePriority::query()->findOrFail($this->priorityId) : new IssuePriority;
-
-        $priority->fill([
-            'key' => strtolower(trim($validated['key'])),
-            'name' => trim($validated['name']),
-            'sort_order' => (int) $validated['sortOrder'],
-        ]);
-        $priority->save();
+        app(UpsertIssuePriorityAction::class)->execute(
+            UpsertIssuePriorityData::fromArray([
+                'priority_id' => $this->priorityId,
+                'key' => $validated['key'],
+                'name' => $validated['name'],
+                'sort_order' => (int) $validated['sortOrder'],
+            ])
+        );
 
         $this->redirectRoute('settings.issue-priorities.index');
     }

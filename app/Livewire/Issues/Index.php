@@ -2,7 +2,8 @@
 
 namespace App\Livewire\Issues;
 
-use App\Models\Issue;
+use App\Domain\Issues\DTO\IssueFiltersData;
+use App\Domain\Issues\Queries\IssueFilteredListQuery;
 use App\Models\IssueCategory;
 use App\Models\IssuePriority;
 use App\Models\Project;
@@ -45,21 +46,18 @@ class Index extends Component
 
     public function render(): View
     {
-        $issues = Issue::query()
+        $filters = IssueFiltersData::fromArray([
+            'user_id' => Auth::id(),
+            'project_id' => $this->projectId !== '' ? (int) $this->projectId : null,
+            'search' => $this->search,
+            'category_id' => $this->categoryId !== '' ? (int) $this->categoryId : null,
+            'priority_id' => $this->priorityId !== '' ? (int) $this->priorityId : null,
+            'client_id' => $this->clientId !== '' ? (int) $this->clientId : null,
+            'assignee_id' => $this->assigneeId !== '' ? (int) $this->assigneeId : null,
+        ]);
+
+        $issues = app(IssueFilteredListQuery::class)->execute($filters)
             ->with(['project', 'status', 'priority', 'category', 'client', 'assignee'])
-            ->whereHas('project', fn ($query) => $query->where('user_id', Auth::id()))
-            ->when($this->projectId !== '', fn ($query) => $query->where('project_id', (int) $this->projectId))
-            ->when($this->search !== '', function ($query): void {
-                $query->where(function ($innerQuery): void {
-                    $innerQuery
-                        ->where('title', 'like', '%'.$this->search.'%')
-                        ->orWhere('description', 'like', '%'.$this->search.'%');
-                });
-            })
-            ->when($this->categoryId !== '', fn ($query) => $query->where('category_id', (int) $this->categoryId))
-            ->when($this->priorityId !== '', fn ($query) => $query->where('priority_id', (int) $this->priorityId))
-            ->when($this->clientId !== '', fn ($query) => $query->where('client_id', (int) $this->clientId))
-            ->when($this->assigneeId !== '', fn ($query) => $query->where('assignee_id', (int) $this->assigneeId))
             ->latest('id')
             ->paginate(15);
 

@@ -2,6 +2,8 @@
 
 namespace App\Livewire\Transactions;
 
+use App\Domain\Transactions\Actions\UpsertTransactionAction;
+use App\Domain\Transactions\DTO\UpsertTransactionData;
 use App\Models\Category;
 use App\Models\Client;
 use App\Models\Invoice;
@@ -109,45 +111,20 @@ class Form extends Component
     {
         $validated = $this->validate();
 
-        $category = Category::query()
-            ->where('user_id', Auth::id())
-            ->findOrFail((int) $validated['categoryId']);
-
-        $clientId = null;
-        if (! empty($validated['clientId'])) {
-            $clientId = Client::query()
-                ->where('user_id', Auth::id())
-                ->findOrFail((int) $validated['clientId'])
-                ->id;
-        }
-
-        $invoiceId = null;
-        if ($validated['documentType'] === 'invoice') {
-            $invoiceId = Invoice::query()
-                ->whereHas('client', fn ($query) => $query->where('user_id', Auth::id()))
-                ->findOrFail((int) $validated['invoiceId'])
-                ->id;
-        }
-
-        $transaction = $this->transactionId
-            ? Transaction::query()
-                ->where('user_id', Auth::id())
-                ->findOrFail($this->transactionId)
-            : new Transaction;
-
-        $transaction->fill([
-            'user_id' => Auth::id(),
-            'category_id' => $category->id,
-            'client_id' => $clientId,
-            'invoice_id' => $invoiceId,
-            'date' => $validated['date'],
-            'amount' => $validated['amount'],
-            'currency' => 'RSD',
-            'title' => trim($validated['title']),
-            'note' => $validated['note'] ?: null,
-        ]);
-
-        $transaction->save();
+        $transaction = app(UpsertTransactionAction::class)->execute(
+            UpsertTransactionData::fromArray([
+                'user_id' => Auth::id(),
+                'transaction_id' => $this->transactionId,
+                'category_id' => (int) $validated['categoryId'],
+                'client_id' => ! empty($validated['clientId']) ? (int) $validated['clientId'] : null,
+                'document_type' => $validated['documentType'],
+                'invoice_id' => ! empty($validated['invoiceId']) ? (int) $validated['invoiceId'] : null,
+                'date' => $validated['date'],
+                'amount' => (float) $validated['amount'],
+                'title' => $validated['title'],
+                'note' => $validated['note'] ?? null,
+            ])
+        );
 
         session()->flash('status', $transaction->wasRecentlyCreated
             ? 'Transakcija je uspešno dodata.'

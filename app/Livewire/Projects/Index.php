@@ -2,6 +2,10 @@
 
 namespace App\Livewire\Projects;
 
+use App\Domain\Projects\Actions\DeleteProjectAction;
+use App\Domain\Projects\Actions\ToggleProjectActiveAction;
+use App\Domain\Projects\DTO\DeleteProjectData;
+use App\Domain\Projects\DTO\ToggleProjectActiveData;
 use App\Models\Project;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
@@ -28,24 +32,24 @@ class Index extends Component
 
     public function toggleActive(int $projectId): void
     {
-        $project = Project::query()
-            ->where('user_id', Auth::id())
-            ->findOrFail($projectId);
-
-        $project->update([
-            'is_active' => ! $project->is_active,
-        ]);
+        app(ToggleProjectActiveAction::class)->execute(
+            ToggleProjectActiveData::fromArray([
+                'user_id' => Auth::id(),
+                'project_id' => $projectId,
+            ])
+        );
 
         session()->flash('status', 'Status projekta je uspešno ažuriran.');
     }
 
     public function deleteProject(int $projectId): void
     {
-        $project = Project::query()
-            ->where('user_id', Auth::id())
-            ->findOrFail($projectId);
-
-        $project->delete();
+        app(DeleteProjectAction::class)->execute(
+            DeleteProjectData::fromArray([
+                'user_id' => Auth::id(),
+                'project_id' => $projectId,
+            ])
+        );
 
         session()->flash('status', 'Projekat je uspešno obrisan.');
     }

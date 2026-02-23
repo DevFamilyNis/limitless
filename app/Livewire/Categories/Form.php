@@ -2,6 +2,8 @@
 
 namespace App\Livewire\Categories;
 
+use App\Domain\Categories\Actions\UpsertCategoryAction;
+use App\Domain\Categories\DTO\UpsertCategoryData;
 use App\Models\Category;
 use App\Models\CategoryType;
 use Illuminate\Contracts\View\View;
@@ -50,19 +52,14 @@ class Form extends Component
     {
         $validated = $this->validate();
 
-        $category = $this->categoryId
-            ? Category::query()
-                ->where('user_id', Auth::id())
-                ->findOrFail($this->categoryId)
-            : new Category;
-
-        $category->fill([
-            'user_id' => Auth::id(),
-            'category_type_id' => (int) $validated['categoryTypeId'],
-            'name' => trim($validated['name']),
-        ]);
-
-        $category->save();
+        $category = app(UpsertCategoryAction::class)->execute(
+            UpsertCategoryData::fromArray([
+                'user_id' => Auth::id(),
+                'category_id' => $this->categoryId,
+                'category_type_id' => (int) $validated['categoryTypeId'],
+                'name' => $validated['name'],
+            ])
+        );
 
         session()->flash('status', $category->wasRecentlyCreated
             ? 'Kategorija je uspešno dodata.'

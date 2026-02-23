@@ -2,6 +2,8 @@
 
 namespace App\Livewire\Categories;
 
+use App\Domain\Categories\Actions\DeleteCategoryAction;
+use App\Domain\Categories\DTO\DeleteCategoryData;
 use App\Models\Category;
 use App\Models\CategoryType;
 use Illuminate\Contracts\View\View;
@@ -29,11 +31,12 @@ class Index extends Component
 
     public function deleteCategory(int $categoryId): void
     {
-        $category = Category::query()
-            ->where('user_id', Auth::id())
-            ->findOrFail($categoryId);
-
-        $category->delete();
+        app(DeleteCategoryAction::class)->execute(
+            DeleteCategoryData::fromArray([
+                'user_id' => Auth::id(),
+                'category_id' => $categoryId,
+            ])
+        );
 
         session()->flash('status', 'Kategorija je uspešno obrisana.');
     }

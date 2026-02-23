@@ -2,6 +2,8 @@
 
 namespace App\Livewire\Settings\IssueStatuses;
 
+use App\Domain\Settings\Issues\Actions\UpsertIssueStatusAction;
+use App\Domain\Settings\Issues\DTO\UpsertIssueStatusData;
 use App\Models\IssueStatus;
 use Illuminate\Contracts\View\View;
 use Illuminate\Validation\Rule;
@@ -44,15 +46,15 @@ class Form extends Component
     {
         $validated = $this->validate();
 
-        $status = $this->statusId ? IssueStatus::query()->findOrFail($this->statusId) : new IssueStatus;
-
-        $status->fill([
-            'key' => strtolower(trim($validated['key'])),
-            'name' => trim($validated['name']),
-            'sort_order' => (int) $validated['sortOrder'],
-            'is_active' => (bool) $validated['isActive'],
-        ]);
-        $status->save();
+        app(UpsertIssueStatusAction::class)->execute(
+            UpsertIssueStatusData::fromArray([
+                'status_id' => $this->statusId,
+                'key' => $validated['key'],
+                'name' => $validated['name'],
+                'sort_order' => (int) $validated['sortOrder'],
+                'is_active' => (bool) $validated['isActive'],
+            ])
+        );
 
         $this->redirectRoute('settings.issue-statuses.index');
     }
