@@ -9,6 +9,7 @@ use App\Livewire\ClientProjectRates\Form as ClientProjectRateForm;
 use App\Livewire\ClientProjectRates\Index as ClientProjectRateIndex;
 use App\Livewire\Clients\Form as ClientForm;
 use App\Livewire\Clients\Index as ClientIndex;
+use App\Livewire\Dashboard\DashboardPage;
 use App\Livewire\Invoices\Form as InvoiceForm;
 use App\Livewire\Invoices\Index as InvoiceIndex;
 use App\Livewire\Issues\Board as IssueBoard;
@@ -41,7 +42,7 @@ Route::middleware('guest')->group(function () {
         ->name('magic-login.consume');
 });
 
-Route::view('dashboard', 'dashboard')
+Route::livewire('dashboard', DashboardPage::class)
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
