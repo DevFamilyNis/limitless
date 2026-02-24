@@ -86,7 +86,7 @@ class Form extends Component
         $this->clientId = (string) $invoice->client_id;
 
         if ($this->title === '') {
-            $this->title = 'Uplata po fakturi '.$invoice->invoice_number;
+            $this->title = __('messages.transactions.payment_for_invoice').' '.$invoice->invoice_number;
         }
     }
 
@@ -127,8 +127,8 @@ class Form extends Component
         );
 
         session()->flash('status', $transaction->wasRecentlyCreated
-            ? 'Transakcija je uspešno dodata.'
-            : 'Transakcija je uspešno izmenjena.');
+            ? __('messages.transactions.flash_created')
+            : __('messages.transactions.flash_updated'));
 
         $this->redirectRoute('transactions.index');
     }
@@ -169,7 +169,7 @@ class Form extends Component
             'invoices' => $invoices,
             'hasRequiredData' => $categories->isNotEmpty(),
         ])->layout('layouts.app', [
-            'title' => $this->transactionId ? 'Izmena transakcije' : 'Nova transakcija',
+            'title' => $this->transactionId ? __('messages.transactions.edit_title') : __('messages.transactions.new_title'),
         ]);
     }
 }

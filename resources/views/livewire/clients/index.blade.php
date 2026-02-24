@@ -23,8 +23,8 @@
     <div class="grid gap-3 md:grid-cols-3">
         <flux:input
             wire:model.live.debounce.300ms="search"
-            label="Pretraga"
-            placeholder="Naziv, email ili telefon"
+            :label="__('messages.common.search')"
+            :placeholder="__('messages.clients.search_placeholder')"
         />
 
         <flux:select wire:model.live="statusFilter" :label="__('messages.table.status')">
@@ -71,16 +71,16 @@
                         </x-ui.table.td>
                         <x-ui.table.td>
                             @if ($client->is_active)
-                                <span class="inline-flex rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-700 dark:bg-green-900/40 dark:text-green-300">Aktivan</span>
+                                <span class="inline-flex rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-700 dark:bg-green-900/40 dark:text-green-300">@lang('messages.status_labels.active_m')</span>
                             @else
-                                <span class="inline-flex rounded-full bg-zinc-100 px-2 py-1 text-xs font-medium text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">Neaktivan</span>
+                                <span class="inline-flex rounded-full bg-zinc-100 px-2 py-1 text-xs font-medium text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">@lang('messages.status_labels.inactive_m')</span>
                             @endif
                         </x-ui.table.td>
                         <x-ui.table.td align="right">
                             <x-ui.table.actions>
                                 <x-ui.buttons.icon-action
                                     :href="route('clients.edit', $client)"
-                                    title="Izmeni klijenta"
+                                    :title="__('messages.clients.edit_title')"
                                     color="primary"
                                     navigate
                                 >
@@ -89,7 +89,7 @@
 
                                 <x-ui.buttons.icon-action
                                     wire:click="toggleActive({{ $client->id }})"
-                                    :title="$client->is_active ? 'Deaktiviraj klijenta' : 'Aktiviraj klijenta'"
+                                    :title="$client->is_active ? __('messages.clients.toggle_deactivate_title') : __('messages.clients.toggle_activate_title')"
                                     color="warning"
                                 >
                                     <x-ui.icons.disable :class="$actionIconClass" />
@@ -97,7 +97,7 @@
 
                                 <x-ui.buttons.icon-action
                                     wire:click="deleteClient({{ $client->id }})"
-                                    title="Obriši klijenta"
+                                    :title="__('messages.clients.delete_title')"
                                     color="danger"
                                 >
                                     <x-ui.icons.trash :class="$actionIconClass" />

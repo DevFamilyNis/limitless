@@ -1,8 +1,8 @@
 <div class="flex h-full w-full flex-1 flex-col gap-6">
     <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
-            <flux:heading size="xl">Transakcije</flux:heading>
-            <flux:text>Read-only pregled prihoda i rashoda po mesecu.</flux:text>
+            <flux:heading size="xl">@lang('messages.transactions.title')</flux:heading>
+            <flux:text>@lang('messages.transactions.subtitle')</flux:text>
         </div>
     </div>
 
@@ -11,32 +11,32 @@
     @endif
 
     <div class="grid gap-3 md:grid-cols-4">
-        <flux:select wire:model.live="month" label="Mesec">
+        <flux:select wire:model.live="month" :label="__('messages.common.month')">
             @foreach ($months as $monthKey => $monthName)
                 <option value="{{ $monthKey }}">{{ ucfirst($monthName) }}</option>
             @endforeach
         </flux:select>
-        <flux:select wire:model.live="year" label="Godina">
+        <flux:select wire:model.live="year" :label="__('messages.common.year')">
             @foreach ($years as $yearKey => $yearName)
                 <option value="{{ $yearKey }}">{{ $yearName }}</option>
             @endforeach
         </flux:select>
-        <flux:input wire:model.live.debounce.300ms="search" label="Pretraga" placeholder="Naziv, kategorija, klijent..." />
-        <flux:select wire:model.live="typeFilter" label="Tip">
-            <option value="all">Svi</option>
-            <option value="income">Prihod</option>
-            <option value="expense">Rashod</option>
+        <flux:input wire:model.live.debounce.300ms="search" :label="__('messages.common.search')" :placeholder="__('messages.transactions.search_placeholder')" />
+        <flux:select wire:model.live="typeFilter" :label="__('messages.transactions.type')">
+            <option value="all">@lang('messages.common.all')</option>
+            <option value="income">@lang('messages.categories.income')</option>
+            <option value="expense">@lang('messages.categories.expense')</option>
         </flux:select>
     </div>
 
     <x-ui.table>
         <x-ui.table.head>
             <tr>
-                <x-ui.table.th>Datum</x-ui.table.th>
-                <x-ui.table.th>Naslov</x-ui.table.th>
-                <x-ui.table.th>Kategorija</x-ui.table.th>
-                <x-ui.table.th>Dokument</x-ui.table.th>
-                <x-ui.table.th>Iznos</x-ui.table.th>
+                <x-ui.table.th>@lang('messages.common.date')</x-ui.table.th>
+                <x-ui.table.th>@lang('messages.common.title')</x-ui.table.th>
+                <x-ui.table.th>@lang('messages.transactions.category')</x-ui.table.th>
+                <x-ui.table.th>@lang('messages.transactions.document')</x-ui.table.th>
+                <x-ui.table.th>@lang('messages.common.amount')</x-ui.table.th>
             </tr>
         </x-ui.table.head>
         <x-ui.table.body>
@@ -46,27 +46,27 @@
                     <x-ui.table.td>
                         <div class="font-medium">{{ $transaction->title }}</div>
                         @if ($transaction->client)
-                            <div class="text-xs text-zinc-500">Klijent: {{ $transaction->client->display_name }}</div>
+                            <div class="text-xs text-zinc-500">@lang('messages.transactions.client_prefix'): {{ $transaction->client->display_name }}</div>
                         @endif
                     </x-ui.table.td>
                     <x-ui.table.td>
                         <div>{{ $transaction->category?->name }}</div>
                         <div class="text-xs text-zinc-500">
-                            {{ $transaction->category?->type?->key === 'expense' ? 'Rashod' : $transaction->category?->type?->name }}
+                            {{ $transaction->category?->type?->key === 'expense' ? __('messages.categories.expense') : __('messages.categories.income') }}
                         </div>
                     </x-ui.table.td>
                     <x-ui.table.td>
                         @if ($transaction->invoice)
-                            Faktura {{ $transaction->invoice->invoice_number }}
+                            @lang('messages.transactions.invoice_label') {{ $transaction->invoice->invoice_number }}
                         @else
-                            Fiskalni račun
+                            @lang('messages.transactions.fiscal_receipt')
                         @endif
                     </x-ui.table.td>
                     <x-ui.table.td>{{ number_format((float) $transaction->amount, 2, ',', '.') }} {{ $transaction->currency }}</x-ui.table.td>
                 </x-ui.table.row>
             @empty
                 <x-ui.table.empty colspan="5">
-                    Nema transakcija za izabrani period.
+                    @lang('messages.transactions.empty')
                 </x-ui.table.empty>
             @endforelse
         </x-ui.table.body>

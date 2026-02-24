@@ -44,7 +44,7 @@ class Index extends Component
             ])
         );
 
-        session()->flash('status', 'Faktura je označena kao plaćena.');
+        session()->flash('status', __('messages.invoices.flash_marked_paid'));
     }
 
     public function deleteInvoice(int $invoiceId): void
@@ -56,7 +56,7 @@ class Index extends Component
             ])
         );
 
-        session()->flash('status', 'Faktura je uspešno obrisana.');
+        session()->flash('status', __('messages.invoices.flash_deleted'));
     }
 
     public function downloadPdf(int $invoiceId): ?BinaryFileResponse
@@ -110,7 +110,7 @@ class Index extends Component
             'invoices' => $invoices,
             'statuses' => InvoiceStatus::query()->orderBy('id')->get(),
         ])->layout('layouts.app', [
-            'title' => 'Fakture',
+            'title' => __('messages.invoices.title'),
         ]);
     }
 }

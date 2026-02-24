@@ -41,7 +41,7 @@ class Index extends Component
             ])
         );
 
-        session()->flash('status', 'Poreska godina je uspešno obrisana.');
+        session()->flash('status', __('messages.tax_years.flash_deleted'));
     }
 
     public function render(): View
@@ -55,7 +55,7 @@ class Index extends Component
         return view('livewire.tax-years.index', [
             'taxYears' => $taxYears,
         ])->layout('layouts.app', [
-            'title' => 'Poreske godine',
+            'title' => __('messages.tax_years.title'),
         ]);
     }
 }

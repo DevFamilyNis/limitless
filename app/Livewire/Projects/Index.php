@@ -41,7 +41,7 @@ class Index extends Component
             ])
         );
 
-        session()->flash('status', 'Status projekta je uspešno ažuriran.');
+        session()->flash('status', __('messages.projects.flash_status_updated'));
     }
 
     public function deleteProject(int $projectId): void
@@ -53,7 +53,7 @@ class Index extends Component
             ])
         );
 
-        session()->flash('status', 'Projekat je uspešno obrisan.');
+        session()->flash('status', __('messages.projects.flash_deleted'));
     }
 
     public function render(): View
@@ -90,7 +90,7 @@ class Index extends Component
         return view('livewire.projects.index', [
             'projects' => $projects,
         ])->layout('layouts.app', [
-            'title' => 'Projekti',
+            'title' => __('messages.projects.title'),
         ]);
     }
 }

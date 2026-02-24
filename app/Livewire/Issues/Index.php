@@ -69,7 +69,7 @@ class Index extends Component
             'clients' => \App\Models\Client::query()->where('user_id', Auth::id())->orderBy('display_name')->get(),
             'assignees' => User::query()->orderBy('name')->get(),
         ])->layout('layouts.app', [
-            'title' => 'Issues',
+            'title' => __('messages.issues.table_title'),
         ]);
     }
 }

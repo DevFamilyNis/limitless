@@ -62,8 +62,8 @@ class Form extends Component
         );
 
         session()->flash('status', $category->wasRecentlyCreated
-            ? 'Kategorija je uspešno dodata.'
-            : 'Kategorija je uspešno izmenjena.');
+            ? __('messages.categories.flash_created')
+            : __('messages.categories.flash_updated'));
 
         $this->redirectRoute('categories.index');
     }
@@ -74,7 +74,7 @@ class Form extends Component
             'isEditing' => $this->categoryId !== null,
             'types' => CategoryType::query()->orderBy('id')->get(),
         ])->layout('layouts.app', [
-            'title' => $this->categoryId ? 'Izmena kategorije' : 'Nova kategorija',
+            'title' => $this->categoryId ? __('messages.categories.edit_title') : __('messages.categories.new_title'),
         ]);
     }
 }

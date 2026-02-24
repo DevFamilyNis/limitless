@@ -46,7 +46,7 @@ class Show extends Component
         return view('livewire.projects.show', [
             'clients' => $clients,
         ])->layout('layouts.app', [
-            'title' => 'Projekat - '.$this->project->name,
+            'title' => __('messages.projects.title').': '.$this->project->name,
         ]);
     }
 

@@ -124,7 +124,7 @@ class Show extends Component
 
         return view('livewire.issues.show')
             ->layout('layouts.app', [
-                'title' => 'Issue detalji',
+                'title' => __('messages.issues.show_title'),
             ]);
     }
 }

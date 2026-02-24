@@ -235,8 +235,8 @@ class Form extends Component
         }
 
         session()->flash('status', $invoice->wasRecentlyCreated
-            ? 'Faktura je uspešno dodata.'
-            : 'Faktura je uspešno izmenjena.');
+            ? __('messages.invoices.flash_created')
+            : __('messages.invoices.flash_updated'));
 
         $this->redirectRoute('invoices.index');
     }
@@ -267,7 +267,7 @@ class Form extends Component
             'statuses' => InvoiceStatus::query()->orderBy('id')->get(),
             'hasRequiredData' => $hasRequiredData,
         ])->layout('layouts.app', [
-            'title' => $this->invoiceId ? 'Izmena fakture' : 'Nova faktura',
+            'title' => $this->invoiceId ? __('messages.invoices.edit_title') : __('messages.invoices.new_title'),
         ]);
     }
 

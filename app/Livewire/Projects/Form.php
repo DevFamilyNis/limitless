@@ -65,8 +65,8 @@ class Form extends Component
         );
 
         session()->flash('status', $project->wasRecentlyCreated
-            ? 'Projekat je uspešno dodat.'
-            : 'Projekat je uspešno izmenjen.');
+            ? __('messages.projects.flash_created')
+            : __('messages.projects.flash_updated'));
 
         $this->redirectRoute('projects.index');
     }
@@ -76,7 +76,7 @@ class Form extends Component
         return view('livewire.projects.form', [
             'isEditing' => $this->projectId !== null,
         ])->layout('layouts.app', [
-            'title' => $this->projectId ? 'Izmena projekta' : 'Novi projekat',
+            'title' => $this->projectId ? __('messages.projects.edit_title') : __('messages.projects.new_title'),
         ]);
     }
 }

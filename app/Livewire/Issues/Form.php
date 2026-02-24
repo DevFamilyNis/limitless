@@ -111,8 +111,8 @@ class Form extends Component
         );
 
         session()->flash('status', $issue->wasRecentlyCreated
-            ? 'Issue je uspešno kreiran.'
-            : 'Issue je uspešno izmenjen.');
+            ? __('messages.issues.flash_created')
+            : __('messages.issues.flash_updated'));
 
         $this->redirectRoute('issues.show', ['issue' => $issue->id]);
     }
@@ -137,7 +137,7 @@ class Form extends Component
             'categories' => IssueCategory::query()->where('is_active', true)->orderBy('name')->get(),
             'assignees' => User::query()->orderBy('name')->get(),
         ])->layout('layouts.app', [
-            'title' => $this->issueId ? 'Izmena issue-a' : 'Novi issue',
+            'title' => $this->issueId ? __('messages.issues.edit_title') : __('messages.issues.new_title'),
         ]);
     }
 }

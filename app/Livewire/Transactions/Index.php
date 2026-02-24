@@ -85,7 +85,7 @@ class Index extends Component
             'months' => $months,
             'years' => $years,
         ])->layout('layouts.app', [
-            'title' => 'Transakcije',
+            'title' => __('messages.transactions.title'),
         ]);
     }
 }

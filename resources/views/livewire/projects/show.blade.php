@@ -2,54 +2,54 @@
     <div class="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
         <div>
             <flux:heading size="xl">{{ $project->name }}</flux:heading>
-            <flux:text>Kod: {{ $project->code }} | Detalji projekta, korisnici i zbir mesečnih faktura.</flux:text>
+            <flux:text>@lang('messages.common.code'): {{ $project->code }} | @lang('messages.projects.details_subtitle')</flux:text>
         </div>
 
         <div class="flex items-center gap-2">
             <flux:button variant="ghost" :href="route('projects.index')" wire:navigate>
-                Nazad
+                @lang('messages.actions.back')
             </flux:button>
             <flux:button variant="primary" :href="route('projects.edit', $project)" wire:navigate>
-                Izmeni
+                @lang('messages.actions.edit')
             </flux:button>
         </div>
     </div>
 
     <div class="grid gap-4 md:grid-cols-3">
         <flux:card>
-            <flux:text class="text-xs text-zinc-500">Status</flux:text>
-            <flux:heading size="lg">{{ $project->is_active ? 'Aktivan' : 'Neaktivan' }}</flux:heading>
+            <flux:text class="text-xs text-zinc-500">@lang('messages.common.status')</flux:text>
+            <flux:heading size="lg">{{ $project->is_active ? __('messages.status_labels.active_m') : __('messages.status_labels.inactive_m') }}</flux:heading>
         </flux:card>
 
         <flux:card>
-            <flux:text class="text-xs text-zinc-500">Vlasnik</flux:text>
+            <flux:text class="text-xs text-zinc-500">@lang('messages.common.owner')</flux:text>
             <flux:heading size="lg">{{ $project->user?->name ?? '-' }}</flux:heading>
         </flux:card>
 
         <flux:card>
-            <flux:text class="text-xs text-zinc-500">Zbir faktura (tekući mesec)</flux:text>
+            <flux:text class="text-xs text-zinc-500">@lang('messages.projects.summary_current_month')</flux:text>
             <flux:heading size="lg">{{ number_format($currentMonthInvoiceTotal, 2, ',', '.') }} RSD</flux:heading>
         </flux:card>
     </div>
 
     <flux:card class="space-y-3">
-        <flux:heading size="lg">Opis</flux:heading>
+        <flux:heading size="lg">@lang('messages.common.description')</flux:heading>
         <flux:text>{{ $project->description ?: '-' }}</flux:text>
     </flux:card>
 
     <div class="grid gap-6 lg:grid-cols-2">
         <flux:card class="space-y-4">
-            <flux:heading size="lg">Korisnici projekta</flux:heading>
+            <flux:heading size="lg">@lang('messages.projects.project_users')</flux:heading>
 
             @if ($clients->isEmpty())
-                <flux:text class="text-zinc-500">Nema povezanih korisnika/klijenata preko cenovnika.</flux:text>
+                <flux:text class="text-zinc-500">@lang('messages.projects.no_related_users')</flux:text>
             @else
                 <x-ui.table>
                     <x-ui.table.head>
                         <tr>
-                            <x-ui.table.th>Naziv</x-ui.table.th>
-                            <x-ui.table.th>Tip</x-ui.table.th>
-                            <x-ui.table.th>Kontakt</x-ui.table.th>
+                            <x-ui.table.th>@lang('messages.table.name')</x-ui.table.th>
+                            <x-ui.table.th>@lang('messages.common.type')</x-ui.table.th>
+                            <x-ui.table.th>@lang('messages.table.contact')</x-ui.table.th>
                         </tr>
                     </x-ui.table.head>
                     <x-ui.table.body>
@@ -75,13 +75,13 @@
         </flux:card>
 
         <flux:card class="space-y-4">
-            <flux:heading size="lg">Zbir mesečnih faktura (6 meseci)</flux:heading>
+            <flux:heading size="lg">@lang('messages.projects.summary_last_6_months')</flux:heading>
 
             <x-ui.table>
                 <x-ui.table.head>
                     <tr>
-                        <x-ui.table.th>Mesec</x-ui.table.th>
-                        <x-ui.table.th>Iznos (RSD)</x-ui.table.th>
+                        <x-ui.table.th>@lang('messages.common.month')</x-ui.table.th>
+                        <x-ui.table.th>@lang('messages.common.amount') (RSD)</x-ui.table.th>
                     </tr>
                 </x-ui.table.head>
                 <x-ui.table.body>

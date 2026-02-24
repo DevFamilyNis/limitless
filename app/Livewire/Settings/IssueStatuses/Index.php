@@ -17,7 +17,7 @@ class Index extends Component
                 'status_id' => $statusId,
             ])
         );
-        session()->flash('status', 'Status je obrisan.');
+        session()->flash('status', __('messages.settings.issue_statuses.flash_deleted'));
     }
 
     public function render(): View
@@ -25,7 +25,7 @@ class Index extends Component
         return view('livewire.settings.issue-statuses.index', [
             'statuses' => IssueStatus::query()->orderBy('sort_order')->get(),
         ])->layout('layouts.app', [
-            'title' => 'Issue statusi',
+            'title' => __('messages.menu.statuses'),
         ]);
     }
 }

@@ -59,7 +59,7 @@ class Form extends Component
         return view('livewire.settings.issue-priorities.form', [
             'isEditing' => $this->priorityId !== null,
         ])->layout('layouts.app', [
-            'title' => $this->priorityId ? 'Izmena prioriteta' : 'Novi prioritet',
+            'title' => $this->priorityId ? __('messages.settings.issue_priorities.edit_title') : __('messages.settings.issue_priorities.new_title'),
         ]);
     }
 }

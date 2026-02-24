@@ -43,7 +43,7 @@ class Index extends Component
                 ])
             );
 
-            session()->flash('status', 'KPO je uspešno generisan.');
+            session()->flash('status', __('messages.kpo.flash_generated'));
         } catch (LockedKpoReportException $exception) {
             session()->flash('status', $exception->getMessage());
         }
@@ -58,7 +58,7 @@ class Index extends Component
             ])
         );
 
-        session()->flash('status', 'KPO je zaključan i finalni PDF je generisan.');
+        session()->flash('status', __('messages.kpo.flash_locked'));
     }
 
     public function downloadPdf(int $month): BinaryFileResponse
@@ -132,7 +132,7 @@ class Index extends Component
             'months' => $months,
             'years' => $years,
         ])->layout('layouts.app', [
-            'title' => 'KPO izveštaji',
+            'title' => __('messages.kpo.title'),
         ]);
     }
 }

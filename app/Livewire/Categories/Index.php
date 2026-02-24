@@ -38,7 +38,7 @@ class Index extends Component
             ])
         );
 
-        session()->flash('status', 'Kategorija je uspešno obrisana.');
+        session()->flash('status', __('messages.categories.flash_deleted'));
     }
 
     public function render(): View
@@ -59,7 +59,7 @@ class Index extends Component
             'categories' => $categories,
             'types' => CategoryType::query()->orderBy('id')->get(),
         ])->layout('layouts.app', [
-            'title' => 'Kategorije',
+            'title' => __('messages.categories.title'),
         ]);
     }
 }

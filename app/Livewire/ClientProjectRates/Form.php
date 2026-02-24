@@ -89,8 +89,8 @@ class Form extends Component
         );
 
         session()->flash('status', $rate->wasRecentlyCreated
-            ? 'Cena klijenta je uspešno dodata.'
-            : 'Cena klijenta je uspešno izmenjena.');
+            ? __('messages.client_project_rates.flash_created')
+            : __('messages.client_project_rates.flash_updated'));
 
         $this->redirectRoute('client-project-rates.index');
     }
@@ -129,7 +129,7 @@ class Form extends Component
             'billingPeriods' => BillingPeriod::query()->orderBy('id')->get(),
             'hasRequiredData' => $clients->isNotEmpty() && $projects->isNotEmpty(),
         ])->layout('layouts.app', [
-            'title' => $this->rateId ? 'Izmena cene klijenta' : 'Nova cena klijenta',
+            'title' => $this->rateId ? __('messages.client_project_rates.edit_title') : __('messages.client_project_rates.new_title'),
         ]);
     }
 }

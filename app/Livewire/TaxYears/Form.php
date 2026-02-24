@@ -74,8 +74,8 @@ class Form extends Component
         );
 
         session()->flash('status', $taxYear->wasRecentlyCreated
-            ? 'Poreska godina je uspešno dodata.'
-            : 'Poreska godina je uspešno izmenjena.');
+            ? __('messages.tax_years.flash_created')
+            : __('messages.tax_years.flash_updated'));
 
         $this->redirectRoute('tax-years.index');
     }
@@ -85,7 +85,7 @@ class Form extends Component
         return view('livewire.tax-years.form', [
             'isEditing' => $this->taxYearId !== null,
         ])->layout('layouts.app', [
-            'title' => $this->taxYearId ? 'Izmena poreske godine' : 'Nova poreska godina',
+            'title' => $this->taxYearId ? __('messages.tax_years.edit_title') : __('messages.tax_years.new_title'),
         ]);
     }
 }

@@ -17,7 +17,7 @@ class Index extends Component
                 'priority_id' => $priorityId,
             ])
         );
-        session()->flash('status', 'Prioritet je obrisan.');
+        session()->flash('status', __('messages.settings.issue_priorities.flash_deleted'));
     }
 
     public function render(): View
@@ -25,7 +25,7 @@ class Index extends Component
         return view('livewire.settings.issue-priorities.index', [
             'priorities' => IssuePriority::query()->orderBy('sort_order')->get(),
         ])->layout('layouts.app', [
-            'title' => 'Issue prioriteti',
+            'title' => __('messages.menu.priorities'),
         ]);
     }
 }

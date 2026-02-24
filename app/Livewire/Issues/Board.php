@@ -47,7 +47,7 @@ class Board extends Component
             ])
         );
 
-        session()->flash('status', 'Issue je uspešno pomeren.');
+        session()->flash('status', __('messages.issues.flash_moved'));
     }
 
     public function render(): View
@@ -82,7 +82,7 @@ class Board extends Component
             'clients' => \App\Models\Client::query()->where('user_id', Auth::id())->orderBy('display_name')->get(),
             'assignees' => User::query()->orderBy('name')->get(),
         ])->layout('layouts.app', [
-            'title' => 'Issue board',
+            'title' => __('messages.issues.board_title'),
         ]);
     }
 }

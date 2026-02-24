@@ -39,7 +39,7 @@ class Index extends Component
             ])
         );
 
-        session()->flash('status', 'Status cene je uspešno ažuriran.');
+        session()->flash('status', __('messages.client_project_rates.flash_status_updated'));
     }
 
     public function deleteRate(int $rateId): void
@@ -51,7 +51,7 @@ class Index extends Component
             ])
         );
 
-        session()->flash('status', 'Cena klijenta je uspešno obrisana.');
+        session()->flash('status', __('messages.client_project_rates.flash_deleted'));
     }
 
     public function render(): View
@@ -88,7 +88,7 @@ class Index extends Component
         return view('livewire.client-project-rates.index', [
             'rates' => $rates,
         ])->layout('layouts.app', [
-            'title' => 'Cene klijenata',
+            'title' => __('messages.client_project_rates.title'),
         ]);
     }
 }

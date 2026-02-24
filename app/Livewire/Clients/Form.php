@@ -189,7 +189,9 @@ class Form extends Component
             return;
         }
 
-        $message = $client->wasRecentlyCreated ? 'Klijent je uspešno dodat.' : 'Klijent je uspešno izmenjen.';
+        $message = $client->wasRecentlyCreated
+            ? __('messages.clients.flash_created')
+            : __('messages.clients.flash_updated');
 
         session()->flash('status', $message);
         $this->redirectRoute('clients.index');
@@ -227,7 +229,7 @@ class Form extends Component
             'isCompany' => $this->isCompanyType(),
             'isPerson' => $this->isPersonType(),
         ])->layout('layouts.app', [
-            'title' => $this->clientId ? 'Izmena klijenta' : 'Novi klijent',
+            'title' => $this->clientId ? __('messages.clients.form_edit_title') : __('messages.clients.form_new_title'),
         ]);
     }
 }

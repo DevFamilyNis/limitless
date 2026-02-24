@@ -53,7 +53,7 @@ class Form extends Component
         return view('livewire.settings.issue-categories.form', [
             'isEditing' => $this->categoryId !== null,
         ])->layout('layouts.app', [
-            'title' => $this->categoryId ? 'Izmena kategorije' : 'Nova kategorija',
+            'title' => $this->categoryId ? __('messages.settings.issue_categories.edit_title') : __('messages.settings.issue_categories.new_title'),
         ]);
     }
 }

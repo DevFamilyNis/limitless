@@ -64,7 +64,7 @@ class Form extends Component
         return view('livewire.settings.issue-statuses.form', [
             'isEditing' => $this->statusId !== null,
         ])->layout('layouts.app', [
-            'title' => $this->statusId ? 'Izmena statusa' : 'Novi status',
+            'title' => $this->statusId ? __('messages.settings.issue_statuses.edit_title') : __('messages.settings.issue_statuses.new_title'),
         ]);
     }
 }

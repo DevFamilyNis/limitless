@@ -42,7 +42,7 @@
                 <div><span class="text-zinc-500">@lang('messages.table.type'):
                     </span> {{ $client->type?->name ?? '-' }}</div>
                 <div><span class="text-zinc-500">@lang('messages.table.status'):
-                    </span> {{ $client->is_active ? 'Aktivan' : 'Neaktivan' }}</div>
+                    </span> {{ $client->is_active ? __('messages.status_labels.active_m') : __('messages.status_labels.inactive_m') }}</div>
                 <div><span class="text-zinc-500">@lang('messages.form.email'):
                     </span> {{ $client->email ?: '-' }}</div>
                 <div><span class="text-zinc-500">@lang('messages.form.phone'):
@@ -104,7 +104,7 @@
                                 <div>{{ $contact->email ?: '-' }}</div>
                                 <div class="text-xs text-zinc-500">{{ $contact->phone ?: '-' }}</div>
                             </x-ui.table.td>
-                            <x-ui.table.td>{{ $contact->is_primary ? 'Da' : 'Ne' }}</x-ui.table.td>
+                            <x-ui.table.td>{{ $contact->is_primary ? __('messages.common.yes') : __('messages.common.no') }}</x-ui.table.td>
                         </x-ui.table.row>
                     @endforeach
                 </x-ui.table.body>
@@ -130,7 +130,7 @@
                         <x-ui.table.td class="font-medium">{{ $rate->project?->name ?? '-' }}</x-ui.table.td>
                         <x-ui.table.td>{{ $rate->billingPeriod?->name ?? '-' }}</x-ui.table.td>
                         <x-ui.table.td>{{ number_format((float) $rate->price_amount, 2, ',', '.') }} {{ $rate->currency }}</x-ui.table.td>
-                        <x-ui.table.td>{{ $rate->is_active ? 'Aktivan' : 'Neaktivan' }}</x-ui.table.td>
+                        <x-ui.table.td>{{ $rate->is_active ? __('messages.status_labels.active_m') : __('messages.status_labels.inactive_m') }}</x-ui.table.td>
                     </x-ui.table.row>
                 @empty
                     <x-ui.table.empty colspan="4">@lang('messages.table.noResults')</x-ui.table.empty>

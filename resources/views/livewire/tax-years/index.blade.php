@@ -3,12 +3,12 @@
 
     <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
-            <flux:heading size="xl">Poreske godine</flux:heading>
-            <flux:text>Istorija pragova po godinama.</flux:text>
+            <flux:heading size="xl">@lang('messages.tax_years.title')</flux:heading>
+            <flux:text>@lang('messages.tax_years.subtitle')</flux:text>
         </div>
 
         <flux:button variant="primary" :href="route('tax-years.create')" wire:navigate>
-            Dodaj
+            @lang('messages.actions.add')
         </flux:button>
     </div>
 
@@ -17,16 +17,16 @@
     @endif
 
     <div class="grid gap-3 md:grid-cols-3">
-        <flux:input wire:model.live.debounce.300ms="search" label="Pretraga" placeholder="Godina" />
+        <flux:input wire:model.live.debounce.300ms="search" :label="__('messages.common.search')" :placeholder="__('messages.tax_years.search_placeholder')" />
     </div>
 
     <x-ui.table>
         <x-ui.table.head>
             <tr>
-                <x-ui.table.th>Godina</x-ui.table.th>
-                <x-ui.table.th>Prvi prag (RSD)</x-ui.table.th>
-                <x-ui.table.th>Drugi prag (RSD)</x-ui.table.th>
-                <x-ui.table.th align="right">Akcija</x-ui.table.th>
+                <x-ui.table.th>@lang('messages.common.year')</x-ui.table.th>
+                <x-ui.table.th>@lang('messages.tax_years.first_threshold')</x-ui.table.th>
+                <x-ui.table.th>@lang('messages.tax_years.second_threshold')</x-ui.table.th>
+                <x-ui.table.th align="right">@lang('messages.common.action')</x-ui.table.th>
             </tr>
         </x-ui.table.head>
         <x-ui.table.body>
@@ -37,10 +37,10 @@
                     <x-ui.table.td>{{ number_format((float) $taxYear->second_threshold_amount, 2, ',', '.') }}</x-ui.table.td>
                     <x-ui.table.td align="right">
                         <x-ui.table.actions>
-                            <x-ui.buttons.icon-action :href="route('tax-years.edit', $taxYear)" title="Izmeni poresku godinu" color="primary" navigate>
+                            <x-ui.buttons.icon-action :href="route('tax-years.edit', $taxYear)" :title="__('messages.tax_years.edit_action')" color="primary" navigate>
                                 <x-ui.icons.pen :class="$actionIconClass" />
                             </x-ui.buttons.icon-action>
-                            <x-ui.buttons.icon-action wire:click="deleteTaxYear({{ $taxYear->id }})" title="Obriši poresku godinu" color="danger">
+                            <x-ui.buttons.icon-action wire:click="deleteTaxYear({{ $taxYear->id }})" :title="__('messages.tax_years.delete_action')" color="danger">
                                 <x-ui.icons.trash :class="$actionIconClass" />
                             </x-ui.buttons.icon-action>
                         </x-ui.table.actions>
@@ -48,7 +48,7 @@
                 </x-ui.table.row>
             @empty
                 <x-ui.table.empty colspan="4">
-                    Nema unetih poreskih godina.
+                    @lang('messages.tax_years.empty')
                 </x-ui.table.empty>
             @endforelse
         </x-ui.table.body>

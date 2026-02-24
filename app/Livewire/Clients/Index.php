@@ -39,7 +39,7 @@ class Index extends Component
             ])
         );
 
-        session()->flash('status', 'Status klijenta je uspešno ažuriran.');
+        session()->flash('status', __('messages.clients.flash_status_updated'));
     }
 
     public function deleteClient(int $clientId): void
@@ -52,12 +52,12 @@ class Index extends Component
         );
 
         if (! $deleted) {
-            session()->flash('error', 'Klijent ne može biti obrisan jer ima fakture ili transakcije.');
+            session()->flash('error', __('messages.clients.flash_delete_blocked'));
 
             return;
         }
 
-        session()->flash('status', 'Klijent je uspešno obrisan.');
+        session()->flash('status', __('messages.clients.flash_deleted'));
     }
 
     public function render(): View
@@ -86,7 +86,7 @@ class Index extends Component
         return view('livewire.clients.index', [
             'clients' => $clients,
         ])->layout('layouts.app', [
-            'title' => 'Klijenti',
+            'title' => __('messages.clients.title'),
         ]);
     }
 }

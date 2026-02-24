@@ -1,8 +1,8 @@
 <div class="mx-auto w-full max-w-3xl">
     <div class="mb-6 flex items-center justify-between">
         <div>
-            <flux:heading size="xl">{{ $isEditing ? 'Izmena projekta' : 'Novi projekat' }}</flux:heading>
-            <flux:text>@lang('messages.form.editTitle')</flux:text>
+            <flux:heading size="xl">{{ $isEditing ? __('messages.projects.edit_title') : __('messages.projects.new_title') }}</flux:heading>
+            <flux:text>@lang('messages.form.formTitle')</flux:text>
         </div>
 
         <flux:button variant="ghost" :href="route('projects.index')" wire:navigate>

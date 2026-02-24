@@ -17,7 +17,7 @@ class Index extends Component
                 'category_id' => $categoryId,
             ])
         );
-        session()->flash('status', 'Kategorija je obrisana.');
+        session()->flash('status', __('messages.settings.issue_categories.flash_deleted'));
     }
 
     public function render(): View
@@ -25,7 +25,7 @@ class Index extends Component
         return view('livewire.settings.issue-categories.index', [
             'categories' => IssueCategory::query()->orderBy('name')->get(),
         ])->layout('layouts.app', [
-            'title' => 'Issue kategorije',
+            'title' => __('messages.menu.catIssues'),
         ]);
     }
 }

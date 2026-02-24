@@ -39,7 +39,7 @@ class DashboardPage extends Component
             'deadlines' => $deadlines,
             'hasIssueBoardRoute' => Route::has('issues.board'),
         ])->layout('layouts.app', [
-            'title' => 'Početna strana',
+            'title' => __('messages.menu.dashboard'),
         ]);
     }
 }

@@ -43,7 +43,7 @@ class Show extends Component
         return view('livewire.clients.show', [
             'clientName' => $clientName,
         ])->layout('layouts.app', [
-            'title' => 'Klijent - '.$clientName,
+            'title' => __('messages.clients.title').': '.$clientName,
         ]);
     }
 }
