@@ -12,7 +12,7 @@ test('dashboard page is displayed for authenticated user', function () {
         ->assertOk()
         ->assertSee('Prihod ove godine')
         ->assertSee('Neto ovaj mesec')
-        ->assertSee('Otvorene fakture');
+        ->assertSee(__('messages.text.sentInvoices'));
 });
 
 test('dashboard uses fallback paucal thresholds when tax year is missing', function () {

@@ -40,7 +40,7 @@ test('client show page is displayed for owner', function () {
     $this->actingAs($user)
         ->get(route('clients.show', $client))
         ->assertOk()
-        ->assertSee('Detaljan pregled klijenta');
+        ->assertSee(__('messages.text.clientShowSubTitle'));
 });
 
 test('client show page returns 404 for non owner', function () {
