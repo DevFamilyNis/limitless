@@ -49,11 +49,13 @@
                     <x-ui.table.row wire:key="client-{{ $client->id }}">
                         <x-ui.table.td>
                             <div class="font-medium">
-                                @if ($client->type?->key === 'person' && $client->person)
-                                    {{ trim($client->person->first_name.' '.$client->person->last_name) }}
-                                @else
-                                    {{ $client->display_name }}
-                                @endif
+                                <a href="{{ route('clients.show', $client) }}" wire:navigate class="text-blue-600 hover:text-blue-700 hover:underline dark:text-blue-400 dark:hover:text-blue-300">
+                                    @if ($client->type?->key === 'person' && $client->person)
+                                        {{ trim($client->person->first_name.' '.$client->person->last_name) }}
+                                    @else
+                                        {{ $client->display_name }}
+                                    @endif
+                                </a>
                             </div>
                             @if ($client->company && $client->company->pib)
                                 <div class="text-xs text-zinc-500">PIB: {{ $client->company->pib }}</div>

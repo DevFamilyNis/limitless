@@ -26,6 +26,40 @@ test('create client page is displayed', function () {
         ->assertSee('Novi klijent');
 });
 
+test('client show page is displayed for owner', function () {
+    $user = User::factory()->create();
+    $personTypeId = ClientType::query()->where('key', 'person')->value('id');
+
+    $client = Client::query()->create([
+        'user_id' => $user->id,
+        'client_type_id' => $personTypeId,
+        'display_name' => 'Petar Petrovic',
+        'is_active' => true,
+    ]);
+
+    $this->actingAs($user)
+        ->get(route('clients.show', $client))
+        ->assertOk()
+        ->assertSee('Detaljan pregled klijenta');
+});
+
+test('client show page returns 404 for non owner', function () {
+    $owner = User::factory()->create();
+    $anotherUser = User::factory()->create();
+    $personTypeId = ClientType::query()->where('key', 'person')->value('id');
+
+    $client = Client::query()->create([
+        'user_id' => $owner->id,
+        'client_type_id' => $personTypeId,
+        'display_name' => 'Privatni Klijent',
+        'is_active' => true,
+    ]);
+
+    $this->actingAs($anotherUser)
+        ->get(route('clients.show', $client))
+        ->assertNotFound();
+});
+
 test('user can create company client with company details', function () {
     $user = User::factory()->create();
     $companyTypeId = ClientType::query()->where('key', 'company')->value('id');

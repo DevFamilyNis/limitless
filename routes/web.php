@@ -9,6 +9,7 @@ use App\Livewire\ClientProjectRates\Form as ClientProjectRateForm;
 use App\Livewire\ClientProjectRates\Index as ClientProjectRateIndex;
 use App\Livewire\Clients\Form as ClientForm;
 use App\Livewire\Clients\Index as ClientIndex;
+use App\Livewire\Clients\Show as ClientShow;
 use App\Livewire\Dashboard\DashboardPage;
 use App\Livewire\Invoices\Form as InvoiceForm;
 use App\Livewire\Invoices\Index as InvoiceIndex;
@@ -51,6 +52,7 @@ Route::middleware('auth')->group(function () {
     Route::livewire('clients', ClientIndex::class)->name('clients.index');
     Route::livewire('clients/create', ClientForm::class)->name('clients.create');
     Route::livewire('clients/{client}/edit', ClientForm::class)->name('clients.edit');
+    Route::livewire('clients/{client}', ClientShow::class)->name('clients.show');
     Route::livewire('projects', ProjectIndex::class)->name('projects.index');
     Route::livewire('projects/create', ProjectForm::class)->name('projects.create');
     Route::livewire('projects/{project}/edit', ProjectForm::class)->name('projects.edit');

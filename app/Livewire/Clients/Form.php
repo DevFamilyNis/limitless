@@ -153,7 +153,7 @@ class Form extends Component
         if ($this->isPersonType()) {
             $fullName = trim($this->firstName.' '.$this->lastName);
 
-            if ($fullName !== '') {
+            if ($fullName !== '' && trim($this->displayName) === '') {
                 $this->displayName = $fullName;
             }
         }
