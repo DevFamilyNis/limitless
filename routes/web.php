@@ -16,6 +16,7 @@ use App\Livewire\Issues\Board as IssueBoard;
 use App\Livewire\Issues\Form as IssueForm;
 use App\Livewire\Issues\Index as IssueIndex;
 use App\Livewire\Issues\Show as IssueShow;
+use App\Livewire\KpoReports\Index as KpoReportIndex;
 use App\Livewire\Projects\Form as ProjectForm;
 use App\Livewire\Projects\Index as ProjectIndex;
 use App\Livewire\Settings\IssueCategories\Form as IssueCategoryForm;
@@ -66,6 +67,7 @@ Route::middleware('auth')->group(function () {
     Route::livewire('tax-years', TaxYearIndex::class)->name('tax-years.index');
     Route::livewire('tax-years/create', TaxYearForm::class)->name('tax-years.create');
     Route::livewire('tax-years/{taxYear}/edit', TaxYearForm::class)->name('tax-years.edit');
+    Route::livewire('kpo-reports', KpoReportIndex::class)->name('kpo-reports.index');
     Route::livewire('issue-board', IssueBoard::class)->name('issues.board');
     Route::livewire('issues', IssueIndex::class)->name('issues.index');
     Route::livewire('issues/create', IssueForm::class)->name('issues.create');

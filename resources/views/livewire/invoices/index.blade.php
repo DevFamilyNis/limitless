@@ -88,6 +88,14 @@
                                 @endif
 
                                 <x-ui.buttons.icon-action
+                                    wire:click="downloadPdf({{ $invoice->id }})"
+                                    title="Preuzmi PDF"
+                                    color="primary"
+                                >
+                                    <x-ui.icons.download :class="$actionIconClass" />
+                                </x-ui.buttons.icon-action>
+
+                                <x-ui.buttons.icon-action
                                     :href="route('invoices.edit', $invoice)"
                                     title="Izmeni fakturu"
                                     color="primary"

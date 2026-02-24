@@ -36,6 +36,9 @@
                     <flux:sidebar.item icon="calendar-days" :href="route('tax-years.index')" :current="request()->routeIs('tax-years.*')" wire:navigate>
                         Poreske godine
                     </flux:sidebar.item>
+                    <flux:sidebar.item icon="document-text" :href="route('kpo-reports.index')" :current="request()->routeIs('kpo-reports.*')" wire:navigate>
+                        KPO izveštaji
+                    </flux:sidebar.item>
                     <flux:sidebar.item icon="layout-grid" :href="route('issues.board')" :current="request()->routeIs('issues.board')" wire:navigate>
                         Issue board
                     </flux:sidebar.item>

@@ -3,15 +3,19 @@
 namespace App\Livewire\Invoices;
 
 use App\Domain\Invoices\Actions\DeleteInvoiceAction;
+use App\Domain\Invoices\Actions\GenerateInvoicePdfAction;
 use App\Domain\Invoices\Actions\MarkInvoicePaidAction;
 use App\Domain\Invoices\DTO\DeleteInvoiceData;
+use App\Domain\Invoices\DTO\GenerateInvoicePdfData;
 use App\Domain\Invoices\DTO\MarkInvoicePaidData;
+use App\Domain\Invoices\Exceptions\InvoicePdfGenerationException;
 use App\Models\Invoice;
 use App\Models\InvoiceStatus;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class Index extends Component
 {
@@ -53,6 +57,26 @@ class Index extends Component
         );
 
         session()->flash('status', 'Faktura je uspešno obrisana.');
+    }
+
+    public function downloadPdf(int $invoiceId): ?BinaryFileResponse
+    {
+        try {
+            $result = app(GenerateInvoicePdfAction::class)->execute(
+                GenerateInvoicePdfData::fromArray([
+                    'user_id' => Auth::id(),
+                    'invoice_id' => $invoiceId,
+                ])
+            );
+        } catch (InvoicePdfGenerationException $exception) {
+            session()->flash('status', $exception->getMessage());
+
+            return null;
+        }
+
+        return response()
+            ->download($result['path'], $result['filename'])
+            ->deleteFileAfterSend(true);
     }
 
     public function render(): View
