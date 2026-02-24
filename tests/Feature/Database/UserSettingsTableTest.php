@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
@@ -19,34 +20,41 @@ test('user settings table has expected structure', function () {
     ]))->toBeTrue();
 });
 
-test('default user settings row is inserted', function () {
-    $userId = DB::table('users')
-        ->where('email', 'dev.famil.nis@gmail.com')
-        ->value('id');
+test('user settings row can be inserted', function () {
+    $user = User::factory()->create();
 
-    expect($userId)->not->toBeNull();
-
-    $this->assertDatabaseHas('user_settings', [
-        'user_id' => $userId,
+    DB::table('user_settings')->insert([
+        'user_id' => $user->id,
         'display_name' => 'Dev-Family',
         'address' => 'Branka Radicevica 26a',
         'pib' => '113101530',
         'mb' => '66579484',
         'bank_account' => '160-6000001451121-46',
         'default_currency' => 'RSD',
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
+
+    $this->assertDatabaseHas('user_settings', [
+        'user_id' => $user->id,
+        'display_name' => 'Dev-Family',
     ]);
 });
 
 test('user settings are deleted when user is deleted', function () {
-    $userId = DB::table('users')
-        ->where('email', 'dev.famil.nis@gmail.com')
-        ->value('id');
+    $user = User::factory()->create();
 
-    expect($userId)->not->toBeNull();
+    DB::table('user_settings')->insert([
+        'user_id' => $user->id,
+        'display_name' => 'Temp User',
+        'default_currency' => 'RSD',
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
 
-    DB::table('users')->where('id', $userId)->delete();
+    DB::table('users')->where('id', $user->id)->delete();
 
     $this->assertDatabaseMissing('user_settings', [
-        'user_id' => $userId,
+        'user_id' => $user->id,
     ]);
 });

@@ -25,10 +25,11 @@ test('create project page is displayed', function () {
 
 test('project show page is displayed for owner', function () {
     $user = User::factory()->create();
+    $projectCode = 'EMPAY-'.fake()->unique()->numberBetween(1000, 9999);
 
     $project = Project::query()->create([
         'user_id' => $user->id,
-        'code' => 'EMPAY',
+        'code' => $projectCode,
         'name' => 'Empay Projekat',
         'is_active' => true,
     ]);
@@ -42,10 +43,11 @@ test('project show page is displayed for owner', function () {
 test('project show page returns 404 for non owner', function () {
     $owner = User::factory()->create();
     $anotherUser = User::factory()->create();
+    $projectCode = 'EMPAY-'.fake()->unique()->numberBetween(1000, 9999);
 
     $project = Project::query()->create([
         'user_id' => $owner->id,
-        'code' => 'EMPAY',
+        'code' => $projectCode,
         'name' => 'Privatan projekat',
         'is_active' => true,
     ]);
@@ -57,9 +59,10 @@ test('project show page returns 404 for non owner', function () {
 
 test('user can create project', function () {
     $user = User::factory()->create();
+    $projectCode = 'EMPAY-'.fake()->unique()->numberBetween(1000, 9999);
 
     Livewire::actingAs($user)->test(Form::class)
-        ->set('code', 'EMPAY')
+        ->set('code', $projectCode)
         ->set('name', 'Empay Projekat')
         ->set('description', 'Test opis')
         ->call('save')
@@ -67,7 +70,7 @@ test('user can create project', function () {
 
     $this->assertDatabaseHas('projects', [
         'user_id' => $user->id,
-        'code' => 'EMPAY',
+        'code' => $projectCode,
         'name' => 'Empay Projekat',
         'is_active' => true,
     ]);
@@ -75,17 +78,19 @@ test('user can create project', function () {
 
 test('user can search projects', function () {
     $user = User::factory()->create();
+    $empayCode = 'EMPAY-'.fake()->unique()->numberBetween(1000, 9999);
+    $fmCode = 'FM-'.fake()->unique()->numberBetween(1000, 9999);
 
     Project::query()->create([
         'user_id' => $user->id,
-        'code' => 'EMPAY',
+        'code' => $empayCode,
         'name' => 'Empay Projekat',
         'is_active' => true,
     ]);
 
     Project::query()->create([
         'user_id' => $user->id,
-        'code' => 'FM',
+        'code' => $fmCode,
         'name' => 'Facility Management',
         'is_active' => true,
     ]);
@@ -98,10 +103,11 @@ test('user can search projects', function () {
 
 test('user can update project', function () {
     $user = User::factory()->create();
+    $projectCode = 'EMPAY-'.fake()->unique()->numberBetween(1000, 9999);
 
     $project = Project::query()->create([
         'user_id' => $user->id,
-        'code' => 'EMPAY',
+        'code' => $projectCode,
         'name' => 'Stari naziv',
         'is_active' => true,
     ]);
@@ -121,10 +127,11 @@ test('user can update project', function () {
 
 test('user can deactivate and activate project', function () {
     $user = User::factory()->create();
+    $projectCode = 'EMPAY-'.fake()->unique()->numberBetween(1000, 9999);
 
     $project = Project::query()->create([
         'user_id' => $user->id,
-        'code' => 'EMPAY',
+        'code' => $projectCode,
         'name' => 'Empay Projekat',
         'is_active' => true,
     ]);
@@ -148,10 +155,11 @@ test('user can deactivate and activate project', function () {
 
 test('user can delete project', function () {
     $user = User::factory()->create();
+    $projectCode = 'EMPAY-'.fake()->unique()->numberBetween(1000, 9999);
 
     $project = Project::query()->create([
         'user_id' => $user->id,
-        'code' => 'EMPAY',
+        'code' => $projectCode,
         'name' => 'Empay Projekat',
         'is_active' => true,
     ]);

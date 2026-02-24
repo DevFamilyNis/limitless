@@ -31,6 +31,7 @@ test('user can create client project rate', function () {
     $user = User::factory()->create();
     $companyTypeId = ClientType::query()->where('key', 'company')->value('id');
     $monthlyId = BillingPeriod::query()->where('key', 'monthly')->value('id');
+    $projectCode = 'EMPAY-'.fake()->unique()->numberBetween(1000, 9999);
 
     $client = Client::query()->create([
         'user_id' => $user->id,
@@ -41,7 +42,7 @@ test('user can create client project rate', function () {
 
     $project = Project::query()->create([
         'user_id' => $user->id,
-        'code' => 'EMPAY',
+        'code' => $projectCode,
         'name' => 'EmPay',
         'is_active' => true,
     ]);
@@ -68,6 +69,8 @@ test('user can search client project rates', function () {
     $user = User::factory()->create();
     $companyTypeId = ClientType::query()->where('key', 'company')->value('id');
     $monthlyId = BillingPeriod::query()->where('key', 'monthly')->value('id');
+    $empayCode = 'EMPAY-'.fake()->unique()->numberBetween(1000, 9999);
+    $fmCode = 'FM-'.fake()->unique()->numberBetween(1000, 9999);
 
     $client = Client::query()->create([
         'user_id' => $user->id,
@@ -78,14 +81,14 @@ test('user can search client project rates', function () {
 
     $empay = Project::query()->create([
         'user_id' => $user->id,
-        'code' => 'EMPAY',
+        'code' => $empayCode,
         'name' => 'EmPay',
         'is_active' => true,
     ]);
 
     $fm = Project::query()->create([
         'user_id' => $user->id,
-        'code' => 'FM',
+        'code' => $fmCode,
         'name' => 'Facility Management',
         'is_active' => true,
     ]);
@@ -119,6 +122,7 @@ test('user can update client project rate', function () {
     $companyTypeId = ClientType::query()->where('key', 'company')->value('id');
     $monthlyId = BillingPeriod::query()->where('key', 'monthly')->value('id');
     $yearlyId = BillingPeriod::query()->where('key', 'yearly')->value('id');
+    $projectCode = 'EMPAY-'.fake()->unique()->numberBetween(1000, 9999);
 
     $client = Client::query()->create([
         'user_id' => $user->id,
@@ -129,7 +133,7 @@ test('user can update client project rate', function () {
 
     $project = Project::query()->create([
         'user_id' => $user->id,
-        'code' => 'EMPAY',
+        'code' => $projectCode,
         'name' => 'EmPay',
         'is_active' => true,
     ]);
@@ -160,6 +164,7 @@ test('user can deactivate and activate client project rate', function () {
     $user = User::factory()->create();
     $companyTypeId = ClientType::query()->where('key', 'company')->value('id');
     $monthlyId = BillingPeriod::query()->where('key', 'monthly')->value('id');
+    $projectCode = 'EMPAY-'.fake()->unique()->numberBetween(1000, 9999);
 
     $client = Client::query()->create([
         'user_id' => $user->id,
@@ -170,7 +175,7 @@ test('user can deactivate and activate client project rate', function () {
 
     $project = Project::query()->create([
         'user_id' => $user->id,
-        'code' => 'EMPAY',
+        'code' => $projectCode,
         'name' => 'EmPay',
         'is_active' => true,
     ]);
@@ -205,6 +210,7 @@ test('user can delete client project rate', function () {
     $user = User::factory()->create();
     $companyTypeId = ClientType::query()->where('key', 'company')->value('id');
     $monthlyId = BillingPeriod::query()->where('key', 'monthly')->value('id');
+    $projectCode = 'EMPAY-'.fake()->unique()->numberBetween(1000, 9999);
 
     $client = Client::query()->create([
         'user_id' => $user->id,
@@ -215,7 +221,7 @@ test('user can delete client project rate', function () {
 
     $project = Project::query()->create([
         'user_id' => $user->id,
-        'code' => 'EMPAY',
+        'code' => $projectCode,
         'name' => 'EmPay',
         'is_active' => true,
     ]);

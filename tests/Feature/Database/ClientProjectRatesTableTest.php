@@ -27,6 +27,7 @@ test('client project rates are deleted when client is deleted', function () {
     $user = User::factory()->create();
     $companyTypeId = ClientType::query()->where('key', 'company')->value('id');
     $monthlyId = BillingPeriod::query()->where('key', 'monthly')->value('id');
+    $projectCode = 'EMPAY-'.fake()->unique()->numberBetween(1000, 9999);
 
     $client = Client::query()->create([
         'user_id' => $user->id,
@@ -37,7 +38,7 @@ test('client project rates are deleted when client is deleted', function () {
 
     $project = Project::query()->create([
         'user_id' => $user->id,
-        'code' => 'EMPAY',
+        'code' => $projectCode,
         'name' => 'EmPay',
         'is_active' => true,
     ]);

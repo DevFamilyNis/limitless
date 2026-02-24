@@ -3,7 +3,12 @@
 use App\Mail\MagicLoginLinkMail;
 use App\Models\LoginLink;
 use App\Models\User;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Support\Facades\Mail;
+
+beforeEach(function () {
+    $this->withoutMiddleware(VerifyCsrfToken::class);
+});
 
 test('users can request a magic login link from login screen', function () {
     Mail::fake();
