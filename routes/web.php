@@ -20,6 +20,7 @@ use App\Livewire\Issues\Show as IssueShow;
 use App\Livewire\KpoReports\Index as KpoReportIndex;
 use App\Livewire\Projects\Form as ProjectForm;
 use App\Livewire\Projects\Index as ProjectIndex;
+use App\Livewire\Projects\Show as ProjectShow;
 use App\Livewire\Settings\IssueCategories\Form as IssueCategoryForm;
 use App\Livewire\Settings\IssueCategories\Index as IssueCategoryIndex;
 use App\Livewire\Settings\IssuePriorities\Form as IssuePriorityForm;
@@ -56,6 +57,7 @@ Route::middleware('auth')->group(function () {
     Route::livewire('projects', ProjectIndex::class)->name('projects.index');
     Route::livewire('projects/create', ProjectForm::class)->name('projects.create');
     Route::livewire('projects/{project}/edit', ProjectForm::class)->name('projects.edit');
+    Route::livewire('projects/{project}', ProjectShow::class)->name('projects.show');
     Route::livewire('client-project-rates', ClientProjectRateIndex::class)->name('client-project-rates.index');
     Route::livewire('client-project-rates/create', ClientProjectRateForm::class)->name('client-project-rates.create');
     Route::livewire('client-project-rates/{clientProjectRate}/edit', ClientProjectRateForm::class)->name('client-project-rates.edit');

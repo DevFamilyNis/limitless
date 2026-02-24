@@ -6,6 +6,8 @@ use App\Domain\Projects\Actions\DeleteProjectAction;
 use App\Domain\Projects\Actions\ToggleProjectActiveAction;
 use App\Domain\Projects\DTO\DeleteProjectData;
 use App\Domain\Projects\DTO\ToggleProjectActiveData;
+use App\Models\ClientProjectRate;
+use App\Models\InvoiceItem;
 use App\Models\Project;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
@@ -57,6 +59,20 @@ class Index extends Component
     public function render(): View
     {
         $projects = Project::query()
+            ->with('user')
+            ->addSelect([
+                'clients_count' => ClientProjectRate::query()
+                    ->selectRaw('COUNT(DISTINCT client_id)')
+                    ->whereColumn('project_id', 'projects.id'),
+                'current_month_total' => InvoiceItem::query()
+                    ->join('invoices', 'invoices.id', '=', 'invoice_items.invoice_id')
+                    ->join('clients', 'clients.id', '=', 'invoices.client_id')
+                    ->selectRaw('COALESCE(SUM(invoice_items.amount), 0)')
+                    ->whereColumn('invoice_items.project_id', 'projects.id')
+                    ->whereColumn('clients.user_id', 'projects.user_id')
+                    ->whereYear('invoices.issue_date', (int) now()->year)
+                    ->whereMonth('invoices.issue_date', (int) now()->month),
+            ])
             ->where('user_id', Auth::id())
             ->when($this->search !== '', function ($query): void {
                 $query->where(function ($innerQuery): void {

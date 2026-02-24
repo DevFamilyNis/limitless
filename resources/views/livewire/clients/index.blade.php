@@ -27,7 +27,7 @@
             placeholder="Naziv, email ili telefon"
         />
 
-        <flux:select wire:model.live="statusFilter" label="Status">
+        <flux:select wire:model.live="statusFilter" :label="__('messages.table.status')">
             <option value="all">@lang('messages.text.all')</option>
             <option value="active">@lang('messages.text.active')</option>
             <option value="inactive">@lang('messages.text.inactive')</option>

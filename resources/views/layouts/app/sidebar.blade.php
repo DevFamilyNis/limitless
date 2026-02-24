@@ -13,7 +13,7 @@
             <flux:sidebar.nav>
                 <flux:sidebar.group :heading="__('Platform')" class="grid">
                     <flux:sidebar.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
-                        {{ __('messages.menu.dashboard') }}
+                        @lang('messages.menu.dashboard')
                     </flux:sidebar.item>
                     <flux:sidebar.item icon="users" :href="route('clients.index')" :current="request()->routeIs('clients.*')" wire:navigate>
                         @lang('messages.menu.clients')
@@ -25,36 +25,36 @@
                         @lang('messages.menu.projectsPrice')
                     </flux:sidebar.item>
                     <flux:sidebar.item icon="document-text" :href="route('invoices.index')" :current="request()->routeIs('invoices.*')" wire:navigate>
-                        Fakture
+                       @lang('messages.menu.invoices')
                     </flux:sidebar.item>
                     <flux:sidebar.item icon="tag" :href="route('categories.index')" :current="request()->routeIs('categories.*')" wire:navigate>
-                        Kategorije
+                       @lang('messages.menu.categories')
                     </flux:sidebar.item>
                     <flux:sidebar.item icon="arrows-right-left" :href="route('transactions.index')" :current="request()->routeIs('transactions.*')" wire:navigate>
-                        Transakcije
+                       @lang('messages.menu.transaction')
                     </flux:sidebar.item>
                     <flux:sidebar.item icon="calendar-days" :href="route('tax-years.index')" :current="request()->routeIs('tax-years.*')" wire:navigate>
-                        Poreske godine
+                       @lang('messages.menu.tax')
                     </flux:sidebar.item>
                     <flux:sidebar.item icon="document-text" :href="route('kpo-reports.index')" :current="request()->routeIs('kpo-reports.*')" wire:navigate>
-                        KPO izveštaji
+                      @lang('messages.menu.kpo')
                     </flux:sidebar.item>
                     <flux:sidebar.item icon="layout-grid" :href="route('issues.board')" :current="request()->routeIs('issues.board')" wire:navigate>
-                        Issue board
+                        @lang('messages.menu.issueBoard')
                     </flux:sidebar.item>
                     <flux:sidebar.item icon="document-text" :href="route('issues.index')" :current="request()->routeIs('issues.*') && ! request()->routeIs('issues.board')" wire:navigate>
-                        Issues
+                        @lang('messages.menu.issueTable')
                     </flux:sidebar.item>
                 </flux:sidebar.group>
                 <flux:sidebar.group :heading="'Settings'" class="grid">
                     <flux:sidebar.item icon="bars-2" :href="route('settings.issue-statuses.index')" :current="request()->routeIs('settings.issue-statuses.*')" wire:navigate>
-                        Statusi
+                        @lang('messages.menu.statuses')
                     </flux:sidebar.item>
                     <flux:sidebar.item icon="receipt-percent" :href="route('settings.issue-priorities.index')" :current="request()->routeIs('settings.issue-priorities.*')" wire:navigate>
-                        Prioriteti
+                        @lang('messages.menu.priorities')
                     </flux:sidebar.item>
                     <flux:sidebar.item icon="tag" :href="route('settings.issue-categories.index')" :current="request()->routeIs('settings.issue-categories.*')" wire:navigate>
-                        Kategorije
+                        @lang('messages.menu.catIssues')
                     </flux:sidebar.item>
                 </flux:sidebar.group>
             </flux:sidebar.nav>

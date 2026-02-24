@@ -23,6 +23,38 @@ test('create project page is displayed', function () {
         ->assertSee('Novi projekat');
 });
 
+test('project show page is displayed for owner', function () {
+    $user = User::factory()->create();
+
+    $project = Project::query()->create([
+        'user_id' => $user->id,
+        'code' => 'EMPAY',
+        'name' => 'Empay Projekat',
+        'is_active' => true,
+    ]);
+
+    $this->actingAs($user)
+        ->get(route('projects.show', $project))
+        ->assertOk()
+        ->assertSee('Detalji projekta');
+});
+
+test('project show page returns 404 for non owner', function () {
+    $owner = User::factory()->create();
+    $anotherUser = User::factory()->create();
+
+    $project = Project::query()->create([
+        'user_id' => $owner->id,
+        'code' => 'EMPAY',
+        'name' => 'Privatan projekat',
+        'is_active' => true,
+    ]);
+
+    $this->actingAs($anotherUser)
+        ->get(route('projects.show', $project))
+        ->assertNotFound();
+});
+
 test('user can create project', function () {
     $user = User::factory()->create();
 

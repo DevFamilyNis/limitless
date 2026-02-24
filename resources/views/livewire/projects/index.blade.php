@@ -26,65 +26,75 @@
         </flux:select>
     </div>
 
-    <x-ui.table>
-        <x-ui.table.head>
-            <tr>
-                <x-ui.table.th>@lang('messages.table.code')</x-ui.table.th>
-                <x-ui.table.th>@lang('messages.table.name')</x-ui.table.th>
-                <x-ui.table.th>@lang('messages.form.note')</x-ui.table.th>
-                <x-ui.table.th>@lang('messages.table.status')</x-ui.table.th>
-                <x-ui.table.th align="right">@lang('messages.table.action')</x-ui.table.th>
-            </tr>
-        </x-ui.table.head>
-        <x-ui.table.body>
-                @forelse ($projects as $project)
-                    <x-ui.table.row wire:key="project-{{ $project->id }}">
-                        <x-ui.table.td class="font-medium">{{ $project->code }}</x-ui.table.td>
-                        <x-ui.table.td>{{ $project->name }}</x-ui.table.td>
-                        <x-ui.table.td>{{ $project->description ?: '-' }}</x-ui.table.td>
-                        <x-ui.table.td>
+    @if ($projects->isEmpty())
+        <flux:card>
+            <flux:text>@lang('messages.table.noResults')</flux:text>
+        </flux:card>
+    @else
+        <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            @foreach ($projects as $project)
+                <flux:card class="flex h-full flex-col gap-4" wire:key="project-card-{{ $project->id }}">
+                    <a href="{{ route('projects.show', $project) }}" wire:navigate class="space-y-2">
+                        <div class="flex items-center justify-between">
+                            <flux:badge color="zinc">{{ $project->code }}</flux:badge>
                             @if ($project->is_active)
                                 <span class="inline-flex rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-700 dark:bg-green-900/40 dark:text-green-300">Aktivan</span>
                             @else
                                 <span class="inline-flex rounded-full bg-zinc-100 px-2 py-1 text-xs font-medium text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">Neaktivan</span>
                             @endif
-                        </x-ui.table.td>
-                        <x-ui.table.td align="right">
-                            <x-ui.table.actions>
-                                <x-ui.buttons.icon-action
-                                    :href="route('projects.edit', $project)"
-                                    title="Izmeni projekat"
-                                    color="primary"
-                                    navigate
-                                >
-                                    <x-ui.icons.pen :class="$actionIconClass" />
-                                </x-ui.buttons.icon-action>
+                        </div>
 
-                                <x-ui.buttons.icon-action
-                                    wire:click="toggleActive({{ $project->id }})"
-                                    :title="$project->is_active ? 'Deaktiviraj projekat' : 'Aktiviraj projekat'"
-                                    color="warning"
-                                >
-                                    <x-ui.icons.disable :class="$actionIconClass" />
-                                </x-ui.buttons.icon-action>
+                        <flux:heading size="lg">{{ $project->name }}</flux:heading>
+                        <flux:text>{{ $project->description ?: '-' }}</flux:text>
+                    </a>
 
-                                <x-ui.buttons.icon-action
-                                    wire:click="deleteProject({{ $project->id }})"
-                                    title="Obriši projekat"
-                                    color="danger"
-                                >
-                                    <x-ui.icons.trash :class="$actionIconClass" />
-                                </x-ui.buttons.icon-action>
-                            </x-ui.table.actions>
-                        </x-ui.table.td>
-                    </x-ui.table.row>
-                @empty
-                    <x-ui.table.empty colspan="5">
-                        @lang('messages.table.noResults')
-                    </x-ui.table.empty>
-                @endforelse
-        </x-ui.table.body>
-    </x-ui.table>
+                    <div class="mt-auto grid gap-2 text-sm">
+                        <div class="flex items-center justify-between">
+                            <span class="text-zinc-500">Korisnici</span>
+                            <span class="font-medium">{{ (int) ($project->clients_count ?? 0) }}</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-zinc-500">Fakture mesec</span>
+                            <span class="font-medium">{{ number_format((float) ($project->current_month_total ?? 0), 2, ',', '.') }} RSD</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-zinc-500">Vlasnik</span>
+                            <span class="font-medium">{{ $project->user?->name ?? '-' }}</span>
+                        </div>
+                    </div>
+
+                    <div class="pt-2">
+                        <x-ui.table.actions>
+                            <x-ui.buttons.icon-action
+                                :href="route('projects.edit', $project)"
+                                title="Izmeni projekat"
+                                color="primary"
+                                navigate
+                            >
+                                <x-ui.icons.pen :class="$actionIconClass" />
+                            </x-ui.buttons.icon-action>
+
+                            <x-ui.buttons.icon-action
+                                wire:click="toggleActive({{ $project->id }})"
+                                :title="$project->is_active ? 'Deaktiviraj projekat' : 'Aktiviraj projekat'"
+                                color="warning"
+                            >
+                                <x-ui.icons.disable :class="$actionIconClass" />
+                            </x-ui.buttons.icon-action>
+
+                            <x-ui.buttons.icon-action
+                                wire:click="deleteProject({{ $project->id }})"
+                                title="Obriši projekat"
+                                color="danger"
+                            >
+                                <x-ui.icons.trash :class="$actionIconClass" />
+                            </x-ui.buttons.icon-action>
+                        </x-ui.table.actions>
+                    </div>
+                </flux:card>
+            @endforeach
+        </div>
+    @endif
 
     <div>
         {{ $projects->links() }}
