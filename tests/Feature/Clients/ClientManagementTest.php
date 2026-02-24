@@ -131,6 +131,34 @@ test('user can save person details for person client', function () {
     ]);
 });
 
+test('person client save auto-fills display name from first and last name', function () {
+    $user = User::factory()->create();
+    $personTypeId = ClientType::query()->where('key', 'person')->value('id');
+
+    $client = Client::query()->create([
+        'user_id' => $user->id,
+        'client_type_id' => $personTypeId,
+        'display_name' => '',
+        'is_active' => true,
+    ]);
+
+    Livewire::actingAs($user)->test(Form::class, ['client' => $client])
+        ->set('firstName', 'Petar')
+        ->set('lastName', 'Petrovic')
+        ->set('email', 'petar@example.com')
+        ->call('save')
+        ->assertRedirect(route('clients.index', absolute: false));
+
+    $client->refresh();
+    expect($client->display_name)->toBe('Petar Petrovic');
+
+    $this->assertDatabaseHas('client_person', [
+        'client_id' => $client->id,
+        'first_name' => 'Petar',
+        'last_name' => 'Petrovic',
+    ]);
+});
+
 test('user can manage company contacts in client form', function () {
     $user = User::factory()->create();
     $companyTypeId = ClientType::query()->where('key', 'company')->value('id');

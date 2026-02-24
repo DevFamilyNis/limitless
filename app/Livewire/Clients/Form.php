@@ -150,6 +150,14 @@ class Form extends Component
 
     public function save(): void
     {
+        if ($this->isPersonType()) {
+            $fullName = trim($this->firstName.' '.$this->lastName);
+
+            if ($fullName !== '') {
+                $this->displayName = $fullName;
+            }
+        }
+
         $validated = $this->validate();
 
         try {
