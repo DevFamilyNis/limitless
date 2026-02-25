@@ -22,9 +22,6 @@ class Form extends Component
 
     public function mount(?TaxYear $taxYear = null): void
     {
-        if ($taxYear?->exists && $taxYear->user_id !== Auth::id()) {
-            abort(404);
-        }
 
         if ($taxYear?->exists) {
             $this->taxYearId = $taxYear->id;
@@ -50,9 +47,7 @@ class Form extends Component
                 'required',
                 'integer',
                 'digits:4',
-                Rule::unique('tax_years', 'year')
-                    ->where(fn ($query) => $query->where('user_id', Auth::id()))
-                    ->ignore($this->taxYearId),
+                Rule::unique('tax_years', 'year')->ignore($this->taxYearId),
             ],
             'firstThresholdAmount' => ['required', 'numeric', 'min:0.01'],
             'secondThresholdAmount' => ['required', 'numeric', 'gt:firstThresholdAmount'],

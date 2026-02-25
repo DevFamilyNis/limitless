@@ -14,7 +14,7 @@ final class UpsertClientAction
     public function execute(UpsertClientData $dto): Client
     {
         $client = $dto->clientId
-            ? Client::query()->where('user_id', $dto->userId)->findOrFail($dto->clientId)
+            ? Client::query()->findOrFail($dto->clientId)
             : new Client;
 
         $client->fill([

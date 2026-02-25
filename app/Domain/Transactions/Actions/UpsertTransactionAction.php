@@ -15,13 +15,11 @@ final class UpsertTransactionAction
     public function execute(UpsertTransactionData $dto): Transaction
     {
         $category = Category::query()
-            ->where('user_id', $dto->userId)
             ->findOrFail($dto->categoryId);
 
         $clientId = null;
         if ($dto->clientId !== null) {
             $clientId = Client::query()
-                ->where('user_id', $dto->userId)
                 ->findOrFail($dto->clientId)
                 ->id;
         }
@@ -29,13 +27,12 @@ final class UpsertTransactionAction
         $invoiceId = null;
         if ($dto->documentType === 'invoice') {
             $invoiceId = Invoice::query()
-                ->whereHas('client', fn ($query) => $query->where('user_id', $dto->userId))
                 ->findOrFail((int) $dto->invoiceId)
                 ->id;
         }
 
         $transaction = $dto->transactionId
-            ? Transaction::query()->where('user_id', $dto->userId)->findOrFail($dto->transactionId)
+            ? Transaction::query()->findOrFail($dto->transactionId)
             : new Transaction;
 
         $transaction->fill([

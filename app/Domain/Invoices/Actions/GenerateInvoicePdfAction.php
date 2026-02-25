@@ -21,11 +21,9 @@ final class GenerateInvoicePdfAction
     {
         $invoice = Invoice::query()
             ->with(['client.user', 'client.type', 'client.person', 'client.company', 'status', 'items.project'])
-            ->whereHas('client', fn ($query) => $query->where('user_id', $dto->userId))
             ->findOrFail($dto->invoiceId);
 
         $userSetting = UserSetting::query()
-            ->where('user_id', $dto->userId)
             ->first();
 
         if (! class_exists(Pdf::class)) {

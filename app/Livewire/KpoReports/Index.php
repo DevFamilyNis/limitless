@@ -64,7 +64,6 @@ class Index extends Component
     public function downloadPdf(int $month): BinaryFileResponse
     {
         $report = KpoReport::query()
-            ->where('user_id', Auth::id())
             ->where('year', $this->year)
             ->where('month', $month)
             ->first();
@@ -96,7 +95,6 @@ class Index extends Component
     public function render(): View
     {
         $reports = KpoReport::query()
-            ->where('user_id', Auth::id())
             ->where('year', $this->year)
             ->withCount('rows')
             ->with('media')
@@ -104,7 +102,6 @@ class Index extends Component
             ->keyBy('month');
 
         $years = KpoReport::query()
-            ->where('user_id', Auth::id())
             ->select('year')
             ->distinct()
             ->orderByDesc('year')

@@ -52,9 +52,6 @@ class Form extends Component
 
     public function mount(UpsertInvoiceAction $upsertInvoiceAction, ?Invoice $invoice = null): void
     {
-        if ($invoice?->exists && $invoice->client->user_id !== Auth::id()) {
-            abort(404);
-        }
 
         if ($invoice?->exists) {
             $invoice->load(['items']);
@@ -86,7 +83,6 @@ class Form extends Component
         }
 
         $this->clientId = (string) Client::query()
-            ->where('user_id', Auth::id())
             ->where('is_active', true)
             ->value('id');
 
@@ -245,7 +241,6 @@ class Form extends Component
     {
         $clients = Client::query()
             ->with(['type', 'person'])
-            ->where('user_id', Auth::id())
             ->where(function ($query): void {
                 $query->where('is_active', true);
 
@@ -285,7 +280,6 @@ class Form extends Component
         }
 
         $project = Project::query()
-            ->where('user_id', Auth::id())
             ->find($projectId);
 
         if ($project) {

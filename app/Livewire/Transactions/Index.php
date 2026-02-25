@@ -4,7 +4,6 @@ namespace App\Livewire\Transactions;
 
 use App\Models\Transaction;
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -50,7 +49,6 @@ class Index extends Component
     {
         $transactions = Transaction::query()
             ->with(['category.type', 'client', 'invoice'])
-            ->where('user_id', Auth::id())
             ->whereYear('date', (int) $this->year)
             ->whereMonth('date', (int) $this->month)
             ->when($this->search !== '', function ($query): void {

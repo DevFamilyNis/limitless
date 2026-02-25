@@ -13,7 +13,6 @@ final class UpsertCategoryAction
     {
         $category = $dto->categoryId
             ? Category::query()
-                ->where('user_id', $dto->userId)
                 ->findOrFail($dto->categoryId)
             : new Category;
 

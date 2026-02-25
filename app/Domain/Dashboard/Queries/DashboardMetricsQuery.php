@@ -22,7 +22,6 @@ final class DashboardMetricsQuery
         $month = (int) $today->month;
 
         $taxYear = TaxYear::query()
-            ->where('user_id', $userId)
             ->where('year', $year)
             ->first();
 
@@ -31,8 +30,7 @@ final class DashboardMetricsQuery
 
         $transactionBaseQuery = Transaction::query()
             ->join('categories', 'categories.id', '=', 'transactions.category_id')
-            ->join('category_types', 'category_types.id', '=', 'categories.category_type_id')
-            ->where('transactions.user_id', $userId);
+            ->join('category_types', 'category_types.id', '=', 'categories.category_type_id');
 
         $incomeYear = (float) (clone $transactionBaseQuery)
             ->where('category_types.key', 'income')
@@ -54,7 +52,6 @@ final class DashboardMetricsQuery
         $invoiceMetrics = Invoice::query()
             ->join('invoice_statuses', 'invoice_statuses.id', '=', 'invoices.status_id')
             ->join('clients', 'clients.id', '=', 'invoices.client_id')
-            ->where('clients.user_id', $userId)
             ->selectRaw("COALESCE(SUM(CASE WHEN invoice_statuses.`key` NOT IN ('paid','canceled') THEN 1 ELSE 0 END), 0) as open_count")
             ->selectRaw("COALESCE(SUM(CASE WHEN invoice_statuses.`key` NOT IN ('paid','canceled') THEN invoices.total ELSE 0 END), 0) as open_amount")
             ->selectRaw("COALESCE(SUM(CASE WHEN invoice_statuses.`key` NOT IN ('paid','canceled') AND invoices.due_date < ? THEN 1 ELSE 0 END), 0) as overdue_count", [$today->toDateString()])
@@ -65,7 +62,6 @@ final class DashboardMetricsQuery
             ->join('issue_statuses', 'issue_statuses.id', '=', 'issues.status_id')
             ->leftJoin('issue_priorities', 'issue_priorities.id', '=', 'issues.priority_id')
             ->leftJoin('issue_categories', 'issue_categories.id', '=', 'issues.category_id')
-            ->where('projects.user_id', $userId)
             ->selectRaw("COALESCE(SUM(CASE WHEN issue_statuses.`key` = 'todo' THEN 1 ELSE 0 END), 0) as todo_count")
             ->selectRaw("COALESCE(SUM(CASE WHEN issue_statuses.`key` = 'doing' THEN 1 ELSE 0 END), 0) as doing_count")
             ->selectRaw("COALESCE(SUM(CASE WHEN issue_statuses.`key` != 'done' AND issue_priorities.`key` IN ('high','urgent') THEN 1 ELSE 0 END), 0) as high_open_count")

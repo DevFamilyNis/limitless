@@ -19,7 +19,6 @@ final class MarkInvoicePaidAction
         }
 
         $invoice = Invoice::query()
-            ->whereHas('client', fn ($query) => $query->where('user_id', $dto->userId))
             ->findOrFail($dto->invoiceId);
 
         $invoice->update(['status_id' => $paidStatusId]);

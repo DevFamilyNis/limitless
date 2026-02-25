@@ -22,9 +22,6 @@ class Form extends Component
 
     public function mount(?Project $project = null): void
     {
-        if ($project?->exists && $project->user_id !== Auth::id()) {
-            abort(404);
-        }
 
         if (! $project?->exists) {
             return;

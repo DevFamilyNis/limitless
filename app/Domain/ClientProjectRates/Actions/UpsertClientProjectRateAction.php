@@ -14,16 +14,13 @@ final class UpsertClientProjectRateAction
     public function execute(UpsertClientProjectRateData $dto): ClientProjectRate
     {
         $client = Client::query()
-            ->where('user_id', $dto->userId)
             ->findOrFail($dto->clientId);
 
         Project::query()
-            ->where('user_id', $dto->userId)
             ->findOrFail($dto->projectId);
 
         $rate = $dto->rateId
             ? ClientProjectRate::query()
-                ->whereHas('client', fn ($query) => $query->where('user_id', $dto->userId))
                 ->findOrFail($dto->rateId)
             : new ClientProjectRate;
 

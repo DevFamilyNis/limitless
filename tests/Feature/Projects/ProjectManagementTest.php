@@ -40,7 +40,7 @@ test('project show page is displayed for owner', function () {
         ->assertSee('Detalji projekta');
 });
 
-test('project show page returns 404 for non owner', function () {
+test('project show page is displayed for another user in shared workspace', function () {
     $owner = User::factory()->create();
     $anotherUser = User::factory()->create();
     $projectCode = 'EMPAY-'.fake()->unique()->numberBetween(1000, 9999);
@@ -54,7 +54,8 @@ test('project show page returns 404 for non owner', function () {
 
     $this->actingAs($anotherUser)
         ->get(route('projects.show', $project))
-        ->assertNotFound();
+        ->assertOk()
+        ->assertSee('Privatan projekat');
 });
 
 test('user can create project', function () {

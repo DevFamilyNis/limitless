@@ -55,3 +55,35 @@ test('move issue to done sets completed at', function () {
     expect($issue->status_id)->toBe($done->id);
     expect($issue->completed_at)->not()->toBeNull();
 });
+
+test('issues are visible to another user in shared workspace', function () {
+    $owner = User::factory()->create();
+    $anotherUser = User::factory()->create();
+    $project = Project::factory()->create(['user_id' => $owner->id]);
+
+    $this->seed(IssueDictionarySeeder::class);
+
+    $backlog = IssueStatus::query()->where('key', 'backlog')->firstOrFail();
+    $priority = IssuePriority::query()->where('key', 'medium')->firstOrFail();
+    $category = IssueCategory::query()->where('name', 'Task')->firstOrFail();
+
+    Issue::query()->create([
+        'project_id' => $project->id,
+        'client_id' => null,
+        'client_contact_id' => null,
+        'status_id' => $backlog->id,
+        'priority_id' => $priority->id,
+        'category_id' => $category->id,
+        'author_id' => $owner->id,
+        'assignee_id' => null,
+        'title' => 'Shared issue title',
+        'description' => null,
+        'due_date' => null,
+        'completed_at' => null,
+    ]);
+
+    $this->actingAs($anotherUser)
+        ->get(route('issues.board'))
+        ->assertOk()
+        ->assertSee('Shared issue title');
+});

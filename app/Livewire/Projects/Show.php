@@ -7,7 +7,6 @@ use App\Models\InvoiceItem;
 use App\Models\Project;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class Show extends Component
@@ -21,9 +20,6 @@ class Show extends Component
 
     public function mount(Project $project): void
     {
-        if ($project->user_id !== Auth::id()) {
-            abort(404);
-        }
 
         $this->project = $project->load(['user']);
 
@@ -36,7 +32,6 @@ class Show extends Component
         $clients = ClientProjectRate::query()
             ->with(['client.type', 'client.person'])
             ->where('project_id', $this->project->id)
-            ->whereHas('client', fn ($query) => $query->where('user_id', Auth::id()))
             ->get()
             ->pluck('client')
             ->filter()
@@ -56,7 +51,6 @@ class Show extends Component
             ->join('invoices', 'invoices.id', '=', 'invoice_items.invoice_id')
             ->join('clients', 'clients.id', '=', 'invoices.client_id')
             ->where('invoice_items.project_id', $this->project->id)
-            ->where('clients.user_id', Auth::id())
             ->whereYear('invoices.issue_date', (int) now()->year)
             ->whereMonth('invoices.issue_date', (int) now()->month)
             ->sum('invoice_items.amount');
@@ -75,7 +69,6 @@ class Show extends Component
                 ->join('invoices', 'invoices.id', '=', 'invoice_items.invoice_id')
                 ->join('clients', 'clients.id', '=', 'invoices.client_id')
                 ->where('invoice_items.project_id', $this->project->id)
-                ->where('clients.user_id', Auth::id())
                 ->whereYear('invoices.issue_date', (int) $month->year)
                 ->whereMonth('invoices.issue_date', (int) $month->month)
                 ->sum('invoice_items.amount');

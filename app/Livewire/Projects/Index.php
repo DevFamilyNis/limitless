@@ -69,11 +69,9 @@ class Index extends Component
                     ->join('clients', 'clients.id', '=', 'invoices.client_id')
                     ->selectRaw('COALESCE(SUM(invoice_items.amount), 0)')
                     ->whereColumn('invoice_items.project_id', 'projects.id')
-                    ->whereColumn('clients.user_id', 'projects.user_id')
                     ->whereYear('invoices.issue_date', (int) now()->year)
                     ->whereMonth('invoices.issue_date', (int) now()->month),
             ])
-            ->where('user_id', Auth::id())
             ->when($this->search !== '', function ($query): void {
                 $query->where(function ($innerQuery): void {
                     $innerQuery

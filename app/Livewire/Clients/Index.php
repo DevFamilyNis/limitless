@@ -64,7 +64,6 @@ class Index extends Component
     {
         $clients = Client::query()
             ->with(['type', 'company', 'person'])
-            ->where('user_id', Auth::id())
             ->when($this->search !== '', function ($query): void {
                 $query->where(function ($innerQuery): void {
                     $innerQuery

@@ -94,15 +94,16 @@ test('generate monthly kpo report builds snapshot rows and totals from invoices 
 
     $report->load(['rows' => fn ($query) => $query->orderBy('row_no')]);
 
-    expect($report->rows)->toHaveCount(2);
+    expect($report->rows)->toHaveCount(3);
     expect((float) $report->products_total)->toBe(0.0);
-    expect((float) $report->services_total)->toBe(20000.0);
-    expect((float) $report->activity_total)->toBe(20000.0);
+    expect((float) $report->services_total)->toBe(29999.0);
+    expect((float) $report->activity_total)->toBe(29999.0);
 
-    expect($report->rows->pluck('row_no')->all())->toBe([1, 2]);
-    expect($report->rows->pluck('invoice_id')->all())->toBe([$invoiceB->id, $invoiceA->id]);
+    expect($report->rows->pluck('row_no')->all())->toBe([1, 2, 3]);
+    expect($report->rows->pluck('invoice_id')->all())->toBe([$invoiceB->id, $otherUserInvoice->id, $invoiceA->id]);
     expect($report->rows->pluck('entry_description')->all())->toBe([
         '001/2026 - HR',
+        '101/2026 - Other',
         '002/2026 - HR',
     ]);
 
@@ -111,7 +112,7 @@ test('generate monthly kpo report builds snapshot rows and totals from invoices 
         'invoice_id' => $outsideMonth->id,
     ]);
 
-    $this->assertDatabaseMissing('kpo_report_rows', [
+    $this->assertDatabaseHas('kpo_report_rows', [
         'kpo_report_id' => $report->id,
         'invoice_id' => $otherUserInvoice->id,
     ]);

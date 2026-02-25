@@ -13,7 +13,6 @@ final class MoveIssueAction
     public function execute(MoveIssueData $dto): Issue
     {
         $issue = Issue::query()
-            ->whereHas('project', fn ($query) => $query->where('user_id', $dto->userId))
             ->findOrFail($dto->issueId);
 
         $toStatus = IssueStatus::query()->findOrFail($dto->toStatusId);

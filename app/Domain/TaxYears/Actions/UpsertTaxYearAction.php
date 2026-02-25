@@ -12,7 +12,7 @@ final class UpsertTaxYearAction
     public function execute(UpsertTaxYearData $dto): TaxYear
     {
         $taxYear = $dto->taxYearId
-            ? TaxYear::query()->where('user_id', $dto->userId)->findOrFail($dto->taxYearId)
+            ? TaxYear::query()->findOrFail($dto->taxYearId)
             : new TaxYear;
 
         $taxYear->fill([

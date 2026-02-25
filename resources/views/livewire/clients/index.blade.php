@@ -64,7 +64,17 @@
                                 <div class="text-xs text-zinc-500">{{ $client->person->first_name }} {{ $client->person->last_name }}</div>
                             @endif
                         </x-ui.table.td>
-                        <x-ui.table.td>{{ $client->type->name }}</x-ui.table.td>
+                        <x-ui.table.td>
+                             @if ($client->type?->key === 'person')
+                            <flux:badge icon="user-circle" color="yellow">
+                                {{ $client->type->name }}
+                            </flux:badge>
+                            @else
+                                <flux:badge icon="building-office" color="teal">
+                                    {{ $client->type->name }}
+                                </flux:badge>
+                            @endif
+                        </x-ui.table.td>
                         <x-ui.table.td>
                             <div>{{ $client->email ?: '-' }}</div>
                             <div class="text-xs text-zinc-500">{{ $client->phone ?: '-' }}</div>

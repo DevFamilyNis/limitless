@@ -12,7 +12,6 @@ final class ToggleClientProjectRateAction
     public function execute(ToggleClientProjectRateData $dto): ClientProjectRate
     {
         $rate = ClientProjectRate::query()
-            ->whereHas('client', fn ($query) => $query->where('user_id', $dto->userId))
             ->findOrFail($dto->rateId);
 
         $rate->update([

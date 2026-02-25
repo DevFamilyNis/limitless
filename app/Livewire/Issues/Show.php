@@ -31,10 +31,6 @@ class Show extends Component
     {
         $issue->load('project');
 
-        if ($issue->project->user_id !== Auth::id()) {
-            abort(404);
-        }
-
         $this->issue = $issue;
     }
 

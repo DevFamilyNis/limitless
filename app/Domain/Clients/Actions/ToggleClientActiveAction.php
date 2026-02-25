@@ -11,7 +11,7 @@ final class ToggleClientActiveAction
 {
     public function execute(ToggleClientActiveData $dto): Client
     {
-        $client = Client::query()->where('user_id', $dto->userId)->findOrFail($dto->clientId);
+        $client = Client::query()->findOrFail($dto->clientId);
 
         $client->update(['is_active' => ! $client->is_active]);
 

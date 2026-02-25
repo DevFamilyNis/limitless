@@ -13,10 +13,10 @@ final class EnsureCurrentTaxYearAction
     {
         return TaxYear::query()->firstOrCreate(
             [
-                'user_id' => $dto->userId,
                 'year' => now()->year,
             ],
             [
+                'user_id' => $dto->userId,
                 'first_threshold_amount' => 6000000,
                 'second_threshold_amount' => 8000000,
             ]

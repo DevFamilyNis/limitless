@@ -12,7 +12,6 @@ final class ToggleProjectActiveAction
     public function execute(ToggleProjectActiveData $dto): Project
     {
         $project = Project::query()
-            ->where('user_id', $dto->userId)
             ->findOrFail($dto->projectId);
 
         $project->update([

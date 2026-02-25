@@ -20,11 +20,11 @@ final class GenerateMonthlyKpoReportAction
 
         $report = KpoReport::query()->firstOrCreate(
             [
-                'user_id' => $dto->userId,
                 'year' => $dto->year,
                 'month' => $dto->month,
             ],
             [
+                'user_id' => $dto->userId,
                 'period_from' => $periodFrom->toDateString(),
                 'period_to' => $periodTo->toDateString(),
                 'products_total' => 0,
@@ -40,7 +40,6 @@ final class GenerateMonthlyKpoReportAction
 
         $invoices = Invoice::query()
             ->with('client')
-            ->whereHas('client', fn ($query) => $query->where('user_id', $dto->userId))
             ->whereBetween('created_at', [$periodFrom->copy()->startOfDay(), $periodTo->copy()->endOfDay()])
             ->orderBy('issue_date')
             ->orderBy('invoice_number')

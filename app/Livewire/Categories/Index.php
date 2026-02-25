@@ -45,7 +45,6 @@ class Index extends Component
     {
         $categories = Category::query()
             ->with('type')
-            ->where('user_id', Auth::id())
             ->when($this->search !== '', function ($query): void {
                 $query->where('name', 'like', '%'.$this->search.'%');
             })

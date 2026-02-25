@@ -21,12 +21,10 @@ final class UpsertIssueAction
         }
 
         $project = Project::query()
-            ->where('user_id', $dto->userId)
             ->findOrFail($dto->projectId);
 
         $issue = $dto->issueId
             ? Issue::query()
-                ->whereHas('project', fn ($query) => $query->where('user_id', $dto->userId))
                 ->findOrFail($dto->issueId)
             : new Issue;
 

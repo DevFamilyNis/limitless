@@ -47,7 +47,6 @@ class Index extends Component
     public function render(): View
     {
         $taxYears = TaxYear::query()
-            ->where('user_id', Auth::id())
             ->when($this->search !== '', fn ($query) => $query->where('year', 'like', '%'.$this->search.'%'))
             ->orderByDesc('year')
             ->paginate(10);

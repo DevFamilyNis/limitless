@@ -12,7 +12,6 @@ final class DeleteTaxYearAction
     public function execute(DeleteTaxYearData $dto): void
     {
         $taxYear = TaxYear::query()
-            ->where('user_id', $dto->userId)
             ->findOrFail($dto->taxYearId);
 
         $taxYear->delete();

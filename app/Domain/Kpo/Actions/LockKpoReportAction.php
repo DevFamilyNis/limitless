@@ -16,7 +16,6 @@ final class LockKpoReportAction
     public function execute(LockKpoReportData $dto): KpoReport
     {
         $report = KpoReport::query()
-            ->where('user_id', $dto->userId)
             ->findOrFail($dto->kpoReportId);
 
         DB::transaction(function () use ($report): void {

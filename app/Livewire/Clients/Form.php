@@ -44,9 +44,6 @@ class Form extends Component
 
     public function mount(?Client $client = null): void
     {
-        if ($client && $client->user_id !== Auth::id()) {
-            abort(404);
-        }
 
         $client = $client?->load(['company', 'person', 'contacts']);
 

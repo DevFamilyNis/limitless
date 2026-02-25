@@ -28,9 +28,6 @@ class Form extends Component
 
     public function mount(?ClientProjectRate $clientProjectRate = null): void
     {
-        if ($clientProjectRate?->exists && $clientProjectRate->client->user_id !== Auth::id()) {
-            abort(404);
-        }
 
         if ($clientProjectRate?->exists) {
             $this->rateId = $clientProjectRate->id;
@@ -44,12 +41,10 @@ class Form extends Component
         }
 
         $this->clientId = (string) Client::query()
-            ->where('user_id', Auth::id())
             ->where('is_active', true)
             ->value('id');
 
         $this->projectId = (string) Project::query()
-            ->where('user_id', Auth::id())
             ->where('is_active', true)
             ->value('id');
 
@@ -99,7 +94,6 @@ class Form extends Component
     {
         $clients = Client::query()
             ->with(['type', 'person'])
-            ->where('user_id', Auth::id())
             ->where(function ($query): void {
                 $query->where('is_active', true);
 
@@ -111,7 +105,6 @@ class Form extends Component
             ->get();
 
         $projects = Project::query()
-            ->where('user_id', Auth::id())
             ->where(function ($query): void {
                 $query->where('is_active', true);
 

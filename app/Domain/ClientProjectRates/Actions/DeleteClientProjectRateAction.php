@@ -12,7 +12,6 @@ final class DeleteClientProjectRateAction
     public function execute(DeleteClientProjectRateData $dto): void
     {
         $rate = ClientProjectRate::query()
-            ->whereHas('client', fn ($query) => $query->where('user_id', $dto->userId))
             ->findOrFail($dto->rateId);
 
         $rate->delete();

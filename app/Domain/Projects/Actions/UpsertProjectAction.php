@@ -12,7 +12,7 @@ final class UpsertProjectAction
     public function execute(UpsertProjectData $dto): Project
     {
         $project = $dto->projectId
-            ? Project::query()->where('user_id', $dto->userId)->findOrFail($dto->projectId)
+            ? Project::query()->findOrFail($dto->projectId)
             : new Project;
 
         $project->fill([

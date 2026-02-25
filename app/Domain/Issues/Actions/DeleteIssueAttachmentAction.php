@@ -12,7 +12,6 @@ final class DeleteIssueAttachmentAction
     public function execute(DeleteIssueAttachmentData $dto): void
     {
         $issue = Issue::query()
-            ->whereHas('project', fn ($query) => $query->where('user_id', $dto->userId))
             ->findOrFail($dto->issueId);
 
         $media = $issue->media()->findOrFail($dto->mediaId);

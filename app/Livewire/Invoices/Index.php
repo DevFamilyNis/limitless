@@ -84,7 +84,6 @@ class Index extends Component
         $invoices = Invoice::query()
             ->with(['client.type', 'client.person', 'status'])
             ->withCount('items')
-            ->whereHas('client', fn ($query) => $query->where('user_id', Auth::id()))
             ->when($this->search !== '', function ($query): void {
                 $query->where(function ($innerQuery): void {
                     $innerQuery

@@ -43,7 +43,7 @@ test('client show page is displayed for owner', function () {
         ->assertSee(__('messages.text.clientShowSubTitle'));
 });
 
-test('client show page returns 404 for non owner', function () {
+test('client show page is displayed for another user in shared workspace', function () {
     $owner = User::factory()->create();
     $anotherUser = User::factory()->create();
     $personTypeId = ClientType::query()->where('key', 'person')->value('id');
@@ -57,7 +57,8 @@ test('client show page returns 404 for non owner', function () {
 
     $this->actingAs($anotherUser)
         ->get(route('clients.show', $client))
-        ->assertNotFound();
+        ->assertOk()
+        ->assertSee('Privatni Klijent');
 });
 
 test('user can create company client with company details', function () {

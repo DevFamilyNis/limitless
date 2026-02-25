@@ -11,7 +11,7 @@ final class DeleteClientAction
 {
     public function execute(DeleteClientData $dto): bool
     {
-        $client = Client::query()->where('user_id', $dto->userId)->findOrFail($dto->clientId);
+        $client = Client::query()->findOrFail($dto->clientId);
 
         if (! $client->canBeDeleted()) {
             return false;

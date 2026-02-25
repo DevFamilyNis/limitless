@@ -19,9 +19,7 @@ final class AddIssueCommentAction
             throw new AuthorizationException('Nije moguće odrediti autora komentara.');
         }
 
-        Issue::query()
-            ->whereHas('project', fn ($query) => $query->where('user_id', $authorId))
-            ->findOrFail($dto->issueId);
+        Issue::query()->findOrFail($dto->issueId);
 
         return IssueComment::query()->create([
             'issue_id' => $dto->issueId,

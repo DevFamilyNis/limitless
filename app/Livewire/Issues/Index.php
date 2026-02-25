@@ -32,7 +32,6 @@ class Index extends Component
     public function mount(): void
     {
         $this->projectId = (string) Project::query()
-            ->where('user_id', Auth::id())
             ->orderBy('name')
             ->value('id');
     }
@@ -63,10 +62,10 @@ class Index extends Component
 
         return view('livewire.issues.index', [
             'issues' => $issues,
-            'projects' => Project::query()->where('user_id', Auth::id())->orderBy('name')->get(),
+            'projects' => Project::query()->orderBy('name')->get(),
             'categories' => IssueCategory::query()->where('is_active', true)->orderBy('name')->get(),
             'priorities' => IssuePriority::query()->orderBy('sort_order')->get(),
-            'clients' => \App\Models\Client::query()->where('user_id', Auth::id())->orderBy('display_name')->get(),
+            'clients' => \App\Models\Client::query()->orderBy('display_name')->get(),
             'assignees' => User::query()->orderBy('name')->get(),
         ])->layout('layouts.app', [
             'title' => __('messages.issues.table_title'),

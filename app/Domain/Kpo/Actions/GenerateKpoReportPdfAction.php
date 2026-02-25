@@ -21,7 +21,6 @@ final class GenerateKpoReportPdfAction
                 'user',
                 'rows' => fn ($query) => $query->orderBy('row_no'),
             ])
-            ->where('user_id', $dto->userId)
             ->findOrFail($dto->kpoReportId);
 
         if (! class_exists(Pdf::class)) {

@@ -21,6 +21,37 @@ test('invoices page is displayed', function () {
         ->assertOk();
 });
 
+test('invoices are visible to another user in shared workspace', function () {
+    $owner = User::factory()->create();
+    $anotherUser = User::factory()->create();
+    $personTypeId = ClientType::query()->where('key', 'person')->value('id');
+    $draftStatusId = InvoiceStatus::query()->where('key', 'draft')->value('id');
+    $year = (int) now()->year;
+
+    $client = Client::query()->create([
+        'user_id' => $owner->id,
+        'client_type_id' => $personTypeId,
+        'display_name' => 'Shared Invoice Client',
+        'is_active' => true,
+    ]);
+
+    Invoice::query()->create([
+        'client_id' => $client->id,
+        'status_id' => $draftStatusId,
+        'invoice_year' => $year,
+        'invoice_seq' => 10,
+        'invoice_number' => '010/'.$year,
+        'issue_date' => now()->toDateString(),
+        'subtotal' => 1000,
+        'total' => 1000,
+    ]);
+
+    $this->actingAs($anotherUser)
+        ->get(route('invoices.index'))
+        ->assertOk()
+        ->assertSee('010/'.$year);
+});
+
 test('create invoice page is displayed with previewed invoice number fields', function () {
     $user = User::factory()->create();
 

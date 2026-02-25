@@ -12,7 +12,6 @@ final class UploadIssueAttachmentsAction
     public function execute(UploadIssueAttachmentsData $dto): void
     {
         $issue = Issue::query()
-            ->whereHas('project', fn ($query) => $query->where('user_id', $dto->userId))
             ->findOrFail($dto->issueId);
 
         foreach ($dto->files as $file) {

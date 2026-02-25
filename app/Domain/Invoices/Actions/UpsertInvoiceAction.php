@@ -20,7 +20,6 @@ final class UpsertInvoiceAction
     public function execute(UpsertInvoiceData $dto): Invoice
     {
         $client = Client::query()
-            ->where('user_id', $dto->userId)
             ->findOrFail($dto->clientId);
 
         $status = InvoiceStatus::query()->findOrFail($dto->statusId);
@@ -28,7 +27,6 @@ final class UpsertInvoiceAction
         $invoice = $dto->invoiceId
             ? Invoice::query()
                 ->with('items')
-                ->whereHas('client', fn ($query) => $query->where('user_id', $dto->userId))
                 ->findOrFail($dto->invoiceId)
             : new Invoice;
 
@@ -39,7 +37,6 @@ final class UpsertInvoiceAction
             ->values();
 
         $allowedProjectIds = Project::query()
-            ->where('user_id', $dto->userId)
             ->whereIn('id', $projectIds)
             ->pluck('id')
             ->map(fn (int $projectId): int => (int) $projectId)

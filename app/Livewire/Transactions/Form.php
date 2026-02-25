@@ -34,9 +34,6 @@ class Form extends Component
 
     public function mount(?Transaction $transaction = null): void
     {
-        if ($transaction?->exists && $transaction->user_id !== Auth::id()) {
-            abort(404);
-        }
 
         if ($transaction?->exists) {
             $this->transactionId = $transaction->id;
@@ -53,10 +50,8 @@ class Form extends Component
         }
 
         $this->categoryId = (string) Category::query()
-            ->where('user_id', Auth::id())
             ->value('id');
         $this->clientId = (string) Client::query()
-            ->where('user_id', Auth::id())
             ->where('is_active', true)
             ->value('id');
         $this->date = now()->toDateString();
@@ -76,7 +71,6 @@ class Form extends Component
         }
 
         $invoice = Invoice::query()
-            ->whereHas('client', fn ($query) => $query->where('user_id', Auth::id()))
             ->find((int) $this->invoiceId);
 
         if (! $invoice) {
@@ -137,13 +131,11 @@ class Form extends Component
     {
         $categories = Category::query()
             ->with('type')
-            ->where('user_id', Auth::id())
             ->orderBy('name')
             ->get();
 
         $clients = Client::query()
             ->with(['type', 'person'])
-            ->where('user_id', Auth::id())
             ->where(function ($query): void {
                 $query->where('is_active', true);
 
@@ -156,7 +148,6 @@ class Form extends Component
 
         $invoices = Invoice::query()
             ->with('client')
-            ->whereHas('client', fn ($query) => $query->where('user_id', Auth::id()))
             ->when($this->clientId !== '', fn ($query) => $query->where('client_id', (int) $this->clientId))
             ->orderByDesc('issue_date')
             ->limit(50)

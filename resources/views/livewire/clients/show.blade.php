@@ -69,13 +69,19 @@
             @else
                 <div class="grid gap-3 text-sm">
                     <div><span class="text-zinc-500">@lang('messages.form.pib'):</span>
-                        {{ $client->company?->pib ?: '-' }}
+                        <flux:badge color="lime">
+                             {{ $client->company?->pib ?: '-' }}
+                        </flux:badge>
                     </div>
                     <div><span class="text-zinc-500">@lang('messages.form.mb'):</span>
-                        {{ $client->company?->mb ?: '-' }}
+                        <flux:badge color="lime">
+                            {{ $client->company?->mb ?: '-' }}
+                         </flux:badge>
                     </div>
                     <div><span class="text-zinc-500">@lang('messages.form.account'):</span>
-                        {{ $client->company?->bank_account ?: '-' }}
+                         <flux:badge color="lime">
+                            {{ $client->company?->bank_account ?: '-' }}
+                         </flux:badge>
                     </div>
                 </div>
             @endif
@@ -98,7 +104,9 @@
                 <x-ui.table.body>
                     @foreach ($client->contacts as $contact)
                         <x-ui.table.row>
-                            <x-ui.table.td class="font-medium">{{ $contact->full_name }}</x-ui.table.td>
+                            <x-ui.table.td class="font-bold">
+                                {{ $contact->full_name }}
+                            </x-ui.table.td>
                             <x-ui.table.td>{{ $contact->position ?: '-' }}</x-ui.table.td>
                             <x-ui.table.td>
                                 <div>{{ $contact->email ?: '-' }}</div>

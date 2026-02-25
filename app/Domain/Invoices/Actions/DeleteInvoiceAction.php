@@ -12,7 +12,6 @@ final class DeleteInvoiceAction
     public function execute(DeleteInvoiceData $dto): void
     {
         $invoice = Invoice::query()
-            ->whereHas('client', fn ($query) => $query->where('user_id', $dto->userId))
             ->findOrFail($dto->invoiceId);
 
         $invoice->delete();

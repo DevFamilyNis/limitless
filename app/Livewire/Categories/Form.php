@@ -20,9 +20,6 @@ class Form extends Component
 
     public function mount(?Category $category = null): void
     {
-        if ($category?->exists && $category->user_id !== Auth::id()) {
-            abort(404);
-        }
 
         if ($category?->exists) {
             $this->categoryId = $category->id;

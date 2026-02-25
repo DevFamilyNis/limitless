@@ -58,7 +58,6 @@ class Index extends Component
     {
         $rates = ClientProjectRate::query()
             ->with(['client.type', 'client.person', 'project', 'billingPeriod'])
-            ->whereHas('client', fn ($query) => $query->where('user_id', Auth::id()))
             ->when($this->search !== '', function ($query): void {
                 $query->where(function ($innerQuery): void {
                     $innerQuery

@@ -40,9 +40,6 @@ class Form extends Component
 
     public function mount(?Issue $issue = null): void
     {
-        if ($issue?->exists && $issue->project->user_id !== Auth::id()) {
-            abort(404);
-        }
 
         if ($issue?->exists) {
             $this->issueId = $issue->id;
@@ -60,7 +57,7 @@ class Form extends Component
             return;
         }
 
-        $this->projectId = (string) Project::query()->where('user_id', Auth::id())->value('id');
+        $this->projectId = (string) Project::query()->value('id');
         $this->statusId = (string) IssueStatus::query()->where('key', 'backlog')->value('id');
         $this->priorityId = (string) IssuePriority::query()->orderBy('sort_order')->value('id');
         $this->categoryId = (string) IssueCategory::query()->where('is_active', true)->orderBy('name')->value('id');
@@ -129,8 +126,8 @@ class Form extends Component
 
         return view('livewire.issues.form', [
             'isEditing' => $this->issueId !== null,
-            'projects' => Project::query()->where('user_id', Auth::id())->orderBy('name')->get(),
-            'clients' => \App\Models\Client::query()->where('user_id', Auth::id())->where('is_active', true)->orderBy('display_name')->get(),
+            'projects' => Project::query()->orderBy('name')->get(),
+            'clients' => \App\Models\Client::query()->where('is_active', true)->orderBy('display_name')->get(),
             'clientContacts' => $clientContacts,
             'statuses' => IssueStatus::query()->where('is_active', true)->orderBy('sort_order')->get(),
             'priorities' => IssuePriority::query()->orderBy('sort_order')->get(),

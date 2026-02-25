@@ -13,7 +13,6 @@ final class IssueFilteredListQuery
     public function execute(IssueFiltersData $dto): Builder
     {
         return Issue::query()
-            ->whereHas('project', fn ($query) => $query->where('user_id', $dto->userId))
             ->when($dto->projectId !== null, fn ($query) => $query->where('project_id', $dto->projectId))
             ->when($dto->search !== null, function ($query) use ($dto): void {
                 $query->where(function ($innerQuery) use ($dto): void {
