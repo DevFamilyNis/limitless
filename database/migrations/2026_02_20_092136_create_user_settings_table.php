@@ -27,7 +27,7 @@ return new class extends Migration
         });
 
         $defaultUserId = DB::table('users')
-            ->where('email', 'dev.famil.nis@gmail.com')
+            ->where('email', 'dev.family.nis@gmail.com')
             ->value('id');
 
         if ($defaultUserId) {

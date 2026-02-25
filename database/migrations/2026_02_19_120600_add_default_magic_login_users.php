@@ -18,7 +18,7 @@ return new class extends Migration
             [
                 [
                     'name' => 'Igor Mitrinović',
-                    'email' => 'dev.famil.nis@gmail.com',
+                    'email' => 'dev.family.nis@gmail.com',
                     'email_verified_at' => $now,
                     'password' => Hash::make(Str::random(40)),
                     'created_at' => $now,
@@ -45,7 +45,7 @@ return new class extends Migration
     {
         DB::table('users')
             ->whereIn('email', [
-                'dev.famil.nis@gmail.com',
+                'dev.family.nis@gmail.com',
                 'stevan.dev.family@gmail.com',
             ])
             ->delete();
