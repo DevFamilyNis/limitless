@@ -103,6 +103,37 @@ final class UpsertClientAction
                 $client->contacts()->updateOrCreate(['id' => $contactId], $contact);
             }
 
+            $appLinks = collect($dto->appLinks)
+                ->map(function (array $appLink): array {
+                    return [
+                        'id' => $appLink['id'] ?? null,
+                        'label' => trim((string) ($appLink['label'] ?? '')),
+                        'url' => trim((string) ($appLink['url'] ?? '')),
+                    ];
+                })
+                ->filter(fn (array $appLink): bool => $appLink['label'] !== '' || $appLink['url'] !== '')
+                ->values();
+
+            if ($appLinks->contains(fn (array $appLink): bool => $appLink['url'] === '')) {
+                throw ValidationException::withMessages([
+                    'app_links' => 'Aplikacija mora imati URL.',
+                ]);
+            }
+
+            $existingAppLinkIds = $client->appLinks()->pluck('id')->all();
+            $incomingAppLinkIds = $appLinks->pluck('id')->filter()->map(fn ($id): int => (int) $id)->all();
+            $appLinkIdsForDeletion = array_diff($existingAppLinkIds, $incomingAppLinkIds);
+
+            if ($appLinkIdsForDeletion !== []) {
+                $client->appLinks()->whereIn('id', $appLinkIdsForDeletion)->delete();
+            }
+
+            foreach ($appLinks as $appLink) {
+                $appLinkId = $appLink['id'] ? (int) $appLink['id'] : null;
+                unset($appLink['id']);
+                $client->appLinks()->updateOrCreate(['id' => $appLinkId], $appLink);
+            }
+
             $client->person()->delete();
         } elseif ($clientTypeKey === 'person') {
             $client->person()->updateOrCreate([], [
@@ -111,10 +142,12 @@ final class UpsertClientAction
             ]);
             $client->company()->delete();
             $client->contacts()->delete();
+            $client->appLinks()->delete();
         } else {
             $client->company()->delete();
             $client->person()->delete();
             $client->contacts()->delete();
+            $client->appLinks()->delete();
         }
 
         return $client;

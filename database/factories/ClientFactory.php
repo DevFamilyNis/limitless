@@ -29,6 +29,7 @@ class ClientFactory extends Factory
             'email' => fake()->safeEmail(),
             'phone' => fake()->phoneNumber(),
             'address' => fake()->address(),
+            'app_link' => null,
             'note' => fake()->sentence(),
             'is_active' => true,
         ];

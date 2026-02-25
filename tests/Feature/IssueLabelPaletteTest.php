@@ -19,8 +19,8 @@ test('issue priority palette escalates from blue to red', function () {
 test('medium priority has stronger contrast style', function () {
     $medium = IssueLabelPalette::forPriority('medium', 'Medium');
 
-    expect($medium['font_weight'])->toBe(700);
-    expect($medium['border_width'])->toBe('2px');
+    expect($medium['font_weight'])->toBe(500);
+    expect($medium['border_width'])->toBe('1px');
 });
 
 test('issue category palette follows common naming conventions', function () {

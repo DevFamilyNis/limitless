@@ -22,6 +22,7 @@ class Client extends Model
         'email',
         'phone',
         'address',
+        'app_link',
         'note',
         'is_active',
     ];
@@ -53,6 +54,11 @@ class Client extends Model
     public function contacts(): HasMany
     {
         return $this->hasMany(ClientContact::class);
+    }
+
+    public function appLinks(): HasMany
+    {
+        return $this->hasMany(ClientAppLink::class);
     }
 
     public function projectRates(): HasMany

@@ -18,6 +18,7 @@ class Show extends Component
             'company',
             'person',
             'contacts',
+            'appLinks',
             'projectRates.project',
             'projectRates.billingPeriod',
         ]);

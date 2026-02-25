@@ -8,6 +8,7 @@ final class UpsertClientData
 {
     /**
      * @param  array<int, array{id:int|null,full_name:string,email:string,phone:string,position:string,is_primary:bool,note:string}>  $contacts
+     * @param  array<int, array{id:int|null,label:string,url:string}>  $appLinks
      */
     public function __construct(
         public readonly int $userId,
@@ -24,6 +25,7 @@ final class UpsertClientData
         public readonly ?string $firstName,
         public readonly ?string $lastName,
         public readonly array $contacts,
+        public readonly array $appLinks,
     ) {}
 
     public static function fromArray(array $data): self
@@ -43,6 +45,7 @@ final class UpsertClientData
             firstName: self::nullableString($data['first_name'] ?? null),
             lastName: self::nullableString($data['last_name'] ?? null),
             contacts: $data['contacts'] ?? [],
+            appLinks: $data['app_links'] ?? [],
         );
     }
 

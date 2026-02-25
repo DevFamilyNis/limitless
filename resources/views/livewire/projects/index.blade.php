@@ -1,3 +1,4 @@
+@php use App\Support\ProjectColorPalette; @endphp
 <div class="flex h-full w-full flex-1 flex-col gap-6">
     @php($actionIconClass = 'size-3.5')
 
@@ -17,7 +18,7 @@
     @endif
 
     <div class="grid gap-3 md:grid-cols-3">
-        <flux:input wire:model.live.debounce.300ms="search" :label="__('messages.common.search')" :placeholder="__('messages.projects.search_placeholder')" />
+        <flux:input wire:model.live.debounce.300ms="search" :label="__('messages.common.search')" :placeholder="__('messages.projects.search_placeholder')"/>
 
         <flux:select wire:model.live="statusFilter" :label="__('messages.common.status')">
             <option value="all">@lang('messages.text.all')</option>
@@ -33,18 +34,18 @@
     @else
         <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
             @foreach ($projects as $project)
-                @php($projectColor = \App\Support\ProjectColorPalette::for($project))
+                @php($projectColor = ProjectColorPalette::for($project))
 
                 <flux:card
-                    class="flex h-full flex-col gap-4"
-                    wire:key="project-card-{{ $project->id }}"
-                    style="border-color: {{ $projectColor['border'] }};"
+                        class="flex h-full flex-col gap-4 bg-zinc-50"
+                        wire:key="project-card-{{ $project->id }}"
+                        style="border-color: {{ $projectColor['border'] }};"
                 >
                     <a href="{{ route('projects.show', $project) }}" wire:navigate class="space-y-2">
                         <div class="flex items-center justify-between">
                             <span
-                                class="inline-flex rounded-full border px-2 py-1 text-xs font-semibold"
-                                style="background-color: {{ $projectColor['soft_bg'] }}; border-color: {{ $projectColor['border'] }}; color: {{ $projectColor['hex'] }};"
+                                    class="inline-flex rounded-full border px-2 py-1 text-xs font-semibold"
+                                    style="background-color: {{ $projectColor['soft_bg'] }}; border-color: {{ $projectColor['border'] }}; color: {{ $projectColor['hex'] }};"
                             >
                                 {{ $project->code }}
                             </span>
@@ -77,28 +78,28 @@
                     <div class="pt-2">
                         <x-ui.table.actions>
                             <x-ui.buttons.icon-action
-                                :href="route('projects.edit', $project)"
-                                :title="__('messages.actions.edit').' '.__('messages.projects.title')"
-                                color="primary"
-                                navigate
+                                    :href="route('projects.edit', $project)"
+                                    :title="__('messages.actions.edit').' '.__('messages.projects.title')"
+                                    color="primary"
+                                    navigate
                             >
-                                <x-ui.icons.pen :class="$actionIconClass" />
+                                <x-ui.icons.pen :class="$actionIconClass"/>
                             </x-ui.buttons.icon-action>
 
                             <x-ui.buttons.icon-action
-                                wire:click="toggleActive({{ $project->id }})"
-                                :title="$project->is_active ? __('messages.actions.toggle_inactive').' '.__('messages.projects.title') : __('messages.actions.toggle_active').' '.__('messages.projects.title')"
-                                color="warning"
+                                    wire:click="toggleActive({{ $project->id }})"
+                                    :title="$project->is_active ? __('messages.actions.toggle_inactive').' '.__('messages.projects.title') : __('messages.actions.toggle_active').' '.__('messages.projects.title')"
+                                    color="warning"
                             >
-                                <x-ui.icons.disable :class="$actionIconClass" />
+                                <x-ui.icons.disable :class="$actionIconClass"/>
                             </x-ui.buttons.icon-action>
 
                             <x-ui.buttons.icon-action
-                                wire:click="deleteProject({{ $project->id }})"
-                                :title="__('messages.actions.delete').' '.__('messages.projects.title')"
-                                color="danger"
+                                    wire:click="deleteProject({{ $project->id }})"
+                                    :title="__('messages.actions.delete').' '.__('messages.projects.title')"
+                                    color="danger"
                             >
-                                <x-ui.icons.trash :class="$actionIconClass" />
+                                <x-ui.icons.trash :class="$actionIconClass"/>
                             </x-ui.buttons.icon-action>
                         </x-ui.table.actions>
                     </div>

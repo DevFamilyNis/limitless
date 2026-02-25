@@ -49,6 +49,29 @@
                     </span> {{ $client->phone ?: '-' }}</div>
                 <div><span class="text-zinc-500">@lang('messages.form.address'):
                     </span> {{ $client->address ?: '-' }}</div>
+                <div>
+                    <span class="text-zinc-500">@lang('messages.form.link'):</span>
+                    @if ($client->appLinks->isNotEmpty())
+                        <div class="mt-1 space-y-1">
+                            @foreach ($client->appLinks as $appLink)
+                                <div class="text-sm">
+                                    @if ($appLink->label)
+                                        <span class="font-medium">{{ $appLink->label }}:</span>
+                                    @endif
+                                    <a href="{{ $appLink->url }}" target="_blank" rel="noopener noreferrer" class="text-blue-600 underline hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300">
+                                        {{ $appLink->url }}
+                                    </a>
+                                </div>
+                            @endforeach
+                        </div>
+                    @elseif ($client->app_link)
+                        <a href="{{ $client->app_link }}" target="_blank" rel="noopener noreferrer" class="text-blue-600 underline hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300">
+                            {{ $client->app_link }}
+                        </a>
+                    @else
+                        -
+                    @endif
+                </div>
                 <div><span class="text-zinc-500">@lang('messages.form.note'):
                     </span> {{ $client->note ?: '-' }}</div>
             </div>

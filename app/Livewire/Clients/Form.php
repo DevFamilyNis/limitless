@@ -42,10 +42,15 @@ class Form extends Component
      */
     public array $contacts = [];
 
+    /**
+     * @var array<int, array{id:int|null,label:string,url:string}>
+     */
+    public array $appLinks = [];
+
     public function mount(?Client $client = null): void
     {
 
-        $client = $client?->load(['company', 'person', 'contacts']);
+        $client = $client?->load(['company', 'person', 'contacts', 'appLinks']);
 
         if ($client) {
             $this->clientId = $client->id;
@@ -69,6 +74,14 @@ class Form extends Component
                     'position' => (string) $contact->position,
                     'is_primary' => (bool) $contact->is_primary,
                     'note' => (string) $contact->note,
+                ])
+                ->values()
+                ->all();
+            $this->appLinks = $client->appLinks
+                ->map(fn ($appLink): array => [
+                    'id' => $appLink->id,
+                    'label' => (string) $appLink->label,
+                    'url' => (string) $appLink->url,
                 ])
                 ->values()
                 ->all();
@@ -108,6 +121,10 @@ class Form extends Component
             'contacts.*.position' => ['nullable', 'string', 'max:255'],
             'contacts.*.is_primary' => ['boolean'],
             'contacts.*.note' => ['nullable', 'string'],
+            'appLinks' => ['array'],
+            'appLinks.*.id' => ['nullable', 'integer'],
+            'appLinks.*.label' => ['nullable', 'string', 'max:255'],
+            'appLinks.*.url' => ['nullable', 'url', 'max:255'],
         ];
     }
 
@@ -145,6 +162,21 @@ class Form extends Component
         }
     }
 
+    public function addAppLink(): void
+    {
+        $this->appLinks[] = [
+            'id' => null,
+            'label' => '',
+            'url' => '',
+        ];
+    }
+
+    public function removeAppLink(int $index): void
+    {
+        unset($this->appLinks[$index]);
+        $this->appLinks = array_values($this->appLinks);
+    }
+
     public function save(): void
     {
         if ($this->isPersonType()) {
@@ -174,6 +206,7 @@ class Form extends Component
                     'first_name' => $validated['firstName'] ?? null,
                     'last_name' => $validated['lastName'] ?? null,
                     'contacts' => $validated['contacts'] ?? [],
+                    'app_links' => $this->isCompanyType() ? ($validated['appLinks'] ?? []) : [],
                 ])
             );
         } catch (ValidationException $exception) {

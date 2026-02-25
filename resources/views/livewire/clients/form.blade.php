@@ -35,6 +35,37 @@
         @endif
 
         @if ($isCompany)
+            <div class="space-y-4 rounded-xl border border-zinc-200 p-4 dark:border-zinc-700">
+                <div class="flex items-center justify-between">
+                    <flux:heading size="lg">@lang('messages.clients.app_links')</flux:heading>
+                    <flux:button variant="subtle" type="button" wire:click="addAppLink">
+                        @lang('messages.buttons.add')
+                    </flux:button>
+                </div>
+
+                @error('app_links')
+                    <flux:text class="text-red-600 dark:text-red-400">{{ $message }}</flux:text>
+                @enderror
+
+                @forelse ($appLinks as $index => $appLink)
+                    <div wire:key="app-link-row-{{ $appLink['id'] ?? 'new-'.$index }}" class="grid gap-3 rounded-lg p-4 md:grid-cols-12">
+                        <div class="md:col-span-4">
+                            <flux:input wire:model="appLinks.{{ $index }}.label" :label="__('messages.form.name')" />
+                        </div>
+                        <div class="md:col-span-7">
+                            <flux:input wire:model="appLinks.{{ $index }}.url" :label="__('messages.form.link')" type="url" placeholder="https://app.example.com" />
+                        </div>
+                        <div class="flex items-end md:col-span-1">
+                            <flux:button type="button" variant="danger" wire:click="removeAppLink({{ $index }})" class="w-full">
+                                @lang('messages.buttons.delete')
+                            </flux:button>
+                        </div>
+                    </div>
+                @empty
+                    <flux:text class="text-zinc-500">@lang('messages.clients.no_app_links')</flux:text>
+                @endforelse
+            </div>
+
             <div class="grid gap-4 md:grid-cols-3">
                 <flux:input wire:model="pib" :label="__('messages.form.pib')" required />
                 <flux:input wire:model="mb" :label="__('messages.form.mb')" required />

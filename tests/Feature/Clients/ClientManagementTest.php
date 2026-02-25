@@ -73,6 +73,10 @@ test('user can create company client with company details', function () {
     ]);
 
     Livewire::actingAs($user)->test(Form::class, ['client' => $client])
+        ->set('appLinks', [
+            ['id' => null, 'label' => 'Prod', 'url' => 'https://app.dev-family.rs'],
+            ['id' => null, 'label' => 'Staging', 'url' => 'https://staging.dev-family.rs'],
+        ])
         ->set('pib', '113101530')
         ->set('mb', '66579484')
         ->set('bankAccount', '160-6000001451121-46')
@@ -85,6 +89,18 @@ test('user can create company client with company details', function () {
         ->value('id');
 
     expect($clientId)->not->toBeNull();
+
+    $this->assertDatabaseHas('client_app_links', [
+        'client_id' => $clientId,
+        'label' => 'Prod',
+        'url' => 'https://app.dev-family.rs',
+    ]);
+
+    $this->assertDatabaseHas('client_app_links', [
+        'client_id' => $clientId,
+        'label' => 'Staging',
+        'url' => 'https://staging.dev-family.rs',
+    ]);
 
     $this->assertDatabaseHas('client_companies', [
         'client_id' => $clientId,
