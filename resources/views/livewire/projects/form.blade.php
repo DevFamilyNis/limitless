@@ -16,6 +16,13 @@
             <flux:input wire:model="name" :label="__('messages.table.name')" required />
         </div>
 
+        <flux:select wire:model="projectColor" label="Boja projekta">
+            <option value="">⚪ Automatski (predlog po nazivu projekta)</option>
+            @foreach ($projectColorOptions as $key => $label)
+                <option value="{{ $key }}">{{ $label }}</option>
+            @endforeach
+        </flux:select>
+
         <flux:textarea wire:model="description" :label="__('messages.form.note')" rows="4" />
 
         <div class="flex items-center gap-3">

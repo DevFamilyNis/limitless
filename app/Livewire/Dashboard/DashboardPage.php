@@ -8,7 +8,6 @@ use App\Domain\Dashboard\Queries\DashboardMetricsQuery;
 use App\Domain\Dashboard\Queries\DashboardUpcomingDeadlinesQuery;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Route;
 use Livewire\Component;
 
 class DashboardPage extends Component
@@ -37,7 +36,6 @@ class DashboardPage extends Component
             'issueHighOpenCount' => $metrics['issueHighOpenCount'],
             'issueOverdueRemindersCount' => $metrics['issueOverdueRemindersCount'],
             'deadlines' => $deadlines,
-            'hasIssueBoardRoute' => Route::has('issues.board'),
         ])->layout('layouts.app', [
             'title' => __('messages.menu.dashboard'),
         ]);

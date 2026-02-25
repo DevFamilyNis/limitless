@@ -51,21 +51,64 @@
 
     <div class="grid gap-4 xl:grid-cols-4">
         @foreach ($statuses as $status)
+            @php($statusColor = \App\Support\IssueLabelPalette::forStatus($status->key, $status->name))
             <div class="rounded-xl border border-zinc-200 p-3 dark:border-zinc-700">
                 <div class="mb-3 flex items-center justify-between">
-                    <flux:heading size="sm">{{ $status->name }}</flux:heading>
+                    <flux:heading size="sm">
+                        <span
+                            class="inline-flex rounded-full border px-2 py-1 text-xs font-semibold"
+                            style="background-color: {{ $statusColor['soft_bg'] }}; border-color: {{ $statusColor['border'] }}; border-width: {{ $statusColor['border_width'] }}; color: {{ $statusColor['hex'] }}; font-weight: {{ $statusColor['font_weight'] }};"
+                        >
+                            {{ $status->name }}
+                        </span>
+                    </flux:heading>
                     <flux:text class="text-xs">{{ ($issuesByStatus[$status->id] ?? collect())->count() }}</flux:text>
                 </div>
 
                 <div class="space-y-3">
                     @forelse ($issuesByStatus[$status->id] ?? [] as $issue)
-                        <div class="rounded-lg border border-zinc-200 bg-white p-3 dark:border-zinc-700 dark:bg-zinc-900">
-                            <a href="{{ route('issues.show', $issue) }}" wire:navigate class="block text-sm font-semibold hover:underline">
+                        @php($projectColor = $issue->project ? \App\Support\ProjectColorPalette::for($issue->project) : null)
+                        @php($priorityColor = \App\Support\IssueLabelPalette::forPriority($issue->priority?->key, $issue->priority?->name))
+                        @php($categoryColor = \App\Support\IssueLabelPalette::forCategory($issue->category?->name))
+                        <div
+                            class="rounded-lg border border-zinc-200 bg-white p-3 dark:border-zinc-700 dark:bg-zinc-900"
+                            @if ($projectColor)
+                                style="border-color: {{ $projectColor['border'] }}; background-color: {{ $projectColor['soft_bg'] }};"
+                            @endif
+                        >
+                            <a
+                                href="{{ route('issues.show', $issue) }}"
+                                wire:navigate
+                                class="block text-sm font-semibold hover:underline"
+                                @if ($projectColor)
+                                    style="color: {{ $projectColor['hex'] }};"
+                                @endif
+                            >
                                 {{ $issue->title }}
                             </a>
                             <div class="mt-2 flex flex-wrap gap-1 text-xs">
-                                <span class="rounded bg-zinc-100 px-2 py-1 dark:bg-zinc-800">{{ $issue->priority?->name }}</span>
-                                <span class="rounded bg-zinc-100 px-2 py-1 dark:bg-zinc-800">{{ $issue->category?->name }}</span>
+                                @if ($issue->project)
+                                    <span
+                                        class="rounded border px-2 py-1"
+                                        @if ($projectColor)
+                                            style="background-color: {{ $projectColor['strong_bg'] }}; border-color: {{ $projectColor['border'] }}; color: {{ $projectColor['hex'] }};"
+                                        @endif
+                                    >
+                                        {{ $issue->project->name }}
+                                    </span>
+                                @endif
+                                <span
+                                    class="rounded border px-2 py-1"
+                                    style="background-color: {{ $priorityColor['soft_bg'] }}; border-color: {{ $priorityColor['border'] }}; border-width: {{ $priorityColor['border_width'] }}; color: {{ $priorityColor['hex'] }}; font-weight: {{ $priorityColor['font_weight'] }};"
+                                >
+                                    {{ $issue->priority?->name }}
+                                </span>
+                                <span
+                                    class="rounded border px-2 py-1"
+                                    style="background-color: {{ $categoryColor['soft_bg'] }}; border-color: {{ $categoryColor['border'] }}; border-width: {{ $categoryColor['border_width'] }}; color: {{ $categoryColor['hex'] }}; font-weight: {{ $categoryColor['font_weight'] }};"
+                                >
+                                    {{ $issue->category?->name }}
+                                </span>
                                 @if ($issue->assignee)
                                     <span class="rounded bg-zinc-100 px-2 py-1 dark:bg-zinc-800">{{ $issue->assignee->name }}</span>
                                 @endif

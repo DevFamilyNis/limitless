@@ -5,6 +5,7 @@ namespace App\Livewire\Projects;
 use App\Domain\Projects\Actions\UpsertProjectAction;
 use App\Domain\Projects\DTO\UpsertProjectData;
 use App\Models\Project;
+use App\Support\ProjectColorPalette;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
@@ -20,6 +21,8 @@ class Form extends Component
 
     public string $description = '';
 
+    public string $projectColor = '';
+
     public function mount(?Project $project = null): void
     {
 
@@ -31,6 +34,7 @@ class Form extends Component
         $this->code = $project->code;
         $this->name = $project->name;
         $this->description = (string) $project->description;
+        $this->projectColor = (string) ($project->project_color ?? '');
     }
 
     protected function rules(): array
@@ -44,6 +48,7 @@ class Form extends Component
             ],
             'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
+            'projectColor' => ['nullable', 'string', Rule::in(array_keys(ProjectColorPalette::options()))],
         ];
     }
 
@@ -58,6 +63,7 @@ class Form extends Component
                 'code' => $validated['code'],
                 'name' => $validated['name'],
                 'description' => $validated['description'] ?? null,
+                'project_color' => $validated['projectColor'] ?? null,
             ])
         );
 
@@ -72,6 +78,7 @@ class Form extends Component
     {
         return view('livewire.projects.form', [
             'isEditing' => $this->projectId !== null,
+            'projectColorOptions' => ProjectColorPalette::selectOptions(),
         ])->layout('layouts.app', [
             'title' => $this->projectId ? __('messages.projects.edit_title') : __('messages.projects.new_title'),
         ]);

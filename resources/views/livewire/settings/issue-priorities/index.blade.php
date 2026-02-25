@@ -8,9 +8,17 @@
         <x-ui.table.head><tr><x-ui.table.th>@lang('messages.common.key')</x-ui.table.th><x-ui.table.th>@lang('messages.table.name')</x-ui.table.th><x-ui.table.th>@lang('messages.common.sort')</x-ui.table.th><x-ui.table.th align="right">@lang('messages.common.action')</x-ui.table.th></tr></x-ui.table.head>
         <x-ui.table.body>
             @foreach ($priorities as $priority)
+                @php($priorityColor = \App\Support\IssueLabelPalette::forPriority($priority->key, $priority->name))
                 <x-ui.table.row>
                     <x-ui.table.td>{{ $priority->key }}</x-ui.table.td>
-                    <x-ui.table.td>{{ $priority->name }}</x-ui.table.td>
+                    <x-ui.table.td>
+                        <span
+                            class="inline-flex rounded-full border px-2 py-1 text-xs font-medium"
+                            style="background-color: {{ $priorityColor['soft_bg'] }}; border-color: {{ $priorityColor['border'] }}; border-width: {{ $priorityColor['border_width'] }}; color: {{ $priorityColor['hex'] }}; font-weight: {{ $priorityColor['font_weight'] }};"
+                        >
+                            {{ $priority->name }}
+                        </span>
+                    </x-ui.table.td>
                     <x-ui.table.td>{{ $priority->sort_order }}</x-ui.table.td>
                     <x-ui.table.td align="right">
                         <x-ui.table.actions>

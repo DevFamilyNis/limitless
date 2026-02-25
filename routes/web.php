@@ -13,7 +13,6 @@ use App\Livewire\Clients\Show as ClientShow;
 use App\Livewire\Dashboard\DashboardPage;
 use App\Livewire\Invoices\Form as InvoiceForm;
 use App\Livewire\Invoices\Index as InvoiceIndex;
-use App\Livewire\Issues\Board as IssueBoard;
 use App\Livewire\Issues\Form as IssueForm;
 use App\Livewire\Issues\Index as IssueIndex;
 use App\Livewire\Issues\Show as IssueShow;
@@ -72,7 +71,7 @@ Route::middleware('auth')->group(function () {
     Route::livewire('tax-years/create', TaxYearForm::class)->name('tax-years.create');
     Route::livewire('tax-years/{taxYear}/edit', TaxYearForm::class)->name('tax-years.edit');
     Route::livewire('kpo-reports', KpoReportIndex::class)->name('kpo-reports.index');
-    Route::livewire('issue-board', IssueBoard::class)->name('issues.board');
+    Route::redirect('issue-board', 'issues')->name('issues.board');
     Route::livewire('issues', IssueIndex::class)->name('issues.index');
     Route::livewire('issues/create', IssueForm::class)->name('issues.create');
     Route::livewire('issues/{issue}', IssueShow::class)->name('issues.show');

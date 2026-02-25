@@ -33,10 +33,21 @@
     @else
         <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
             @foreach ($projects as $project)
-                <flux:card class="flex h-full flex-col gap-4" wire:key="project-card-{{ $project->id }}">
+                @php($projectColor = \App\Support\ProjectColorPalette::for($project))
+
+                <flux:card
+                    class="flex h-full flex-col gap-4"
+                    wire:key="project-card-{{ $project->id }}"
+                    style="border-color: {{ $projectColor['border'] }};"
+                >
                     <a href="{{ route('projects.show', $project) }}" wire:navigate class="space-y-2">
                         <div class="flex items-center justify-between">
-                            <flux:badge color="zinc">{{ $project->code }}</flux:badge>
+                            <span
+                                class="inline-flex rounded-full border px-2 py-1 text-xs font-semibold"
+                                style="background-color: {{ $projectColor['soft_bg'] }}; border-color: {{ $projectColor['border'] }}; color: {{ $projectColor['hex'] }};"
+                            >
+                                {{ $project->code }}
+                            </span>
                             @if ($project->is_active)
                                 <span class="inline-flex rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-700 dark:bg-green-900/40 dark:text-green-300">@lang('messages.status_labels.active_m')</span>
                             @else
@@ -44,7 +55,7 @@
                             @endif
                         </div>
 
-                        <flux:heading size="lg">{{ $project->name }}</flux:heading>
+                        <flux:heading size="lg" style="color: {{ $projectColor['hex'] }};">{{ $project->name }}</flux:heading>
                         <flux:text>{{ $project->description ?: '-' }}</flux:text>
                     </a>
 

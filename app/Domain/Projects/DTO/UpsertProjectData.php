@@ -12,6 +12,7 @@ final class UpsertProjectData
         public readonly string $code,
         public readonly string $name,
         public readonly ?string $description,
+        public readonly ?string $projectColor,
     ) {}
 
     public static function fromArray(array $data): self
@@ -24,6 +25,7 @@ final class UpsertProjectData
             code: strtoupper(trim((string) $data['code'])),
             name: trim((string) $data['name']),
             description: $description !== '' ? $description : null,
+            projectColor: isset($data['project_color']) && $data['project_color'] !== '' ? (string) $data['project_color'] : null,
         );
     }
 }

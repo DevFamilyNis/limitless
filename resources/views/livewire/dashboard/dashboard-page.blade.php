@@ -62,13 +62,9 @@
         <div class="rounded-xl border border-zinc-200 p-5 dark:border-zinc-700">
             <div class="mb-4 flex items-center justify-between">
                 <flux:heading size="lg">@lang('messages.text.issues')</flux:heading>
-                @if ($hasIssueBoardRoute)
-                    <flux:button variant="primary" :href="route('issues.board')" wire:navigate>
-                        @lang('messages.text.issuesBoard')
-                    </flux:button>
-                @else
-                    <flux:button variant="primary" disabled>@lang('messages.text.issuesBoardDisabled')</flux:button>
-                @endif
+                <flux:button variant="primary" :href="route('issues.index')" wire:navigate>
+                    @lang('messages.text.issuesBoard')
+                </flux:button>
             </div>
 
             <div class="grid gap-3 sm:grid-cols-2">

@@ -2,10 +2,13 @@
 
 namespace App\Livewire\Issues;
 
+use App\Domain\Issues\Actions\MoveIssueAction;
 use App\Domain\Issues\DTO\IssueFiltersData;
+use App\Domain\Issues\DTO\MoveIssueData;
 use App\Domain\Issues\Queries\IssueFilteredListQuery;
 use App\Models\IssueCategory;
 use App\Models\IssuePriority;
+use App\Models\IssueStatus;
 use App\Models\Project;
 use App\Models\User;
 use Illuminate\Contracts\View\View;
@@ -16,6 +19,8 @@ use Livewire\WithPagination;
 class Index extends Component
 {
     use WithPagination;
+
+    public string $viewMode = 'kanban';
 
     public string $projectId = '';
 
@@ -36,9 +41,32 @@ class Index extends Component
             ->value('id');
     }
 
+    public function setViewMode(string $mode): void
+    {
+        if (! in_array($mode, ['kanban', 'table'], true)) {
+            return;
+        }
+
+        $this->viewMode = $mode;
+        $this->resetPage();
+    }
+
+    public function moveIssue(int $issueId, int $toStatusId): void
+    {
+        app(MoveIssueAction::class)->execute(
+            MoveIssueData::fromArray([
+                'user_id' => Auth::id(),
+                'issue_id' => $issueId,
+                'to_status_id' => $toStatusId,
+            ])
+        );
+
+        session()->flash('status', __('messages.issues.flash_moved'));
+    }
+
     public function updated(string $name): void
     {
-        if (in_array($name, ['projectId', 'search', 'categoryId', 'priorityId', 'clientId', 'assigneeId'], true)) {
+        if (in_array($name, ['viewMode', 'projectId', 'search', 'categoryId', 'priorityId', 'clientId', 'assigneeId'], true)) {
             $this->resetPage();
         }
     }
@@ -55,20 +83,33 @@ class Index extends Component
             'assignee_id' => $this->assigneeId !== '' ? (int) $this->assigneeId : null,
         ]);
 
-        $issues = app(IssueFilteredListQuery::class)->execute($filters)
-            ->with(['project', 'status', 'priority', 'category', 'client', 'assignee'])
-            ->latest('id')
-            ->paginate(15);
+        $baseQuery = app(IssueFilteredListQuery::class)->execute($filters)
+            ->with(['project', 'status', 'priority', 'category', 'client', 'assignee']);
+
+        $issues = $this->viewMode === 'table'
+            ? (clone $baseQuery)->latest('id')->paginate(15)
+            : null;
+
+        $issuesByStatus = $this->viewMode === 'kanban'
+            ? (clone $baseQuery)->latest('id')->get()->groupBy('status_id')
+            : collect();
+
+        $statuses = IssueStatus::query()
+            ->where('is_active', true)
+            ->orderBy('sort_order')
+            ->get();
 
         return view('livewire.issues.index', [
             'issues' => $issues,
+            'issuesByStatus' => $issuesByStatus,
+            'statuses' => $statuses,
             'projects' => Project::query()->orderBy('name')->get(),
             'categories' => IssueCategory::query()->where('is_active', true)->orderBy('name')->get(),
             'priorities' => IssuePriority::query()->orderBy('sort_order')->get(),
             'clients' => \App\Models\Client::query()->orderBy('display_name')->get(),
             'assignees' => User::query()->orderBy('name')->get(),
         ])->layout('layouts.app', [
-            'title' => __('messages.issues.table_title'),
+            'title' => __('messages.menu.tasks'),
         ]);
     }
 }

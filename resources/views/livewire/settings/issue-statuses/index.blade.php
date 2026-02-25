@@ -12,9 +12,17 @@
         <x-ui.table.head><tr><x-ui.table.th>@lang('messages.common.key')</x-ui.table.th><x-ui.table.th>@lang('messages.table.name')</x-ui.table.th><x-ui.table.th>@lang('messages.common.sort')</x-ui.table.th><x-ui.table.th>@lang('messages.common.active')</x-ui.table.th><x-ui.table.th align="right">@lang('messages.common.action')</x-ui.table.th></tr></x-ui.table.head>
         <x-ui.table.body>
             @foreach ($statuses as $status)
+                @php($statusColor = \App\Support\IssueLabelPalette::forStatus($status->key, $status->name))
                 <x-ui.table.row>
                     <x-ui.table.td>{{ $status->key }}</x-ui.table.td>
-                    <x-ui.table.td>{{ $status->name }}</x-ui.table.td>
+                    <x-ui.table.td>
+                        <span
+                            class="inline-flex rounded-full border px-2 py-1 text-xs font-medium"
+                            style="background-color: {{ $statusColor['soft_bg'] }}; border-color: {{ $statusColor['border'] }}; border-width: {{ $statusColor['border_width'] }}; color: {{ $statusColor['hex'] }}; font-weight: {{ $statusColor['font_weight'] }};"
+                        >
+                            {{ $status->name }}
+                        </span>
+                    </x-ui.table.td>
                     <x-ui.table.td>{{ $status->sort_order }}</x-ui.table.td>
                     <x-ui.table.td>{{ $status->is_active ? __('messages.common.yes') : __('messages.common.no') }}</x-ui.table.td>
                     <x-ui.table.td align="right">

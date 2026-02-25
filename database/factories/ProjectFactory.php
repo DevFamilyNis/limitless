@@ -22,6 +22,7 @@ class ProjectFactory extends Factory
             'code' => strtoupper(fake()->bothify('PRJ###??')),
             'name' => fake()->words(2, true),
             'description' => fake()->optional()->sentence(),
+            'project_color' => null,
             'is_active' => true,
         ];
     }

@@ -39,11 +39,8 @@
                     <flux:sidebar.item icon="document-text" :href="route('kpo-reports.index')" :current="request()->routeIs('kpo-reports.*')" wire:navigate>
                       @lang('messages.menu.kpo')
                     </flux:sidebar.item>
-                    <flux:sidebar.item icon="layout-grid" :href="route('issues.board')" :current="request()->routeIs('issues.board')" wire:navigate>
-                        @lang('messages.menu.issueBoard')
-                    </flux:sidebar.item>
-                    <flux:sidebar.item icon="document-text" :href="route('issues.index')" :current="request()->routeIs('issues.*') && ! request()->routeIs('issues.board')" wire:navigate>
-                        @lang('messages.menu.issueTable')
+                    <flux:sidebar.item icon="layout-grid" :href="route('issues.index')" :current="request()->routeIs('issues.*')" wire:navigate>
+                        @lang('messages.menu.tasks')
                     </flux:sidebar.item>
                 </flux:sidebar.group>
                 <flux:sidebar.group :heading="'Settings'" class="grid">

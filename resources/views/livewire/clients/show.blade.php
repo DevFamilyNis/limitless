@@ -134,8 +134,22 @@
             </x-ui.table.head>
             <x-ui.table.body>
                 @forelse ($client->projectRates as $rate)
+                    @php($projectColor = $rate->project ? \App\Support\ProjectColorPalette::for($rate->project) : null)
                     <x-ui.table.row>
-                        <x-ui.table.td class="font-medium">{{ $rate->project?->name ?? '-' }}</x-ui.table.td>
+                        <x-ui.table.td class="font-medium">
+                            @if ($rate->project)
+                                <span
+                                    class="inline-flex rounded-full border px-2 py-1 text-xs font-semibold"
+                                    @if ($projectColor)
+                                        style="background-color: {{ $projectColor['soft_bg'] }}; border-color: {{ $projectColor['border'] }}; color: {{ $projectColor['hex'] }};"
+                                    @endif
+                                >
+                                    {{ $rate->project->name }}
+                                </span>
+                            @else
+                                -
+                            @endif
+                        </x-ui.table.td>
                         <x-ui.table.td>{{ $rate->billingPeriod?->name ?? '-' }}</x-ui.table.td>
                         <x-ui.table.td>{{ number_format((float) $rate->price_amount, 2, ',', '.') }} {{ $rate->currency }}</x-ui.table.td>
                         <x-ui.table.td>{{ $rate->is_active ? __('messages.status_labels.active_m') : __('messages.status_labels.inactive_m') }}</x-ui.table.td>

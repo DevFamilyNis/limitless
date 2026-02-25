@@ -1,7 +1,9 @@
 <div class="mx-auto flex w-full max-w-6xl flex-col gap-6">
+    @php($projectColor = \App\Support\ProjectColorPalette::for($project))
+
     <div class="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
         <div>
-            <flux:heading size="xl">{{ $project->name }}</flux:heading>
+            <flux:heading size="xl" style="color: {{ $projectColor['hex'] }};">{{ $project->name }}</flux:heading>
             <flux:text>@lang('messages.common.code'): {{ $project->code }} | @lang('messages.projects.details_subtitle')</flux:text>
         </div>
 
@@ -16,9 +18,9 @@
     </div>
 
     <div class="grid gap-4 md:grid-cols-3">
-        <flux:card>
+        <flux:card style="border-color: {{ $projectColor['border'] }}; background-color: {{ $projectColor['soft_bg'] }};">
             <flux:text class="text-xs text-zinc-500">@lang('messages.common.status')</flux:text>
-            <flux:heading size="lg">{{ $project->is_active ? __('messages.status_labels.active_m') : __('messages.status_labels.inactive_m') }}</flux:heading>
+            <flux:heading size="lg" style="color: {{ $projectColor['hex'] }};">{{ $project->is_active ? __('messages.status_labels.active_m') : __('messages.status_labels.inactive_m') }}</flux:heading>
         </flux:card>
 
         <flux:card>

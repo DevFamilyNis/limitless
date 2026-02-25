@@ -39,6 +39,7 @@
         </x-ui.table.head>
         <x-ui.table.body>
                 @forelse ($rates as $rate)
+                    @php($projectColor = $rate->project ? \App\Support\ProjectColorPalette::for($rate->project) : null)
                     <x-ui.table.row wire:key="client-project-rate-{{ $rate->id }}">
                         <x-ui.table.td>
                             @if ($rate->client?->type?->key === 'person' && $rate->client?->person)
@@ -48,8 +49,14 @@
                             @endif
                         </x-ui.table.td>
                         <x-ui.table.td>
-                            <div class="font-medium">{{ $rate->project?->name }}</div>
-                            <div class="text-xs text-zinc-500">{{ $rate->project?->code }}</div>
+                            <div
+                                class="inline-flex rounded-full border px-2 py-1 text-xs font-semibold"
+                                @if ($projectColor)
+                                    style="background-color: {{ $projectColor['soft_bg'] }}; border-color: {{ $projectColor['border'] }}; color: {{ $projectColor['hex'] }};"
+                                @endif
+                            >
+                                {{ $rate->project?->code }} - {{ $rate->project?->name }}
+                            </div>
                         </x-ui.table.td>
                         <x-ui.table.td>{{ $rate->billingPeriod?->name }}</x-ui.table.td>
                         <x-ui.table.td>{{ number_format((float) $rate->price_amount, 2, ',', '.') }} {{ $rate->currency }}</x-ui.table.td>

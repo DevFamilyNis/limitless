@@ -8,8 +8,16 @@
         <x-ui.table.head><tr><x-ui.table.th>@lang('messages.table.name')</x-ui.table.th><x-ui.table.th>@lang('messages.status_labels.active_f')</x-ui.table.th><x-ui.table.th align="right">@lang('messages.common.action')</x-ui.table.th></tr></x-ui.table.head>
         <x-ui.table.body>
             @foreach ($categories as $category)
+                @php($categoryColor = \App\Support\IssueLabelPalette::forCategory($category->name))
                 <x-ui.table.row>
-                    <x-ui.table.td>{{ $category->name }}</x-ui.table.td>
+                    <x-ui.table.td>
+                        <span
+                            class="inline-flex rounded-full border px-2 py-1 text-xs font-medium"
+                            style="background-color: {{ $categoryColor['soft_bg'] }}; border-color: {{ $categoryColor['border'] }}; border-width: {{ $categoryColor['border_width'] }}; color: {{ $categoryColor['hex'] }}; font-weight: {{ $categoryColor['font_weight'] }};"
+                        >
+                            {{ $category->name }}
+                        </span>
+                    </x-ui.table.td>
                     <x-ui.table.td>{{ $category->is_active ? __('messages.common.yes') : __('messages.common.no') }}</x-ui.table.td>
                     <x-ui.table.td align="right">
                         <x-ui.table.actions>

@@ -1,24 +1,65 @@
 <div class="mx-auto w-full max-w-6xl space-y-6">
+    @php($projectColor = $issue->project ? \App\Support\ProjectColorPalette::for($issue->project) : null)
+    @php($statusColor = \App\Support\IssueLabelPalette::forStatus($issue->status?->key, $issue->status?->name))
+    @php($priorityColor = \App\Support\IssueLabelPalette::forPriority($issue->priority?->key, $issue->priority?->name))
+    @php($categoryColor = \App\Support\IssueLabelPalette::forCategory($issue->category?->name))
+
     <div class="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
         <div>
-            <flux:heading size="xl">{{ $issue->title }}</flux:heading>
-            <flux:text>{{ $issue->project?->name }} | {{ $issue->status?->name }}</flux:text>
+            <flux:heading size="xl" @if ($projectColor) style="color: {{ $projectColor['hex'] }};" @endif>{{ $issue->title }}</flux:heading>
+            <flux:text>
+                @if ($issue->project)
+                    <span
+                        class="inline-flex rounded-full border px-2 py-1 text-xs font-semibold"
+                        @if ($projectColor)
+                            style="background-color: {{ $projectColor['soft_bg'] }}; border-color: {{ $projectColor['border'] }}; color: {{ $projectColor['hex'] }};"
+                        @endif
+                    >
+                        {{ $issue->project->name }}
+                    </span>
+                @endif
+                <span
+                    class="ml-2 inline-flex rounded-full border px-2 py-1 text-xs font-semibold"
+                    style="background-color: {{ $statusColor['soft_bg'] }}; border-color: {{ $statusColor['border'] }}; border-width: {{ $statusColor['border_width'] }}; color: {{ $statusColor['hex'] }}; font-weight: {{ $statusColor['font_weight'] }};"
+                >
+                    {{ $issue->status?->name }}
+                </span>
+            </flux:text>
         </div>
         <div class="flex gap-2">
-            <flux:button variant="ghost" :href="route('issues.board')" wire:navigate>@lang('messages.actions.board')</flux:button>
+            <flux:button variant="ghost" :href="route('issues.index')" wire:navigate>@lang('messages.actions.issues')</flux:button>
             <flux:button variant="primary" :href="route('issues.edit', $issue)" wire:navigate>@lang('messages.actions.edit')</flux:button>
         </div>
     </div>
 
-    <div class="rounded-xl border border-zinc-200 p-4 dark:border-zinc-700">
+    <div
+        class="rounded-xl border border-zinc-200 p-4 dark:border-zinc-700"
+        @if ($projectColor)
+            style="border-color: {{ $projectColor['border'] }};"
+        @endif
+    >
         <div class="grid gap-4 md:grid-cols-3">
             <div>
                 <div class="text-xs text-zinc-500">@lang('messages.issues.priority')</div>
-                <div>{{ $issue->priority?->name }}</div>
+                <div>
+                    <span
+                        class="inline-flex rounded-full border px-2 py-1 text-xs font-medium"
+                        style="background-color: {{ $priorityColor['soft_bg'] }}; border-color: {{ $priorityColor['border'] }}; border-width: {{ $priorityColor['border_width'] }}; color: {{ $priorityColor['hex'] }}; font-weight: {{ $priorityColor['font_weight'] }};"
+                    >
+                        {{ $issue->priority?->name }}
+                    </span>
+                </div>
             </div>
             <div>
                 <div class="text-xs text-zinc-500">@lang('messages.issues.category')</div>
-                <div>{{ $issue->category?->name }}</div>
+                <div>
+                    <span
+                        class="inline-flex rounded-full border px-2 py-1 text-xs font-medium"
+                        style="background-color: {{ $categoryColor['soft_bg'] }}; border-color: {{ $categoryColor['border'] }}; border-width: {{ $categoryColor['border_width'] }}; color: {{ $categoryColor['hex'] }}; font-weight: {{ $categoryColor['font_weight'] }};"
+                    >
+                        {{ $issue->category?->name }}
+                    </span>
+                </div>
             </div>
             <div>
                 <div class="text-xs text-zinc-500">@lang('messages.issues.due_date')</div>

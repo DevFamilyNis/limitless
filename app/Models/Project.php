@@ -17,6 +17,7 @@ class Project extends Model
         'code',
         'name',
         'description',
+        'project_color',
         'is_active',
     ];
 

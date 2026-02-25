@@ -1,6 +1,6 @@
 <?php
 
-use App\Livewire\Issues\Board;
+use App\Livewire\Issues\Index;
 use App\Models\Issue;
 use App\Models\IssueCategory;
 use App\Models\IssuePriority;
@@ -17,8 +17,9 @@ test('issue board page is displayed', function () {
     $this->seed(IssueDictionarySeeder::class);
 
     $this->actingAs($user)
-        ->get(route('issues.board'))
-        ->assertOk();
+        ->get(route('issues.index'))
+        ->assertOk()
+        ->assertSee('Kanban');
 });
 
 test('move issue to done sets completed at', function () {
@@ -47,7 +48,7 @@ test('move issue to done sets completed at', function () {
         'completed_at' => null,
     ]);
 
-    Livewire::actingAs($user)->test(Board::class)
+    Livewire::actingAs($user)->test(Index::class)
         ->call('moveIssue', $issue->id, $done->id);
 
     $issue->refresh();
@@ -83,7 +84,7 @@ test('issues are visible to another user in shared workspace', function () {
     ]);
 
     $this->actingAs($anotherUser)
-        ->get(route('issues.board'))
+        ->get(route('issues.index'))
         ->assertOk()
         ->assertSee('Shared issue title');
 });

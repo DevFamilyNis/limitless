@@ -65,6 +65,7 @@ test('user can create project', function () {
     Livewire::actingAs($user)->test(Form::class)
         ->set('code', $projectCode)
         ->set('name', 'Empay Projekat')
+        ->set('projectColor', 'slate')
         ->set('description', 'Test opis')
         ->call('save')
         ->assertRedirect(route('projects.index', absolute: false));
@@ -73,6 +74,7 @@ test('user can create project', function () {
         'user_id' => $user->id,
         'code' => $projectCode,
         'name' => 'Empay Projekat',
+        'project_color' => 'slate',
         'is_active' => true,
     ]);
 });
@@ -115,6 +117,7 @@ test('user can update project', function () {
 
     Livewire::actingAs($user)->test(Form::class, ['project' => $project])
         ->set('name', 'Novi naziv')
+        ->set('projectColor', 'teal')
         ->set('description', 'Novi opis')
         ->call('save')
         ->assertRedirect(route('projects.index', absolute: false));
@@ -122,6 +125,7 @@ test('user can update project', function () {
     $this->assertDatabaseHas('projects', [
         'id' => $project->id,
         'name' => 'Novi naziv',
+        'project_color' => 'teal',
         'description' => 'Novi opis',
     ]);
 });
