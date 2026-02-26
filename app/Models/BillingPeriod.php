@@ -19,4 +19,9 @@ class BillingPeriod extends Model
     {
         return $this->hasMany(ClientProjectRate::class);
     }
+
+    public function monthlyExpenseItems(): HasMany
+    {
+        return $this->hasMany(MonthlyExpenseItem::class);
+    }
 }

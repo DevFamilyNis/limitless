@@ -58,8 +58,8 @@
         </div>
     </div>
 
-    <div class="grid gap-4 lg:grid-cols-2">
-        <div class="rounded-xl border border-zinc-200 p-5 dark:border-zinc-700">
+    <div class="grid items-start gap-4 lg:grid-cols-2">
+        <div class="self-start rounded-xl border border-zinc-200 p-5 dark:border-zinc-700">
             <div class="mb-4 flex items-center justify-between">
                 <flux:heading size="lg">@lang('messages.text.issues')</flux:heading>
                 <flux:button variant="primary" :href="route('issues.index')" wire:navigate>
@@ -90,7 +90,7 @@
         <div class="rounded-xl border border-zinc-200 p-5 dark:border-zinc-700">
             <flux:heading size="lg">@lang('messages.text.nextReminder7days')</flux:heading>
 
-            <div class="mt-4 space-y-2">
+            <div class="mt-4 max-h-[30rem] space-y-2 overflow-y-auto pr-1 lg:max-h-[42rem]">
                 @forelse ($deadlines as $item)
                     <div class="flex items-center justify-between gap-3 rounded-lg bg-zinc-100 border border-zinc-200
                      p-3

@@ -12,43 +12,31 @@
         <flux:callout variant="success" icon="check-circle">{{ session('status') }}</flux:callout>
     @endif
 
-    <div class="grid gap-3 md:grid-cols-3">
-        <flux:select wire:model.live="month" :label="__('messages.common.month')">
-            @foreach ($months as $monthKey => $monthName)
-                <option value="{{ $monthKey }}">{{ ucfirst($monthName) }}</option>
-            @endforeach
-        </flux:select>
-        <flux:select wire:model.live="year" :label="__('messages.common.year')">
-            @foreach ($years as $yearKey => $yearName)
-                <option value="{{ $yearKey }}">{{ $yearName }}</option>
-            @endforeach
-        </flux:select>
+    <div class="grid gap-3 md:grid-cols-1">
         <flux:input wire:model.live.debounce.300ms="search" :label="__('messages.common.search')" :placeholder="__('messages.monthly_expenses.search_placeholder')" />
     </div>
 
     <div class="rounded-xl border border-zinc-200 p-4 dark:border-zinc-700">
         <div class="mb-4 flex items-center justify-between gap-3">
             <flux:heading size="sm">
-                {{ $editingExpenseId ? __('messages.monthly_expenses.edit_title') : __('messages.monthly_expenses.new_title') }}
+                {{ $editingItemId ? __('messages.monthly_expenses.edit_title') : __('messages.monthly_expenses.new_title') }}
             </flux:heading>
-            @if ($editingExpenseId)
+            @if ($editingItemId)
                 <flux:button variant="ghost" wire:click="cancelEditing">@lang('messages.actions.back')</flux:button>
             @endif
         </div>
 
-        @if ($expenseCategories->isEmpty())
+        @if ($billingPeriods->isEmpty())
             <flux:callout variant="warning" icon="exclamation-triangle">
                 @lang('messages.monthly_expenses.requirements')
             </flux:callout>
         @else
-            <form wire:submit="saveExpense" class="grid gap-3 md:grid-cols-2">
-                <flux:select wire:model="categoryId" :label="__('messages.transactions.category')" required>
-                    @foreach ($expenseCategories as $category)
-                        <option value="{{ $category->id }}">{{ $category->name }}</option>
+            <form wire:submit="saveItem" class="grid gap-3 md:grid-cols-2">
+                <flux:select wire:model="billingPeriodId" :label="__('messages.client_project_rates.billing_period')" required>
+                    @foreach ($billingPeriods as $period)
+                        <option value="{{ $period->id }}">{{ $period->name }}</option>
                     @endforeach
                 </flux:select>
-
-                <flux:input wire:model="date" :label="__('messages.common.date')" type="date" required />
                 <flux:input wire:model="title" :label="__('messages.common.title')" required />
                 <flux:input wire:model="amount" :label="__('messages.common.amount')" type="number" step="0.01" min="0.01" required />
                 <div class="md:col-span-2">
@@ -64,26 +52,32 @@
     <x-ui.table>
         <x-ui.table.head>
             <tr>
-                <x-ui.table.th>@lang('messages.common.date')</x-ui.table.th>
                 <x-ui.table.th>@lang('messages.common.title')</x-ui.table.th>
-                <x-ui.table.th>@lang('messages.transactions.category')</x-ui.table.th>
+                <x-ui.table.th>@lang('messages.client_project_rates.billing_period')</x-ui.table.th>
                 <x-ui.table.th>@lang('messages.form.note')</x-ui.table.th>
+                <x-ui.table.th align="right">@lang('messages.monthly_expenses.amount_for_period')</x-ui.table.th>
                 <x-ui.table.th align="right">@lang('messages.common.amount')</x-ui.table.th>
                 <x-ui.table.th align="right">@lang('messages.common.action')</x-ui.table.th>
             </tr>
         </x-ui.table.head>
         <x-ui.table.body>
-            @forelse ($expenses as $expense)
-                <x-ui.table.row wire:key="monthly-expense-{{ $expense->id }}">
-                    <x-ui.table.td>{{ $expense->date?->format('d.m.Y') }}</x-ui.table.td>
-                    <x-ui.table.td class="font-medium">{{ $expense->title }}</x-ui.table.td>
-                    <x-ui.table.td>{{ $expense->category?->name }}</x-ui.table.td>
-                    <x-ui.table.td>{{ $expense->note ?: '-' }}</x-ui.table.td>
-                    <x-ui.table.td align="right">{{ number_format((float) $expense->amount, 2, ',', '.') }} {{ $expense->currency }}</x-ui.table.td>
+            @forelse ($items as $item)
+                <x-ui.table.row wire:key="monthly-expense-item-{{ $item->id }}">
+                    <x-ui.table.td class="font-medium">{{ $item->title }}</x-ui.table.td>
+                    <x-ui.table.td>{{ $item->billingPeriod?->name }}</x-ui.table.td>
+                    <x-ui.table.td>{{ $item->note ?: '-' }}</x-ui.table.td>
+                    <x-ui.table.td align="right">{{ number_format((float) $item->amount, 2, ',', '.') }} RSD</x-ui.table.td>
+                    <x-ui.table.td align="right">
+                        @if ($item->billingPeriod?->key === 'yearly')
+                            {{ number_format((float) $item->amount / 12, 2, ',', '.') }} RSD
+                        @else
+                            {{ number_format((float) $item->amount, 2, ',', '.') }} RSD
+                        @endif
+                    </x-ui.table.td>
                     <x-ui.table.td align="right">
                         <x-ui.table.actions>
                             <x-ui.buttons.icon-action
-                                wire:click="editExpense({{ $expense->id }})"
+                                wire:click="editItem({{ $item->id }})"
                                 :title="__('messages.actions.edit')"
                                 color="primary"
                             >
@@ -91,7 +85,7 @@
                             </x-ui.buttons.icon-action>
 
                             <x-ui.buttons.icon-action
-                                wire:click="deleteExpense({{ $expense->id }})"
+                                wire:click="deleteItem({{ $item->id }})"
                                 :title="__('messages.actions.delete')"
                                 color="danger"
                             >
@@ -109,10 +103,10 @@
     </x-ui.table>
 
     <div class="flex items-center justify-end rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm font-semibold dark:border-zinc-700 dark:bg-zinc-900">
-        <span>@lang('messages.monthly_expenses.total'): {{ number_format((float) $totalAmount, 2, ',', '.') }} RSD</span>
+        <span>@lang('messages.monthly_expenses.total'): {{ number_format((float) $monthlyTotal, 2, ',', '.') }} RSD</span>
     </div>
 
     <div>
-        {{ $expenses->links() }}
+        {{ $items->links() }}
     </div>
 </div>

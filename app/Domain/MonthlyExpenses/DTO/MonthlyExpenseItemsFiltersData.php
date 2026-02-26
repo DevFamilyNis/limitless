@@ -2,14 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Transactions\DTO;
+namespace App\Domain\MonthlyExpenses\DTO;
 
-final class MonthlyExpensesFiltersData
+final class MonthlyExpenseItemsFiltersData
 {
     public function __construct(
         public readonly int $userId,
-        public readonly int $month,
-        public readonly int $year,
         public readonly ?string $search,
     ) {}
 
@@ -19,8 +17,6 @@ final class MonthlyExpensesFiltersData
 
         return new self(
             userId: (int) $data['user_id'],
-            month: (int) $data['month'],
-            year: (int) $data['year'],
             search: $search !== '' ? $search : null,
         );
     }

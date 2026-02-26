@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Transactions\DTO;
+namespace App\Domain\MonthlyExpenses\DTO;
 
-final class DeleteTransactionData
+final class DeleteMonthlyExpenseItemData
 {
     public function __construct(
         public readonly int $userId,
-        public readonly int $transactionId,
+        public readonly int $itemId,
     ) {}
 
     public static function fromArray(array $data): self
     {
         return new self(
             userId: (int) $data['user_id'],
-            transactionId: (int) $data['transaction_id'],
+            itemId: (int) $data['item_id'],
         );
     }
 }
