@@ -28,7 +28,7 @@
                 @endif
             </flux:button>
 
-            <flux:button variant="primary" :href="route('issues.create')" wire:navigate>@lang('messages.actions.new_issue')</flux:button>
+            <flux:button variant="primary" :href="route('issues.create')" wire:navigate>@lang('messages.buttons.add')</flux:button>
         </div>
     </div>
 

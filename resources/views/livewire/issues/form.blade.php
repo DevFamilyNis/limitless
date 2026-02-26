@@ -1,7 +1,7 @@
 <div class="mx-auto w-full max-w-6xl">
     <div class="mb-6 flex items-center justify-between">
         <div>
-            <flux:heading size="xl">{{ $isEditing ? __('messages.issues.edit_title') : __('messages.issues.new_title') }}</flux:heading>
+            <flux:heading size="xl">{{ $isEditing ? __('messages.text.edit_title') : __('messages.text.new_title') }}</flux:heading>
             <flux:text>@lang('messages.issues.author_auto')</flux:text>
         </div>
         <flux:button variant="ghost" :href="route('issues.index')" wire:navigate>@lang('messages.actions.back')</flux:button>
