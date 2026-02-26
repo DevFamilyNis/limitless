@@ -113,8 +113,8 @@ test('user can search client project rates', function () {
 
     Livewire::actingAs($user)->test(Index::class)
         ->set('search', 'EMPAY')
-        ->assertSee('EmPay')
-        ->assertDontSee('Facility Management');
+        ->assertSee($empayCode)
+        ->assertDontSee($fmCode);
 });
 
 test('user can update client project rate', function () {
