@@ -119,3 +119,112 @@ test('issue details page can be opened', function () {
         ->assertOk()
         ->assertSee('Issue details page');
 });
+
+test('issues index defaults to all projects', function () {
+    $user = User::factory()->create();
+    $projectA = Project::factory()->create(['user_id' => $user->id, 'name' => 'Alpha Project']);
+    $projectB = Project::factory()->create(['user_id' => $user->id, 'name' => 'Beta Project']);
+
+    $this->seed(IssueDictionarySeeder::class);
+
+    $backlog = IssueStatus::query()->where('key', 'backlog')->firstOrFail();
+    $priority = IssuePriority::query()->where('key', 'medium')->firstOrFail();
+    $category = IssueCategory::query()->where('name', 'Task')->firstOrFail();
+
+    Issue::query()->create([
+        'project_id' => $projectA->id,
+        'client_id' => null,
+        'client_contact_id' => null,
+        'status_id' => $backlog->id,
+        'priority_id' => $priority->id,
+        'category_id' => $category->id,
+        'author_id' => $user->id,
+        'assignee_id' => null,
+        'title' => 'Alpha task',
+        'description' => null,
+        'due_date' => null,
+        'completed_at' => null,
+    ]);
+
+    Issue::query()->create([
+        'project_id' => $projectB->id,
+        'client_id' => null,
+        'client_contact_id' => null,
+        'status_id' => $backlog->id,
+        'priority_id' => $priority->id,
+        'category_id' => $category->id,
+        'author_id' => $user->id,
+        'assignee_id' => null,
+        'title' => 'Beta task',
+        'description' => null,
+        'due_date' => null,
+        'completed_at' => null,
+    ]);
+
+    $this->actingAs($user)
+        ->get(route('issues.index'))
+        ->assertOk()
+        ->assertSee('Alpha task')
+        ->assertSee('Beta task');
+});
+
+test('issues in kanban are ordered by due date ascending with undated tasks last', function () {
+    $user = User::factory()->create();
+    $project = Project::factory()->create(['user_id' => $user->id]);
+
+    $this->seed(IssueDictionarySeeder::class);
+
+    $backlog = IssueStatus::query()->where('key', 'backlog')->firstOrFail();
+    $priority = IssuePriority::query()->where('key', 'medium')->firstOrFail();
+    $category = IssueCategory::query()->where('name', 'Task')->firstOrFail();
+
+    Issue::query()->create([
+        'project_id' => $project->id,
+        'client_id' => null,
+        'client_contact_id' => null,
+        'status_id' => $backlog->id,
+        'priority_id' => $priority->id,
+        'category_id' => $category->id,
+        'author_id' => $user->id,
+        'assignee_id' => null,
+        'title' => 'Task today',
+        'description' => null,
+        'due_date' => now()->toDateString(),
+        'completed_at' => null,
+    ]);
+
+    Issue::query()->create([
+        'project_id' => $project->id,
+        'client_id' => null,
+        'client_contact_id' => null,
+        'status_id' => $backlog->id,
+        'priority_id' => $priority->id,
+        'category_id' => $category->id,
+        'author_id' => $user->id,
+        'assignee_id' => null,
+        'title' => 'Task tomorrow',
+        'description' => null,
+        'due_date' => now()->addDay()->toDateString(),
+        'completed_at' => null,
+    ]);
+
+    Issue::query()->create([
+        'project_id' => $project->id,
+        'client_id' => null,
+        'client_contact_id' => null,
+        'status_id' => $backlog->id,
+        'priority_id' => $priority->id,
+        'category_id' => $category->id,
+        'author_id' => $user->id,
+        'assignee_id' => null,
+        'title' => 'Task no due date',
+        'description' => null,
+        'due_date' => null,
+        'completed_at' => null,
+    ]);
+
+    $this->actingAs($user)
+        ->get(route('issues.index'))
+        ->assertOk()
+        ->assertSeeInOrder(['Task today', 'Task tomorrow', 'Task no due date']);
+});

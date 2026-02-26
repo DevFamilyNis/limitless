@@ -36,9 +36,7 @@ class Index extends Component
 
     public function mount(): void
     {
-        $this->projectId = (string) Project::query()
-            ->orderBy('name')
-            ->value('id');
+        $this->projectId = '';
     }
 
     public function setViewMode(string $mode): void
@@ -84,14 +82,17 @@ class Index extends Component
         ]);
 
         $baseQuery = app(IssueFilteredListQuery::class)->execute($filters)
-            ->with(['project', 'status', 'priority', 'category', 'client', 'assignee']);
+            ->with(['project', 'status', 'priority', 'category', 'client', 'assignee'])
+            ->orderByRaw('due_date IS NULL')
+            ->orderBy('due_date')
+            ->orderByDesc('id');
 
         $issues = $this->viewMode === 'table'
-            ? (clone $baseQuery)->latest('id')->paginate(15)
+            ? (clone $baseQuery)->paginate(15)
             : null;
 
         $issuesByStatus = $this->viewMode === 'kanban'
-            ? (clone $baseQuery)->latest('id')->get()->groupBy('status_id')
+            ? (clone $baseQuery)->get()->groupBy('status_id')
             : collect();
 
         $statuses = IssueStatus::query()
