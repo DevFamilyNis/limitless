@@ -87,7 +87,7 @@
                         <flux:text class="text-xs">{{ ($issuesByStatus[$status->id] ?? collect())->count() }}</flux:text>
                     </div>
 
-                    <div class="max-h-[34rem] space-y-3 overflow-y-auto pr-1">
+                    <div class="max-h-[43rem] space-y-3 overflow-y-auto pr-1">
                         @forelse ($issuesByStatus[$status->id] ?? [] as $issue)
                             @php($projectColor = $issue->project ? \App\Support\ProjectColorPalette::for($issue->project) : null)
                             @php($priorityColor = \App\Support\IssueLabelPalette::forPriority($issue->priority?->key, $issue->priority?->name))
