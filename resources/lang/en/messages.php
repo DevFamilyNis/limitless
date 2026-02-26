@@ -42,6 +42,13 @@ return [
         'statuses' => 'Statusi',
         'priorities' => 'Prioriteti',
         'catIssues' => 'Kategorije zadataka',
+        'settings' => 'Podešavanja',
+        'logOut' => 'Odjava',
+        'theme' => 'Tema',
+        'profile' => 'Profil',
+        'settingsManageTitle' => 'Upravljanje podacima naloga',
+        'profileUpdateTitle' => 'Izmeni ime ili email',
+        'themeTitle' => 'Odaberi temu',
     ],
     'text' => [
         'clients' => 'Korisnici',

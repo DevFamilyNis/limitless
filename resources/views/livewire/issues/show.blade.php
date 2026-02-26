@@ -1,12 +1,13 @@
 <div class="mx-auto w-full max-w-6xl space-y-6">
     @php($projectColor = $issue->project ? \App\Support\ProjectColorPalette::for($issue->project) : null)
+    @php($projectHeadingStyle = $projectColor ? "color: {$projectColor['hex']};" : null)
     @php($statusColor = \App\Support\IssueLabelPalette::forStatus($issue->status?->key, $issue->status?->name))
     @php($priorityColor = \App\Support\IssueLabelPalette::forPriority($issue->priority?->key, $issue->priority?->name))
     @php($categoryColor = \App\Support\IssueLabelPalette::forCategory($issue->category?->name))
 
     <div class="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
         <div>
-            <flux:heading size="xl" @if ($projectColor) style="color: {{ $projectColor['hex'] }};" @endif>{{ $issue->title }}</flux:heading>
+            <flux:heading size="xl" :style="$projectHeadingStyle">{{ $issue->title }}</flux:heading>
             <flux:text>
                 @if ($issue->project)
                     <span

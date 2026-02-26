@@ -55,7 +55,7 @@
                                     style="background-color: {{ $projectColor['soft_bg'] }}; border-color: {{ $projectColor['border'] }}; color: {{ $projectColor['hex'] }};"
                                 @endif
                             >
-                                {{ $rate->project?->code }} - {{ $rate->project?->name }}
+                                {{ $rate->project?->code }}
                             </div>
                         </x-ui.table.td>
                         <x-ui.table.td>{{ $rate->billingPeriod?->name }}</x-ui.table.td>

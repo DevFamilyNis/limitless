@@ -16,7 +16,9 @@
 @endphp
 
 <div {{ $attributes->class([$radiusClass, 'overflow-hidden', 'border border-zinc-200 dark:border-zinc-700' => $bordered]) }}>
-    <table class="{{ $compact ? 'w-full text-xs' : 'w-full text-sm' }} {{ $tableClass }}">
-        {{ $slot }}
-    </table>
+    <div class="w-full overflow-x-auto">
+        <table class="{{ $compact ? 'w-full text-xs' : 'w-full text-sm' }} {{ $tableClass }}">
+            {{ $slot }}
+        </table>
+    </div>
 </div>

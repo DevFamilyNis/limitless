@@ -88,3 +88,34 @@ test('issues are visible to another user in shared workspace', function () {
         ->assertOk()
         ->assertSee('Shared issue title');
 });
+
+test('issue details page can be opened', function () {
+    $user = User::factory()->create();
+    $project = Project::factory()->create(['user_id' => $user->id]);
+
+    $this->seed(IssueDictionarySeeder::class);
+
+    $backlog = IssueStatus::query()->where('key', 'backlog')->firstOrFail();
+    $priority = IssuePriority::query()->where('key', 'medium')->firstOrFail();
+    $category = IssueCategory::query()->where('name', 'Task')->firstOrFail();
+
+    $issue = Issue::query()->create([
+        'project_id' => $project->id,
+        'client_id' => null,
+        'client_contact_id' => null,
+        'status_id' => $backlog->id,
+        'priority_id' => $priority->id,
+        'category_id' => $category->id,
+        'author_id' => $user->id,
+        'assignee_id' => null,
+        'title' => 'Issue details page',
+        'description' => null,
+        'due_date' => null,
+        'completed_at' => null,
+    ]);
+
+    $this->actingAs($user)
+        ->get(route('issues.show', $issue))
+        ->assertOk()
+        ->assertSee('Issue details page');
+});
