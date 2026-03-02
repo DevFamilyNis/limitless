@@ -97,10 +97,7 @@ class Form extends Component
         $this->issueDateTo = now()->subMonthNoOverflow()->endOfMonth()->format('Y-m-d');
         $this->dueDate = now()->startOfMonth()->addDays(14)->format('Y-m-d');
 
-        $preview = $upsertInvoiceAction->preview();
-        $this->invoiceYear = (string) $preview['invoice_year'];
-        $this->invoiceSeq = (string) $preview['invoice_seq'];
-        $this->invoiceNumber = $preview['invoice_number'];
+        $this->refreshInvoiceNumberPreview($upsertInvoiceAction);
 
         $this->updatedClientId();
     }
@@ -130,6 +127,8 @@ class Form extends Component
 
     public function updatedClientId(): void
     {
+        $this->refreshInvoiceNumberPreview(app(UpsertInvoiceAction::class));
+
         $rates = $this->selectedClientRates();
 
         if ($rates->isNotEmpty()) {
@@ -310,6 +309,34 @@ class Form extends Component
         }
 
         $this->recalculateItemAmount($index);
+    }
+
+    protected function refreshInvoiceNumberPreview(UpsertInvoiceAction $upsertInvoiceAction): void
+    {
+        if (! $this->usesCompanyInvoiceCounter()) {
+            $this->invoiceYear = '-';
+            $this->invoiceSeq = '-';
+            $this->invoiceNumber = __('messages.invoices.number_not_applicable');
+
+            return;
+        }
+
+        $preview = $upsertInvoiceAction->preview();
+        $this->invoiceYear = (string) $preview['invoice_year'];
+        $this->invoiceSeq = (string) $preview['invoice_seq'];
+        $this->invoiceNumber = $preview['invoice_number'];
+    }
+
+    protected function usesCompanyInvoiceCounter(): bool
+    {
+        if ($this->clientId === '') {
+            return true;
+        }
+
+        return Client::query()
+            ->whereKey((int) $this->clientId)
+            ->whereHas('type', fn ($query) => $query->where('key', 'company'))
+            ->exists();
     }
 
     protected function recalculateAllItems(): void

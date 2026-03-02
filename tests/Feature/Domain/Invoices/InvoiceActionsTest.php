@@ -15,13 +15,13 @@ test('upsert invoice action creates and updates invoice with items', function ()
     $user = User::factory()->create();
     $this->actingAs($user);
 
-    $personTypeId = ClientType::query()->where('key', 'person')->value('id');
+    $companyTypeId = ClientType::query()->where('key', 'company')->value('id');
     $draftStatusId = InvoiceStatus::query()->where('key', 'draft')->value('id');
     $sentStatusId = InvoiceStatus::query()->where('key', 'sent')->value('id');
 
     $client = Client::query()->create([
         'user_id' => $user->id,
-        'client_type_id' => $personTypeId,
+        'client_type_id' => $companyTypeId,
         'display_name' => 'Invoice Domain Client',
         'is_active' => true,
     ]);
@@ -103,14 +103,14 @@ test('upsert invoice action creates and updates invoice with items', function ()
 
 test('mark invoice paid action updates status to paid', function () {
     $user = User::factory()->create();
-    $personTypeId = ClientType::query()->where('key', 'person')->value('id');
+    $companyTypeId = ClientType::query()->where('key', 'company')->value('id');
     $draftStatusId = InvoiceStatus::query()->where('key', 'draft')->value('id');
     $paidStatusId = InvoiceStatus::query()->where('key', 'paid')->value('id');
     $year = (int) now()->year;
 
     $client = Client::query()->create([
         'user_id' => $user->id,
-        'client_type_id' => $personTypeId,
+        'client_type_id' => $companyTypeId,
         'display_name' => 'Paid Client',
         'is_active' => true,
     ]);
@@ -138,4 +138,92 @@ test('mark invoice paid action updates status to paid', function () {
     $invoice->refresh();
 
     expect($invoice->status_id)->toBe($paidStatusId);
+});
+
+test('person invoice does not consume company invoice counter', function () {
+    $user = User::factory()->create();
+    $companyTypeId = ClientType::query()->where('key', 'company')->value('id');
+    $personTypeId = ClientType::query()->where('key', 'person')->value('id');
+    $draftStatusId = InvoiceStatus::query()->where('key', 'draft')->value('id');
+    $year = (int) now()->year;
+
+    $companyClient = Client::query()->create([
+        'user_id' => $user->id,
+        'client_type_id' => $companyTypeId,
+        'display_name' => 'Company Client',
+        'is_active' => true,
+    ]);
+
+    $personClient = Client::query()->create([
+        'user_id' => $user->id,
+        'client_type_id' => $personTypeId,
+        'display_name' => 'Person Client',
+        'is_active' => true,
+    ]);
+
+    $project = Project::factory()->create(['user_id' => $user->id]);
+
+    Invoice::query()->create([
+        'client_id' => $companyClient->id,
+        'status_id' => $draftStatusId,
+        'invoice_year' => $year,
+        'invoice_seq' => 20,
+        'invoice_number' => '020/'.$year,
+        'issue_date' => now()->toDateString(),
+        'issue_date_to' => now()->toDateString(),
+        'due_date' => now()->addDays(15)->toDateString(),
+        'subtotal' => 1000,
+        'total' => 1000,
+    ]);
+
+    $personInvoice = app(UpsertInvoiceAction::class)->execute(
+        UpsertInvoiceData::fromArray([
+            'user_id' => $user->id,
+            'client_id' => $personClient->id,
+            'status_id' => $draftStatusId,
+            'issue_date' => now()->toDateString(),
+            'issue_date_to' => now()->toDateString(),
+            'due_date' => now()->addDays(15)->toDateString(),
+            'total' => 3000,
+            'note' => null,
+            'items' => [
+                [
+                    'projectId' => (string) $project->id,
+                    'clientProjectRateId' => '',
+                    'description' => 'Fiscal item',
+                    'quantity' => '1.00',
+                    'unitPrice' => '3000.00',
+                    'amount' => '3000.00',
+                ],
+            ],
+        ])
+    );
+
+    expect($personInvoice->invoice_year)->toBe(0);
+    expect($personInvoice->invoice_number)->toStartWith('FIZ-');
+
+    $companyInvoice = app(UpsertInvoiceAction::class)->execute(
+        UpsertInvoiceData::fromArray([
+            'user_id' => $user->id,
+            'client_id' => $companyClient->id,
+            'status_id' => $draftStatusId,
+            'issue_date' => now()->toDateString(),
+            'issue_date_to' => now()->toDateString(),
+            'due_date' => now()->addDays(15)->toDateString(),
+            'total' => 5000,
+            'note' => null,
+            'items' => [
+                [
+                    'projectId' => (string) $project->id,
+                    'clientProjectRateId' => '',
+                    'description' => 'Company item',
+                    'quantity' => '1.00',
+                    'unitPrice' => '5000.00',
+                    'amount' => '5000.00',
+                ],
+            ],
+        ])
+    );
+
+    expect($companyInvoice->invoice_number)->toBe('021/'.$year);
 });

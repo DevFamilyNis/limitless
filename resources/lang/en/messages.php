@@ -216,6 +216,7 @@ return [
         'note' => 'Napomena',
         'sequence' => 'Sekvenca',
         'number_label' => 'Broj fakture',
+        'number_not_applicable' => 'Nije primenljivo',
         'status_label' => 'Status',
         'select_client' => 'Izaberi klijenta',
         'select_status' => 'Izaberi status',

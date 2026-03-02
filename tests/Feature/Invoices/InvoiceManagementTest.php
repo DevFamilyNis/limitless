@@ -159,12 +159,12 @@ test('changing client loads client price list as invoice items', function () {
 
 test('user can create invoice with multiple services and total is sum of items', function () {
     $user = User::factory()->create();
-    $personTypeId = ClientType::query()->where('key', 'person')->value('id');
+    $companyTypeId = ClientType::query()->where('key', 'company')->value('id');
     $draftStatusId = InvoiceStatus::query()->where('key', 'draft')->value('id');
 
     $client = Client::query()->create([
         'user_id' => $user->id,
-        'client_type_id' => $personTypeId,
+        'client_type_id' => $companyTypeId,
         'display_name' => 'Invoice Client',
         'is_active' => true,
     ]);

@@ -20,6 +20,7 @@ final class UpsertInvoiceAction
     public function execute(UpsertInvoiceData $dto): Invoice
     {
         $client = Client::query()
+            ->with('type')
             ->findOrFail($dto->clientId);
 
         $status = InvoiceStatus::query()->findOrFail($dto->statusId);
@@ -68,7 +69,9 @@ final class UpsertInvoiceAction
 
         DB::transaction(function () use ($client, $status, $invoice, $dto, $items): void {
             if (! $invoice->exists) {
-                $generated = $this->generateInvoiceNumber->execute();
+                $generated = $client->type?->key === 'company'
+                    ? $this->generateInvoiceNumber->execute()
+                    : $this->generateAuxiliaryInvoiceNumber();
                 $invoice->invoice_year = $generated['invoice_year'];
                 $invoice->invoice_seq = $generated['invoice_seq'];
                 $invoice->invoice_number = $generated['invoice_number'];
@@ -109,5 +112,28 @@ final class UpsertInvoiceAction
     public function preview(?int $invoiceYear = null): array
     {
         return $this->generateInvoiceNumber->preview($invoiceYear);
+    }
+
+    /**
+     * @return array{invoice_year:int,invoice_seq:int,invoice_number:string}
+     */
+    private function generateAuxiliaryInvoiceNumber(): array
+    {
+        return DB::transaction(function (): array {
+            $auxiliaryYear = 0;
+            $lastSequence = (int) Invoice::query()
+                ->where('invoice_year', $auxiliaryYear)
+                ->lockForUpdate()
+                ->max('invoice_seq');
+
+            $nextSequence = $lastSequence + 1;
+            $displayYear = (int) now()->year;
+
+            return [
+                'invoice_year' => $auxiliaryYear,
+                'invoice_seq' => $nextSequence,
+                'invoice_number' => sprintf('FIZ-%06d/%d', $nextSequence, $displayYear),
+            ];
+        });
     }
 }
