@@ -34,6 +34,7 @@ test('generate invoice pdf action creates temporary pdf file', function () {
         'invoice_seq' => 7,
         'invoice_number' => '007/2026',
         'issue_date' => '2026-02-10',
+        'issue_date_to' => '2026-02-28',
         'due_date' => '2026-02-15',
         'subtotal' => 5000,
         'total' => 5000,

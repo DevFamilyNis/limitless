@@ -21,6 +21,7 @@ class Invoice extends Model
         'invoice_seq',
         'invoice_number',
         'issue_date',
+        'issue_date_to',
         'due_date',
         'subtotal',
         'total',
@@ -29,6 +30,7 @@ class Invoice extends Model
 
     protected $casts = [
         'issue_date' => 'date',
+        'issue_date_to' => 'date',
         'due_date' => 'date',
         'subtotal' => 'decimal:2',
         'total' => 'decimal:2',

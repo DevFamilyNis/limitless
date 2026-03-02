@@ -78,6 +78,7 @@ final class UpsertInvoiceAction
                 'client_id' => $client->id,
                 'status_id' => $status->id,
                 'issue_date' => $dto->issueDate,
+                'issue_date_to' => $dto->issueDateTo,
                 'due_date' => $dto->dueDate,
                 'subtotal' => $dto->total,
                 'total' => $dto->total,

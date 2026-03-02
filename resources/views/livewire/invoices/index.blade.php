@@ -54,7 +54,13 @@
                             @endif
                         </x-ui.table.td>
                         <x-ui.table.td>
-                            <div>@lang('messages.invoices.issue_date'): {{ $invoice->issue_date?->format('d.m.Y') }}</div>
+                            <div>
+                                @lang('messages.invoices.issue_date'):
+                                {{ $invoice->issue_date?->format('d.m.Y') }}
+                                @if ($invoice->issue_date_to)
+                                    - {{ $invoice->issue_date_to->format('d.m.Y') }}
+                                @endif
+                            </div>
                             <div class="text-xs text-zinc-500">
                                 @lang('messages.invoices.due_date'): {{ $invoice->due_date?->format('d.m.Y') ?? '-' }}
                             </div>

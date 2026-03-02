@@ -35,6 +35,7 @@ class InvoiceFactory extends Factory
             'invoice_seq' => $sequence,
             'invoice_number' => $generator->format($sequence, $year),
             'issue_date' => now()->toDateString(),
+            'issue_date_to' => now()->toDateString(),
             'due_date' => now()->addDays(15)->toDateString(),
             'subtotal' => $total,
             'total' => $total,

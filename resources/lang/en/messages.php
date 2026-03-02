@@ -203,6 +203,8 @@ return [
         'dates' => 'Datumi',
         'amounts' => 'Iznosi',
         'issue_date' => 'Datum prometa',
+        'issue_date_from' => 'Datum prometa od',
+        'issue_date_to' => 'Datum prometa do',
         'due_date' => 'Datum dospeća',
         'total' => 'Ukupno',
         'items' => 'Stavki',

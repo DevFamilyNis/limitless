@@ -37,6 +37,7 @@ test('generate kpo report pdf action stores a single media file in pdf collectio
         'invoice_seq' => 1,
         'invoice_number' => '001/2026',
         'issue_date' => '2026-02-10',
+        'issue_date_to' => '2026-02-28',
         'due_date' => '2026-03-15',
         'subtotal' => 10000,
         'total' => 10000,

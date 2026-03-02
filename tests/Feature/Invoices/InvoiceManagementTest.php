@@ -42,6 +42,7 @@ test('invoices are visible to another user in shared workspace', function () {
         'invoice_seq' => 10,
         'invoice_number' => '010/'.$year,
         'issue_date' => now()->toDateString(),
+        'issue_date_to' => now()->toDateString(),
         'subtotal' => 1000,
         'total' => 1000,
     ]);
@@ -84,6 +85,7 @@ test('invoice number generator preview and execute return next sequence for year
         'invoice_seq' => 1,
         'invoice_number' => '001/'.$year,
         'issue_date' => now()->toDateString(),
+        'issue_date_to' => now()->toDateString(),
         'subtotal' => 1000,
         'total' => 1000,
     ]);
@@ -184,7 +186,8 @@ test('user can create invoice with multiple services and total is sum of items',
     Livewire::actingAs($user)->test(Form::class)
         ->set('clientId', (string) $client->id)
         ->set('statusId', (string) $draftStatusId)
-        ->set('issueDate', now()->startOfMonth()->subDay()->toDateString())
+        ->set('issueDate', now()->subMonthNoOverflow()->startOfMonth()->toDateString())
+        ->set('issueDateTo', now()->subMonthNoOverflow()->endOfMonth()->toDateString())
         ->set('dueDate', now()->startOfMonth()->addDays(14)->toDateString())
         ->set('items', [
             [
@@ -217,6 +220,7 @@ test('user can create invoice with multiple services and total is sum of items',
     expect($invoice->invoice_year)->toBe((int) now()->year);
     expect($invoice->invoice_seq)->toBe(1);
     expect($invoice->invoice_number)->toBe('001/'.now()->year);
+    expect($invoice->issue_date_to?->toDateString())->toBe(now()->subMonthNoOverflow()->endOfMonth()->toDateString());
 
     $this->assertDatabaseHas('invoices', [
         'id' => $invoice->id,
@@ -265,6 +269,7 @@ test('user can search invoices', function () {
         'invoice_seq' => 1,
         'invoice_number' => '001/'.$year,
         'issue_date' => now()->toDateString(),
+        'issue_date_to' => now()->toDateString(),
         'subtotal' => 1000,
         'total' => 1000,
     ]);
@@ -276,6 +281,7 @@ test('user can search invoices', function () {
         'invoice_seq' => 2,
         'invoice_number' => '002/'.$year,
         'issue_date' => now()->toDateString(),
+        'issue_date_to' => now()->toDateString(),
         'subtotal' => 2000,
         'total' => 2000,
     ]);
@@ -314,6 +320,7 @@ test('user can update invoice while keeping generated number fields', function (
         'invoice_seq' => 11,
         'invoice_number' => '011/'.$year,
         'issue_date' => now()->toDateString(),
+        'issue_date_to' => now()->toDateString(),
         'subtotal' => 1000,
         'total' => 1000,
     ]);
@@ -373,6 +380,7 @@ test('user can mark invoice as paid from list', function () {
         'invoice_seq' => 3,
         'invoice_number' => '003/'.$year,
         'issue_date' => now()->toDateString(),
+        'issue_date_to' => now()->toDateString(),
         'subtotal' => 3000,
         'total' => 3000,
     ]);
@@ -406,6 +414,7 @@ test('user can delete invoice', function () {
         'invoice_seq' => 9,
         'invoice_number' => '009/'.$year,
         'issue_date' => now()->toDateString(),
+        'issue_date_to' => now()->toDateString(),
         'subtotal' => 900,
         'total' => 900,
     ]);

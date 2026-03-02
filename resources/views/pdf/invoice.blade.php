@@ -174,6 +174,8 @@
     $issuerPib = $userSetting?->pib;
     $issuerMb = $userSetting?->mb;
     $issuerBank = $userSetting?->bank_account;
+    $trafficDateFrom = $invoice->issue_date?->format('d.m.Y');
+    $trafficDateTo = $invoice->issue_date_to?->format('d.m.Y');
 @endphp
 
 <div class="top">
@@ -228,7 +230,16 @@
 </div>
 
 <div class="dates">
-    <div class="row">Datum prometa {{ $invoice->issue_date?->format('d.m.Y') ?? '-' }}</div>
+    <div class="row">
+        Datum prometa
+        @if ($trafficDateFrom && $trafficDateTo)
+            {{ $trafficDateFrom }} - {{ $trafficDateTo }}
+        @elseif ($trafficDateFrom)
+            {{ $trafficDateFrom }}
+        @else
+            -
+        @endif
+    </div>
     <div class="row">Datum dospeća {{ $invoice->due_date?->format('d.m.Y') ?? '-' }}</div>
     @if ($issuerBank)
         <div class="row">Tekući račun: {{ $issuerBank }}</div>

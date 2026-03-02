@@ -35,6 +35,7 @@ test('upsert invoice action creates and updates invoice with items', function ()
             'client_id' => $client->id,
             'status_id' => $draftStatusId,
             'issue_date' => now()->toDateString(),
+            'issue_date_to' => now()->toDateString(),
             'due_date' => now()->addDays(15)->toDateString(),
             'total' => 15000,
             'note' => 'Prva verzija',
@@ -60,6 +61,7 @@ test('upsert invoice action creates and updates invoice with items', function ()
     );
 
     expect($created->invoice_number)->toBe('001/'.now()->year);
+    expect($created->issue_date_to?->toDateString())->toBe(now()->toDateString());
     expect($created->items)->toHaveCount(2);
 
     $updated = app(UpsertInvoiceAction::class)->execute(
@@ -69,6 +71,7 @@ test('upsert invoice action creates and updates invoice with items', function ()
             'client_id' => $client->id,
             'status_id' => $sentStatusId,
             'issue_date' => now()->toDateString(),
+            'issue_date_to' => now()->toDateString(),
             'due_date' => now()->addDays(20)->toDateString(),
             'total' => 7000,
             'note' => 'Izmena',
@@ -87,6 +90,7 @@ test('upsert invoice action creates and updates invoice with items', function ()
 
     expect($updated->id)->toBe($created->id);
     expect($updated->invoice_number)->toBe($created->invoice_number);
+    expect($updated->issue_date_to?->toDateString())->toBe(now()->toDateString());
     expect((float) $updated->total)->toBe(7000.0);
     expect($updated->items)->toHaveCount(1);
 
@@ -118,6 +122,7 @@ test('mark invoice paid action updates status to paid', function () {
         'invoice_seq' => 1,
         'invoice_number' => '001/'.$year,
         'issue_date' => now()->toDateString(),
+        'issue_date_to' => now()->toDateString(),
         'due_date' => now()->addDays(15)->toDateString(),
         'subtotal' => 1000,
         'total' => 1000,

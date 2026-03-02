@@ -31,6 +31,8 @@ class Form extends Component
 
     public string $issueDate = '';
 
+    public string $issueDateTo = '';
+
     public string $dueDate = '';
 
     public string $total = '0.00';
@@ -63,6 +65,7 @@ class Form extends Component
             $this->invoiceSeq = (string) $invoice->invoice_seq;
             $this->invoiceNumber = $invoice->invoice_number;
             $this->issueDate = $invoice->issue_date?->format('Y-m-d') ?? '';
+            $this->issueDateTo = $invoice->issue_date_to?->format('Y-m-d') ?? $this->issueDate;
             $this->dueDate = $invoice->due_date?->format('Y-m-d') ?? '';
             $this->total = (string) $invoice->total;
             $this->note = (string) $invoice->note;
@@ -90,7 +93,8 @@ class Form extends Component
             ->where('key', 'draft')
             ->value('id');
 
-        $this->issueDate = now()->startOfMonth()->subDay()->format('Y-m-d');
+        $this->issueDate = now()->subMonthNoOverflow()->startOfMonth()->format('Y-m-d');
+        $this->issueDateTo = now()->subMonthNoOverflow()->endOfMonth()->format('Y-m-d');
         $this->dueDate = now()->startOfMonth()->addDays(14)->format('Y-m-d');
 
         $preview = $upsertInvoiceAction->preview();
@@ -110,7 +114,8 @@ class Form extends Component
             'clientId' => ['required', 'exists:clients,id'],
             'statusId' => ['required', 'exists:invoice_statuses,id'],
             'issueDate' => ['required', 'date'],
-            'dueDate' => ['nullable', 'date', 'after_or_equal:issueDate'],
+            'issueDateTo' => ['required', 'date', 'after_or_equal:issueDate'],
+            'dueDate' => ['nullable', 'date', 'after_or_equal:issueDateTo'],
             'total' => ['required', 'numeric', 'min:0'],
             'note' => ['nullable', 'string'],
             'items' => ['required', 'array', 'min:1'],
@@ -217,6 +222,7 @@ class Form extends Component
                 'client_id' => (int) $validated['clientId'],
                 'status_id' => (int) $validated['statusId'],
                 'issue_date' => $validated['issueDate'],
+                'issue_date_to' => $validated['issueDateTo'],
                 'due_date' => $validated['dueDate'] ?: null,
                 'total' => (float) $validated['total'],
                 'note' => $validated['note'] ?? null,

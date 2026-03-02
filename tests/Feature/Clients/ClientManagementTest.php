@@ -340,6 +340,7 @@ test('client can be deleted only when there are no dependent documents', functio
         'invoice_seq' => 1,
         'invoice_number' => '001/'.now()->year,
         'issue_date' => now()->toDateString(),
+        'issue_date_to' => now()->toDateString(),
         'due_date' => null,
         'subtotal' => 1000,
         'total' => 1000,

@@ -23,7 +23,7 @@
             <flux:input wire:model="invoiceSeq" :label="__('messages.invoices.sequence')" readonly />
         </div>
 
-        <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
             <flux:select wire:model.live="clientId" :label="__('messages.invoices.client')" required>
                 <option value="">@lang('messages.invoices.select_client')</option>
                 @foreach ($clients as $client)
@@ -43,7 +43,8 @@
                     <option value="{{ $status->id }}">{{ $status->name }}</option>
                 @endforeach
             </flux:select>
-            <flux:input wire:model="issueDate" :label="__('messages.invoices.issue_date')" type="date" required />
+            <flux:input wire:model="issueDate" :label="__('messages.invoices.issue_date_from')" type="date" required />
+            <flux:input wire:model="issueDateTo" :label="__('messages.invoices.issue_date_to')" type="date" required />
             <flux:input wire:model="dueDate" :label="__('messages.invoices.due_date')" type="date" />
         </div>
 
