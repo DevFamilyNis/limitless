@@ -11,10 +11,13 @@
             </flux:sidebar.header>
 
             <flux:sidebar.nav>
-                <flux:sidebar.group :heading="__('Platform')" class="grid">
+                <flux:sidebar.group :heading="'Početna'" class="grid">
                     <flux:sidebar.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
                         @lang('messages.menu.dashboard')
                     </flux:sidebar.item>
+                </flux:sidebar.group>
+
+                <flux:sidebar.group :heading="'Klijenti i projekti'" class="grid">
                     <flux:sidebar.item icon="users" :href="route('clients.index')" :current="request()->routeIs('clients.*')" wire:navigate>
                         @lang('messages.menu.clients')
                     </flux:sidebar.item>
@@ -24,29 +27,41 @@
                     <flux:sidebar.item icon="receipt-percent" :href="route('client-project-rates.index')" :current="request()->routeIs('client-project-rates.*')" wire:navigate>
                         @lang('messages.menu.projectsPrice')
                     </flux:sidebar.item>
+                </flux:sidebar.group>
+
+                <flux:sidebar.group :heading="'Finansije'" class="grid">
                     <flux:sidebar.item icon="document-text" :href="route('invoices.index')" :current="request()->routeIs('invoices.*')" wire:navigate>
                        @lang('messages.menu.invoices')
+                    </flux:sidebar.item>
+                    <flux:sidebar.item icon="arrows-right-left" :href="route('transactions.index')" :current="request()->routeIs('transactions.*')" wire:navigate>
+                       Prihodi
+                    </flux:sidebar.item>
+                    <flux:sidebar.item icon="banknotes" :href="route('paid-expenses.index')" :current="request()->routeIs('paid-expenses.*')" wire:navigate>
+                       Rashodi
+                    </flux:sidebar.item>
+                    <flux:sidebar.item icon="document-text" :href="route('monthly-expenses.index')" :current="request()->routeIs('monthly-expenses.*')" wire:navigate>
+                       Spisak mesečnih obaveza
                     </flux:sidebar.item>
                     <flux:sidebar.item icon="tag" :href="route('categories.index')" :current="request()->routeIs('categories.*')" wire:navigate>
                        @lang('messages.menu.categories')
                     </flux:sidebar.item>
-                    <flux:sidebar.item icon="arrows-right-left" :href="route('transactions.index')" :current="request()->routeIs('transactions.*')" wire:navigate>
-                       @lang('messages.menu.transaction')
-                    </flux:sidebar.item>
-                    <flux:sidebar.item icon="document-text" :href="route('monthly-expenses.index')" :current="request()->routeIs('monthly-expenses.*')" wire:navigate>
-                       @lang('messages.menu.monthlyExpenses')
-                    </flux:sidebar.item>
                     <flux:sidebar.item icon="calendar-days" :href="route('tax-years.index')" :current="request()->routeIs('tax-years.*')" wire:navigate>
                        @lang('messages.menu.tax')
                     </flux:sidebar.item>
+                </flux:sidebar.group>
+
+                <flux:sidebar.group :heading="'Izveštaji'" class="grid">
                     <flux:sidebar.item icon="document-text" :href="route('kpo-reports.index')" :current="request()->routeIs('kpo-reports.*')" wire:navigate>
                       @lang('messages.menu.kpo')
                     </flux:sidebar.item>
+                </flux:sidebar.group>
+
+                <flux:sidebar.group :heading="'Operativa'" class="grid">
                     <flux:sidebar.item icon="layout-grid" :href="route('issues.index')" :current="request()->routeIs('issues.*')" wire:navigate>
                         @lang('messages.menu.tasks')
                     </flux:sidebar.item>
                 </flux:sidebar.group>
-                <flux:sidebar.group :heading="'Settings'" class="grid">
+                <flux:sidebar.group :heading="'Podešavanja'" class="grid">
                     <flux:sidebar.item icon="bars-2" :href="route('settings.issue-statuses.index')" :current="request()->routeIs('settings.issue-statuses.*')" wire:navigate>
                         @lang('messages.menu.statuses')
                     </flux:sidebar.item>
