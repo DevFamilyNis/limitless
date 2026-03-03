@@ -4,6 +4,7 @@ use App\Domain\Invoices\Actions\MarkInvoicePaidAction;
 use App\Domain\Invoices\Actions\UpsertInvoiceAction;
 use App\Domain\Invoices\DTO\MarkInvoicePaidData;
 use App\Domain\Invoices\DTO\UpsertInvoiceData;
+use App\Models\CategoryType;
 use App\Models\Client;
 use App\Models\ClientType;
 use App\Models\Invoice;
@@ -138,6 +139,22 @@ test('mark invoice paid action updates status to paid', function () {
     $invoice->refresh();
 
     expect($invoice->status_id)->toBe($paidStatusId);
+
+    $incomeCategoryTypeId = CategoryType::query()->where('key', 'income')->value('id');
+
+    $this->assertDatabaseHas('categories', [
+        'category_type_id' => $incomeCategoryTypeId,
+        'name' => 'Faktura',
+    ]);
+
+    $this->assertDatabaseHas('transactions', [
+        'user_id' => $user->id,
+        'invoice_id' => $invoice->id,
+        'client_id' => $client->id,
+        'amount' => '1000.00',
+        'currency' => 'RSD',
+        'title' => 'Naplata 001/'.$year,
+    ]);
 });
 
 test('person invoice does not consume company invoice counter', function () {

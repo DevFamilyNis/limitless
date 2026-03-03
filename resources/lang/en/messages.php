@@ -102,7 +102,7 @@ return [
         'contact' => 'Kontakt',
         'status' => 'Status',
         'action' => 'Akcija',
-        'noResults' => 'Nema informacija za prikaz..',
+        'noResults' => 'Nema informacija za prikaz.',
         'code' => 'Šifra',
         'main' => 'Glavni',
         'service' => 'Usluga',

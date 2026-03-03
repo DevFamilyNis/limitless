@@ -31,6 +31,10 @@ final class UpsertTransactionAction
                 ->id;
         }
 
+        if (in_array($dto->documentType, ['invoice', 'fiscal'], true)) {
+            $category = app(ResolveInvoiceIncomeCategoryAction::class)->execute($dto->userId);
+        }
+
         $transaction = $dto->transactionId
             ? Transaction::query()->findOrFail($dto->transactionId)
             : new Transaction;
