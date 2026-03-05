@@ -36,11 +36,36 @@ final class GenerateInvoicePdfAction
         $fileName = sprintf('faktura-%s.pdf', str_replace('/', '-', (string) $invoice->invoice_number));
         $tmpPdfPath = $tmpDirectory.'/'.uniqid('invoice_', true).'.pdf';
 
+        $issuerName = (string) ($userSetting?->display_name ?? '');
+        $issuerBank = (string) ($userSetting?->bank_account ?? '');
+
+        // platilac = klijent (company/person)
+        $payerDisplay = '';
+        if ($invoice->client?->company) {
+            $payerDisplay = (string) $invoice->client->company->company_name;
+        } elseif ($invoice->client?->person) {
+            $payerDisplay = trim((string) $invoice->client->person->first_name.' '.(string) $invoice->client->person->last_name);
+        }
+
+        $qrCodeDataUri = app(GenerateInvoiceQrCodeAction::class)->execute(
+            issuerName: $issuerName,
+            issuerBankAccount: $issuerBank,
+            invoiceTotal: (string) $invoice->total,
+            invoiceNumber: (string) $invoice->invoice_number,
+            payerDisplay: $payerDisplay !== '' ? $payerDisplay : 'Klijent',
+            invoiceNote: $invoice->note ?? null,
+        );
+
         try {
             $pdfContent = Pdf::loadView('pdf.invoice', [
                 'invoice' => $invoice,
                 'userSetting' => $userSetting,
                 'issuerEmail' => $invoice->client?->user?->email,
+
+                // NOVO:
+                'issuerName' => $issuerName,
+                'issuerBank' => $issuerBank,
+                'qrCodeDataUri' => $qrCodeDataUri,
             ])
                 ->setPaper('a4', 'portrait')
                 ->output();
