@@ -302,10 +302,15 @@
     Ovaj račun je punovažan bez potpisa i pečata.
 </div>
 
+@if (! empty($qrCodeDataUri))
+    <img src="{{ $qrCodeDataUri }}" alt="IPS QR" style="width:120px;height:120px;">
+@endif
+
 <div class="section-title">Napomena</div>
 <div>Poreski obveznik nije u sistemu PDV-a. PDV nije obračunat na fakturi u skladu sa članom 33. Zakona o porezu na dodatnu vrednost.</div>
 
 <div class="footer">
+
     {{ $issuerName }}
     @if (! empty($issuerEmail))
         | {{ $issuerEmail }}

@@ -1,7 +1,9 @@
 <?php
 
+use App\Domain\Invoices\Services\IpsQrPayloadBuilder;
 use App\Http\Controllers\Auth\SendMagicLoginLinkController;
 use App\Http\Controllers\MagicLoginController;
+use App\Infrastructure\Qr\QrCodeGenerator;
 use App\Livewire\Auth\MagicLoginRequest;
 use App\Livewire\Categories\Form as CategoryForm;
 use App\Livewire\Categories\Index as CategoryIndex;
@@ -32,6 +34,19 @@ use App\Livewire\TaxYears\Form as TaxYearForm;
 use App\Livewire\TaxYears\Index as TaxYearIndex;
 use App\Livewire\Transactions\Index as TransactionIndex;
 use Illuminate\Support\Facades\Route;
+
+Route::get('/test-qr', function () {
+    $payload = app(IpsQrPayloadBuilder::class)->build(
+        payeeName: 'DEV FAMILY PR',
+        recipientAccount: '160-0000000000000-00',
+        amountRsd: '1200.00',
+        purpose: 'Placanje po fakturi FIZ-000123/2026',
+    );
+
+    $qr = app(QrCodeGenerator::class)->generate($payload);
+
+    return '<pre>'.htmlspecialchars($payload)."</pre><img src='{$qr}' style='width:180px;height:180px'>";
+});
 
 Route::redirect('/', '/magic-login')->name('home');
 Route::redirect('/login', '/magic-login')->name('login');
