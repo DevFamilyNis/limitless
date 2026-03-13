@@ -19,9 +19,9 @@ return [
         'default' => 'slate',
         'rules' => [
             ['needles' => ['backlog'], 'color' => 'slate'],
-            ['needles' => ['todo', 'to_do', 'to-do'], 'color' => 'orange'],
-            ['needles' => ['doing', 'inprogress', 'in_progress', 'wip', 'progress'], 'color' => 'cyan'],
-            ['needles' => ['done', 'closed', 'complete', 'resolved'], 'color' => 'lime'],
+            ['needles' => ['todo', 'to_do', 'to-do'], 'color' => 'slate'],
+            ['needles' => ['doing', 'inprogress', 'in_progress', 'wip', 'progress'], 'color' => 'slate'],
+            ['needles' => ['done', 'closed', 'complete', 'resolved'], 'color' => 'slate'],
         ],
     ],
 

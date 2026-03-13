@@ -83,6 +83,7 @@ class Index extends Component
 
         $baseQuery = app(IssueFilteredListQuery::class)->execute($filters)
             ->with(['project', 'status', 'priority', 'category', 'client', 'assignee'])
+            ->withCount('comments')
             ->orderByRaw('due_date IS NULL')
             ->orderBy('due_date')
             ->orderByDesc('id');
