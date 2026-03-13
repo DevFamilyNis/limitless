@@ -81,7 +81,7 @@
                          </div>
                     </div>
 
-                    <div class="max-h-[43rem] space-y-3 overflow-y-auto pr-1">
+                    <div class="max-h-[53rem] space-y-3 overflow-y-auto pr-1">
                         @forelse ($issuesByStatus[$status->id] ?? [] as $issue)
                             @php($priorityColor = IssueLabelPalette::forPriority($issue->priority?->key, $issue->priority?->name))
                             @php($isDone = $issue->status?->key === 'done')
