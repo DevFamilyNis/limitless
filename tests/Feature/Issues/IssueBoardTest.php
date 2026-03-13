@@ -1,8 +1,10 @@
 <?php
 
 use App\Livewire\Issues\Index;
+use App\Models\Client;
 use App\Models\Issue;
 use App\Models\IssueCategory;
+use App\Models\IssueComment;
 use App\Models\IssuePriority;
 use App\Models\IssueStatus;
 use App\Models\Project;
@@ -227,4 +229,65 @@ test('issues in kanban are ordered by due date ascending with undated tasks last
         ->get(route('issues.index'))
         ->assertOk()
         ->assertSeeInOrder(['Task today', 'Task tomorrow', 'Task no due date']);
+});
+
+test('kanban cards use priority colors, show client label, and gray card styling', function () {
+    $user = User::factory()->create();
+    $project = Project::factory()->create(['user_id' => $user->id]);
+    $client = Client::factory()->create(['user_id' => $user->id, 'display_name' => 'Acme Client']);
+
+    $this->seed(IssueDictionarySeeder::class);
+
+    $done = IssueStatus::query()->where('key', 'done')->firstOrFail();
+    $backlog = IssueStatus::query()->where('key', 'backlog')->firstOrFail();
+    $urgent = IssuePriority::query()->where('key', 'urgent')->firstOrFail();
+    $medium = IssuePriority::query()->where('key', 'medium')->firstOrFail();
+    $category = IssueCategory::query()->where('name', 'Task')->firstOrFail();
+
+    $urgentIssue = Issue::query()->create([
+        'project_id' => $project->id,
+        'client_id' => $client->id,
+        'client_contact_id' => null,
+        'status_id' => $backlog->id,
+        'priority_id' => $urgent->id,
+        'category_id' => $category->id,
+        'author_id' => $user->id,
+        'assignee_id' => null,
+        'title' => 'Urgent board task',
+        'description' => 'Opis zadatka koji je dovoljno dugacak da se lepo skrati u pregledu kartice.',
+        'due_date' => now()->toDateString(),
+        'completed_at' => null,
+    ]);
+
+    IssueComment::query()->create([
+        'issue_id' => $urgentIssue->id,
+        'author_id' => $user->id,
+        'body' => 'Prvi komentar',
+    ]);
+
+    Issue::query()->create([
+        'project_id' => $project->id,
+        'client_id' => null,
+        'client_contact_id' => null,
+        'status_id' => $done->id,
+        'priority_id' => $medium->id,
+        'category_id' => $category->id,
+        'author_id' => $user->id,
+        'assignee_id' => null,
+        'title' => 'Done board task',
+        'description' => null,
+        'due_date' => null,
+        'completed_at' => now(),
+    ]);
+
+    $this->actingAs($user)
+        ->get(route('issues.index'))
+        ->assertOk()
+        ->assertSee('Urgent board task')
+        ->assertSee('Acme Client')
+        ->assertDontSee('animate-pulse', false)
+        ->assertSee('Opis zadatka koji je dovoljno', false)
+        ->assertSee(now()->format('d.m.Y'))
+        ->assertSee(__('messages.issues.move_to'))
+        ->assertSee('rgba(239, 68, 68', false);
 });

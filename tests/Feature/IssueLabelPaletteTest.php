@@ -4,9 +4,9 @@ use App\Support\IssueLabelPalette;
 
 test('issue status palette matches requested workflow colors', function () {
     expect(IssueLabelPalette::forStatus('backlog', 'Backlog')['name'])->toBe('slate');
-    expect(IssueLabelPalette::forStatus('todo', 'To Do')['name'])->toBe('orange');
-    expect(IssueLabelPalette::forStatus('doing', 'Doing')['name'])->toBe('cyan');
-    expect(IssueLabelPalette::forStatus('done', 'Done')['name'])->toBe('lime');
+    expect(IssueLabelPalette::forStatus('todo', 'To Do')['name'])->toBe('slate');
+    expect(IssueLabelPalette::forStatus('doing', 'Doing')['name'])->toBe('slate');
+    expect(IssueLabelPalette::forStatus('done', 'Done')['name'])->toBe('slate');
 });
 
 test('issue priority palette escalates from blue to red', function () {

@@ -68,6 +68,7 @@ class Board extends Component
 
         $issues = app(IssueFilteredListQuery::class)->execute($filters)
             ->with(['status', 'priority', 'category', 'client', 'assignee', 'project'])
+            ->withCount('comments')
             ->latest('id')
             ->get()
             ->groupBy('status_id');
