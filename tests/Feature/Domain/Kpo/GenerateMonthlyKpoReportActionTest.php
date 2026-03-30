@@ -74,6 +74,20 @@ test('generate monthly kpo report builds snapshot rows and totals from invoices 
     ]);
     $outsideMonth->forceFill(['created_at' => '2026-03-01 09:00:00', 'updated_at' => '2026-03-01 09:00:00'])->saveQuietly();
 
+    $fiscalInvoice = Invoice::query()->create([
+        'client_id' => $client->id,
+        'status_id' => $draftStatusId,
+        'invoice_year' => 0,
+        'invoice_seq' => 1,
+        'invoice_number' => 'FIZ-000001/2026',
+        'issue_date' => '2026-02-15',
+        'issue_date_to' => '2026-02-28',
+        'due_date' => '2026-03-15',
+        'subtotal' => 7000,
+        'total' => 7000,
+    ]);
+    $fiscalInvoice->forceFill(['created_at' => '2026-02-15 09:00:00', 'updated_at' => '2026-02-15 09:00:00'])->saveQuietly();
+
     $otherUserInvoice = Invoice::query()->create([
         'client_id' => $otherClient->id,
         'status_id' => $draftStatusId,
@@ -114,6 +128,11 @@ test('generate monthly kpo report builds snapshot rows and totals from invoices 
     $this->assertDatabaseMissing('kpo_report_rows', [
         'kpo_report_id' => $report->id,
         'invoice_id' => $outsideMonth->id,
+    ]);
+
+    $this->assertDatabaseMissing('kpo_report_rows', [
+        'kpo_report_id' => $report->id,
+        'invoice_id' => $fiscalInvoice->id,
     ]);
 
     $this->assertDatabaseHas('kpo_report_rows', [
