@@ -12,7 +12,7 @@
                 <x-ui.table.row>
                     <x-ui.table.td>
                         <span
-                            class="inline-flex rounded-full border px-2 py-1 text-xs font-medium"
+                            class="inline-flex rounded-md border px-2 py-1 text-xs font-medium"
                             style="background-color: {{ $categoryColor['soft_bg'] }}; border-color: {{ $categoryColor['border'] }}; border-width: {{ $categoryColor['border_width'] }}; color: {{ $categoryColor['hex'] }}; font-weight: {{ $categoryColor['font_weight'] }};"
                         >
                             {{ $category->name }}

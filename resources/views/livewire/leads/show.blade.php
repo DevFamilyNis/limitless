@@ -52,10 +52,10 @@
                     <div wire:key="lead-comment-{{ $comment->id }}" class="rounded-xl border border-zinc-200 p-4 dark:border-zinc-700">
                         <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
                             <div class="flex flex-wrap items-center gap-2">
-                                <flux:badge color="sky">{{ $comment->status?->name ?? '-' }}</flux:badge>
-                                <flux:badge color="zinc">{{ strtoupper($comment->event_type) }}</flux:badge>
+                                <x-ui.badge color="sky">{{ $comment->status?->name ?? '-' }}</x-ui.badge>
+                                <x-ui.badge>{{ strtoupper($comment->event_type) }}</x-ui.badge>
                                 @if ($comment->outcome)
-                                    <flux:badge color="lime">{{ $comment->outcome }}</flux:badge>
+                                    <x-ui.badge color="lime">{{ $comment->outcome }}</x-ui.badge>
                                 @endif
                             </div>
                             <flux:text class="text-xs text-zinc-500">

@@ -92,19 +92,19 @@
             @else
                 <div class="grid gap-3 text-sm">
                     <div><span class="text-zinc-500">@lang('messages.form.pib'):</span>
-                        <flux:badge color="lime">
+                        <x-ui.badge color="lime">
                              {{ $client->company?->pib ?: '-' }}
-                        </flux:badge>
+                        </x-ui.badge>
                     </div>
                     <div><span class="text-zinc-500">@lang('messages.form.mb'):</span>
-                        <flux:badge color="lime">
+                        <x-ui.badge color="lime">
                             {{ $client->company?->mb ?: '-' }}
-                         </flux:badge>
+                         </x-ui.badge>
                     </div>
                     <div><span class="text-zinc-500">@lang('messages.form.account'):</span>
-                         <flux:badge color="lime">
+                         <x-ui.badge color="lime">
                             {{ $client->company?->bank_account ?: '-' }}
-                         </flux:badge>
+                         </x-ui.badge>
                     </div>
                 </div>
             @endif
@@ -162,7 +162,7 @@
                         <x-ui.table.td class="font-medium">
                             @if ($rate->project)
                                 <span
-                                    class="inline-flex rounded-full border px-2 py-1 text-xs font-semibold"
+                                    class="inline-flex rounded-md border px-2 py-1 text-xs font-semibold"
                                     @if ($projectColor)
                                         style="background-color: {{ $projectColor['soft_bg'] }}; border-color: {{ $projectColor['border'] }}; color: {{ $projectColor['hex'] }};"
                                     @endif

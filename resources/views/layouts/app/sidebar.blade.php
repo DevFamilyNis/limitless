@@ -31,6 +31,9 @@
                     <flux:sidebar.item icon="users" :href="route('clients.index')" :current="request()->routeIs('clients.*')" wire:navigate>
                         @lang('messages.menu.clients')
                     </flux:sidebar.item>
+                    <flux:sidebar.item icon="briefcase" :href="route('leads.index')" :current="request()->routeIs('leads.*')" wire:navigate>
+                        @lang('messages.menu.leads')
+                    </flux:sidebar.item>
                     <flux:sidebar.item icon="document-text" :href="route('invoices.index')" :current="request()->routeIs('invoices.*')" wire:navigate>
                         @lang('messages.menu.invoices')
                     </flux:sidebar.item>

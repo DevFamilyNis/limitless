@@ -50,7 +50,7 @@
                     <span>@lang('messages.text.unpaidInvoices')</span>
                     <span class="flex items-center gap-2">
                         @if ($overdueInvoicesCount > 0)
-                            <flux:badge color="red">{{ $overdueInvoicesCount }}</flux:badge>
+                            <x-ui.badge color="red">{{ $overdueInvoicesCount }}</x-ui.badge>
                         @endif
                     </span>
                 </div>
@@ -98,9 +98,9 @@
                         <div class="min-w-0">
                             <div class="flex items-center gap-2">
                                 <span class="font-medium">{{ Carbon::parse($item['date'])->format('d.m.Y') }}</span>
-                                <flux:badge color="lime">{{ $item['type'] }}</flux:badge>
+                                <x-ui.badge color="lime">{{ $item['type'] }}</x-ui.badge>
                                 @if (! empty($item['client']))
-                                    <flux:badge>{{ $item['client'] }}</flux:badge>
+                                    <x-ui.badge>{{ $item['client'] }}</x-ui.badge>
                                 @endif
                             </div>
                             <div class="mt-1 truncate">{{ $item['title'] }}</div>

@@ -72,12 +72,12 @@
                         <x-ui.table.td>
                             @php($statusKey = $invoice->status?->key)
                             @php($statusClasses = match ($statusKey) {
-                                'paid' => 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300',
-                                'sent' => 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300',
-                                'canceled' => 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300',
-                                default => 'bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300',
+                                'paid' => 'bg-green-50 text-green-700 ring-green-600/20 dark:bg-green-500/10 dark:text-green-300 dark:ring-green-500/30',
+                                'sent' => 'bg-blue-50 text-blue-700 ring-blue-600/20 dark:bg-blue-500/10 dark:text-blue-300 dark:ring-blue-500/30',
+                                'canceled' => 'bg-red-50 text-red-700 ring-red-600/20 dark:bg-red-500/10 dark:text-red-300 dark:ring-red-500/30',
+                                default => 'bg-zinc-50 text-zinc-700 ring-zinc-500/10 dark:bg-zinc-500/10 dark:text-zinc-300 dark:ring-zinc-400/20',
                             })
-                            <span class="inline-flex rounded-full px-2 py-1 text-xs font-medium {{ $statusClasses }}">
+                            <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset {{ $statusClasses }}">
                                 {{ $invoice->status?->name ?? '-' }}
                             </span>
                         </x-ui.table.td>

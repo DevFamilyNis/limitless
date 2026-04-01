@@ -11,7 +11,7 @@
             @if ($twoFactorEnabled)
                 <div class="space-y-4">
                     <div class="flex items-center gap-3">
-                        <flux:badge color="green">{{ __('Enabled') }}</flux:badge>
+                        <x-ui.badge color="green">{{ __('Enabled') }}</x-ui.badge>
                     </div>
 
                     <flux:text>
@@ -34,7 +34,7 @@
             @else
                 <div class="space-y-4">
                     <div class="flex items-center gap-3">
-                        <flux:badge color="red">{{ __('Disabled') }}</flux:badge>
+                        <x-ui.badge color="red">{{ __('Disabled') }}</x-ui.badge>
                     </div>
 
                     <flux:text variant="subtle">

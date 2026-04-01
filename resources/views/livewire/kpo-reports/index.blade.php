@@ -39,17 +39,17 @@
                     </x-ui.table.td>
                     <x-ui.table.td>
                         @if (! $report)
-                            <span class="inline-flex rounded-full bg-zinc-100 px-2 py-1 text-xs font-medium text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
+                            <x-ui.badge>
                                 @lang('messages.kpo.status_not_generated')
-                            </span>
+                            </x-ui.badge>
                         @elseif ($month['is_locked'])
-                            <span class="inline-flex rounded-full bg-emerald-100 px-2 py-1 text-xs font-medium text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300">
+                            <x-ui.badge color="emerald">
                                 @lang('messages.kpo.status_locked')
-                            </span>
+                            </x-ui.badge>
                         @else
-                            <span class="inline-flex rounded-full bg-blue-100 px-2 py-1 text-xs font-medium text-blue-700 dark:bg-blue-900/40 dark:text-blue-300">
+                            <x-ui.badge color="blue">
                                 @lang('messages.kpo.status_generated')
-                            </span>
+                            </x-ui.badge>
                         @endif
                     </x-ui.table.td>
                     <x-ui.table.td>{{ $report?->rows_count ?? 0 }}</x-ui.table.td>

@@ -44,15 +44,15 @@
                     <a href="{{ route('projects.show', $project) }}" wire:navigate class="space-y-2">
                         <div class="flex items-center justify-between">
                             <span
-                                    class="inline-flex rounded-full border px-2 py-1 text-xs font-semibold"
+                                    class="inline-flex rounded-md border px-2 py-1 text-xs font-semibold"
                                     style="background-color: {{ $projectColor['soft_bg'] }}; border-color: {{ $projectColor['border'] }}; color: {{ $projectColor['hex'] }};"
                             >
                                 {{ $project->code }}
                             </span>
                             @if ($project->is_active)
-                                <span class="inline-flex rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-700 dark:bg-green-900/40 dark:text-green-300">@lang('messages.status_labels.active_m')</span>
+                                <x-ui.badge color="green">@lang('messages.status_labels.active_m')</x-ui.badge>
                             @else
-                                <span class="inline-flex rounded-full bg-zinc-100 px-2 py-1 text-xs font-medium text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">@lang('messages.status_labels.inactive_m')</span>
+                                <x-ui.badge>@lang('messages.status_labels.inactive_m')</x-ui.badge>
                             @endif
                         </div>
 
