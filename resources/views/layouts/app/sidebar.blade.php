@@ -18,6 +18,9 @@
                 </flux:sidebar.group>
 
                 <flux:sidebar.group :heading="'Klijenti i projekti'" class="grid">
+                    <flux:sidebar.item icon="briefcase" :href="route('leads.index')" :current="request()->routeIs('leads.*')" wire:navigate>
+                        @lang('messages.menu.leads')
+                    </flux:sidebar.item>
                     <flux:sidebar.item icon="users" :href="route('clients.index')" :current="request()->routeIs('clients.*')" wire:navigate>
                         @lang('messages.menu.clients')
                     </flux:sidebar.item>
