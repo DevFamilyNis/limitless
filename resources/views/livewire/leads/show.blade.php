@@ -1,4 +1,6 @@
 <div class="flex w-full flex-1 flex-col gap-6">
+    @php($nextFollowUp = $lead->current_next_follow_up_at)
+
     <div class="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
         <div>
             <flux:heading size="xl">{{ $lead->company_name }}</flux:heading>
@@ -25,8 +27,15 @@
             <flux:heading size="lg">{{ $lead->last_contacted_at?->format('d.m.Y H:i') ?: '-' }}</flux:heading>
         </flux:card>
         <flux:card>
-            <flux:text class="text-xs text-zinc-500">@lang('messages.leads.last_response')</flux:text>
-            <flux:heading size="lg">{{ $lead->last_response_at?->format('d.m.Y H:i') ?: '-' }}</flux:heading>
+            <flux:text class="text-xs text-zinc-500">@lang('messages.leads.next_contact')</flux:text>
+            @if ($nextFollowUp)
+                <flux:heading size="lg" class="text-amber-700 dark:text-amber-300">{{ $nextFollowUp->format('d.m.Y H:i') }}</flux:heading>
+                <flux:text class="text-amber-700/80 dark:text-amber-300/80">
+                    {{ $nextFollowUp->isPast() ? __('messages.leads.overdue_next_contact') : __('messages.leads.scheduled_next_contact') }}
+                </flux:text>
+            @else
+                <flux:heading size="lg">-</flux:heading>
+            @endif
         </flux:card>
         <flux:card>
             <flux:text class="text-xs text-zinc-500">@lang('messages.leads.comments')</flux:text>
@@ -56,10 +65,11 @@
 
                         <div class="mt-3 whitespace-pre-line text-sm text-zinc-700 dark:text-zinc-200">{{ $comment->body }}</div>
 
-                        <div class="mt-3 grid gap-2 text-xs text-zinc-500 md:grid-cols-3">
+                        <div class="mt-3 grid gap-2 text-xs text-zinc-500 md:grid-cols-4">
                             <div>@lang('messages.leads.contact_method'): {{ $comment->contact_method ?: '-' }}</div>
                             <div>@lang('messages.leads.contacted_at'): {{ $comment->contacted_at?->format('d.m.Y H:i') ?: '-' }}</div>
                             <div>@lang('messages.leads.responded_at'): {{ $comment->responded_at?->format('d.m.Y H:i') ?: '-' }}</div>
+                            <div class="font-medium text-amber-700 dark:text-amber-300">@lang('messages.leads.next_contact'): {{ $comment->next_follow_up_at?->format('d.m.Y H:i') ?: '-' }}</div>
                         </div>
                     </div>
                 @empty
@@ -76,6 +86,7 @@
                     <div><span class="text-zinc-500">@lang('messages.form.email'):</span> {{ $lead->email ?: '-' }}</div>
                     <div><span class="text-zinc-500">@lang('messages.form.phone'):</span> {{ $lead->phone ?: '-' }}</div>
                     <div><span class="text-zinc-500">@lang('messages.leads.last_contact_method'):</span> {{ $lead->last_contact_method ?: '-' }}</div>
+                    <div><span class="text-zinc-500">@lang('messages.leads.next_contact'):</span> <span class="font-medium text-amber-700 dark:text-amber-300">{{ $nextFollowUp?->format('d.m.Y H:i') ?: '-' }}</span></div>
                 </div>
             </flux:card>
 

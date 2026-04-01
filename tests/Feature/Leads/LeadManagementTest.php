@@ -45,7 +45,8 @@ test('lead show page is displayed for another user in shared workspace', functio
         ->assertDontSee('Tip događaja')
         ->assertDontSee('Ishod')
         ->assertSee('Telefon')
-        ->assertSee('Email');
+        ->assertSee('Email')
+        ->assertSee(__('messages.leads.next_contact'));
 });
 
 test('user can create lead', function () {
@@ -172,8 +173,55 @@ test('user can add lead comment and update lead tracking fields', function () {
         'id' => $lead->id,
         'lead_status_id' => $respondedStatusId,
         'last_contact_method' => 'phone',
+        'next_follow_up_at' => '2026-04-03 09:00:00',
     ]);
 
     expect($lead->fresh()?->last_contacted_at?->format('Y-m-d H:i'))->toBe('2026-04-01 10:00');
     expect($lead->fresh()?->last_response_at?->format('Y-m-d H:i'))->toBe('2026-04-01 10:15');
+    expect($lead->fresh()?->next_follow_up_at?->format('Y-m-d H:i'))->toBe('2026-04-03 09:00');
+});
+
+test('lead uses first upcoming follow up across multiple comments', function () {
+    $user = User::factory()->create();
+    $statusId = LeadStatus::query()->where('key', 'contacted')->value('id');
+
+    $lead = Lead::query()->create([
+        'lead_status_id' => $statusId,
+        'company_name' => 'Future Follow Up Lead',
+        'email' => 'future@example.com',
+        'phone' => '+38160123123',
+    ]);
+
+    $lead->comments()->create([
+        'author_id' => $user->id,
+        'lead_status_id' => $statusId,
+        'event_type' => 'note',
+        'contact_method' => 'phone',
+        'outcome' => null,
+        'body' => 'Prvi komentar.',
+        'contacted_at' => now(),
+        'responded_at' => null,
+        'next_follow_up_at' => now()->addDays(10),
+    ]);
+
+    $lead->comments()->create([
+        'author_id' => $user->id,
+        'lead_status_id' => $statusId,
+        'event_type' => 'note',
+        'contact_method' => 'phone',
+        'outcome' => null,
+        'body' => 'Drugi komentar sa bližim datumom.',
+        'contacted_at' => now(),
+        'responded_at' => null,
+        'next_follow_up_at' => now()->addDays(2),
+    ]);
+
+    $lead->refresh()->load('comments');
+
+    expect($lead->current_next_follow_up_at?->format('Y-m-d'))->toBe(now()->addDays(2)->format('Y-m-d'));
+
+    $this->actingAs($user)
+        ->get(route('leads.show', $lead))
+        ->assertOk()
+        ->assertSee($lead->current_next_follow_up_at?->format('d.m.Y'));
 });

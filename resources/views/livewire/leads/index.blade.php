@@ -57,17 +57,21 @@
                 <x-ui.table.th>@lang('messages.table.contact')</x-ui.table.th>
                 <x-ui.table.th>@lang('messages.table.status')</x-ui.table.th>
                 <x-ui.table.th>@lang('messages.leads.last_contact')</x-ui.table.th>
-                <x-ui.table.th>@lang('messages.leads.comments')</x-ui.table.th>
+                <x-ui.table.th>@lang('messages.leads.next_contact')</x-ui.table.th>
                 <x-ui.table.th align="right">@lang('messages.table.action')</x-ui.table.th>
             </tr>
         </x-ui.table.head>
         <x-ui.table.body>
             @forelse ($leads as $lead)
                 <x-ui.table.row wire:key="lead-{{ $lead->id }}">
+                    @php($nextFollowUp = $lead->current_next_follow_up_at)
                     <x-ui.table.td>
                         <a href="{{ route('leads.show', $lead) }}" wire:navigate class="font-medium text-blue-600 hover:text-blue-700 hover:underline dark:text-blue-400 dark:hover:text-blue-300">
                             {{ $lead->company_name }}
                         </a>
+                        <div class="mt-1 text-xs text-zinc-500">
+                            @lang('messages.leads.comments'): {{ $lead->comments_count }}
+                        </div>
                     </x-ui.table.td>
                     <x-ui.table.td>
                         <div>{{ $lead->email ?: '-' }}</div>
@@ -80,7 +84,39 @@
                         <div>{{ $lead->last_contacted_at?->format('d.m.Y H:i') ?: '-' }}</div>
                         <div class="text-xs text-zinc-500">{{ $lead->last_contact_method ?: '-' }}</div>
                     </x-ui.table.td>
-                    <x-ui.table.td>{{ $lead->comments_count }}</x-ui.table.td>
+                    <x-ui.table.td>
+                        @if ($nextFollowUp)
+                            @php($today = now()->startOfDay())
+                            @php($tomorrow = now()->addDay()->startOfDay())
+                            @php($nextFollowUpDay = $nextFollowUp->copy()->startOfDay())
+
+                            @if ($nextFollowUpDay->lt($today))
+                                @php($badgeClass = 'border-rose-200 bg-rose-50 text-rose-700 dark:border-rose-500/30 dark:bg-rose-500/10 dark:text-rose-200')
+                                @php($badgeText = __('messages.leads.badge_overdue'))
+                            @elseif ($nextFollowUpDay->equalTo($today))
+                                @php($badgeClass = 'border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-200')
+                                @php($badgeText = __('messages.leads.badge_today'))
+                            @elseif ($nextFollowUpDay->equalTo($tomorrow))
+                                @php($badgeClass = 'border-sky-200 bg-sky-50 text-sky-700 dark:border-sky-500/30 dark:bg-sky-500/10 dark:text-sky-200')
+                                @php($badgeText = __('messages.leads.badge_tomorrow'))
+                            @else
+                                @php($badgeClass = 'border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-200')
+                                @php($badgeText = __('messages.leads.badge_scheduled'))
+                            @endif
+
+                            <div class="inline-flex rounded-full border px-3 py-1 text-sm font-semibold {{ $badgeClass }}">
+                                {{ $badgeText }}
+                            </div>
+                            <div class="mt-2 font-medium text-zinc-800 dark:text-zinc-100">
+                                {{ $nextFollowUp->format('d.m.Y H:i') }}
+                            </div>
+                            <div class="text-xs text-zinc-500">
+                                {{ $nextFollowUp->isPast() && ! $nextFollowUpDay->equalTo($today) ? __('messages.leads.overdue_next_contact') : __('messages.leads.scheduled_next_contact') }}
+                            </div>
+                        @else
+                            <span class="text-zinc-400">-</span>
+                        @endif
+                    </x-ui.table.td>
                     <x-ui.table.td align="right">
                         <x-ui.table.actions>
                             <x-ui.buttons.icon-action
