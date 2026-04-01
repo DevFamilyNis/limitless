@@ -19,6 +19,9 @@ use App\Livewire\Issues\Form as IssueForm;
 use App\Livewire\Issues\Index as IssueIndex;
 use App\Livewire\Issues\Show as IssueShow;
 use App\Livewire\KpoReports\Index as KpoReportIndex;
+use App\Livewire\Leads\Form as LeadForm;
+use App\Livewire\Leads\Index as LeadIndex;
+use App\Livewire\Leads\Show as LeadShow;
 use App\Livewire\MonthlyExpenses\Index as MonthlyExpenseIndex;
 use App\Livewire\PaidExpenses\Index as PaidExpenseIndex;
 use App\Livewire\Projects\Form as ProjectForm;
@@ -66,6 +69,10 @@ Route::livewire('dashboard', DashboardPage::class)
     ->name('dashboard');
 
 Route::middleware('auth')->group(function () {
+    Route::livewire('leads', LeadIndex::class)->name('leads.index');
+    Route::livewire('leads/create', LeadForm::class)->name('leads.create');
+    Route::livewire('leads/{lead}/edit', LeadForm::class)->name('leads.edit');
+    Route::livewire('leads/{lead}', LeadShow::class)->name('leads.show');
     Route::livewire('clients', ClientIndex::class)->name('clients.index');
     Route::livewire('clients/create', ClientForm::class)->name('clients.create');
     Route::livewire('clients/{client}/edit', ClientForm::class)->name('clients.edit');

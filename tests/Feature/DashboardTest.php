@@ -12,5 +12,10 @@ test('authenticated users can visit the dashboard', function () {
     $this->actingAs($user);
 
     $response = $this->get(route('dashboard'));
-    $response->assertOk();
+    $response->assertOk()
+        ->assertSee('Brzi linkovi')
+        ->assertSee('Klijenti i projekti')
+        ->assertSee('Finansije')
+        ->assertSee('Izveštaji')
+        ->assertSee('Podešavanja');
 });
