@@ -13,7 +13,7 @@
                     <x-ui.table.td>{{ $priority->key }}</x-ui.table.td>
                     <x-ui.table.td>
                         <span
-                            class="inline-flex rounded-full border px-2 py-1 text-xs font-medium"
+                            class="inline-flex rounded-md border px-2 py-1 text-xs font-medium"
                             style="background-color: {{ $priorityColor['soft_bg'] }}; border-color: {{ $priorityColor['border'] }}; border-width: {{ $priorityColor['border_width'] }}; color: {{ $priorityColor['hex'] }}; font-weight: {{ $priorityColor['font_weight'] }};"
                         >
                             {{ $priority->name }}

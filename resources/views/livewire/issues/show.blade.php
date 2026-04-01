@@ -11,7 +11,7 @@
             <flux:text>
                 @if ($issue->project)
                     <span
-                        class="inline-flex rounded-full border px-2 py-1 text-xs font-semibold"
+                        class="inline-flex rounded-md border px-2 py-1 text-xs font-semibold"
                         @if ($projectColor)
                             style="background-color: {{ $projectColor['soft_bg'] }}; border-color: {{ $projectColor['border'] }}; color: {{ $projectColor['hex'] }};"
                         @endif
@@ -20,7 +20,7 @@
                     </span>
                 @endif
                 <span
-                    class="ml-2 inline-flex rounded-full border px-2 py-1 text-xs font-semibold"
+                    class="ml-2 inline-flex rounded-md border px-2 py-1 text-xs font-semibold"
                     style="background-color: {{ $statusColor['soft_bg'] }}; border-color: {{ $statusColor['border'] }}; border-width: {{ $statusColor['border_width'] }}; color: {{ $statusColor['hex'] }}; font-weight: {{ $statusColor['font_weight'] }};"
                 >
                     {{ $issue->status?->name }}
@@ -44,7 +44,7 @@
                 <div class="text-xs text-zinc-500">@lang('messages.issues.priority')</div>
                 <div>
                     <span
-                        class="inline-flex rounded-full border px-2 py-1 text-xs font-medium"
+                        class="inline-flex rounded-md border px-2 py-1 text-xs font-medium"
                         style="background-color: {{ $priorityColor['soft_bg'] }}; border-color: {{ $priorityColor['border'] }}; border-width: {{ $priorityColor['border_width'] }}; color: {{ $priorityColor['hex'] }}; font-weight: {{ $priorityColor['font_weight'] }};"
                     >
                         {{ $issue->priority?->name }}
@@ -55,7 +55,7 @@
                 <div class="text-xs text-zinc-500">@lang('messages.issues.category')</div>
                 <div>
                     <span
-                        class="inline-flex rounded-full border px-2 py-1 text-xs font-medium"
+                        class="inline-flex rounded-md border px-2 py-1 text-xs font-medium"
                         style="background-color: {{ $categoryColor['soft_bg'] }}; border-color: {{ $categoryColor['border'] }}; border-width: {{ $categoryColor['border_width'] }}; color: {{ $categoryColor['hex'] }}; font-weight: {{ $categoryColor['font_weight'] }};"
                     >
                         {{ $issue->category?->name }}
