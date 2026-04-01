@@ -224,6 +224,9 @@
         @if ($invoice->client?->address)
             <div class="row">{{ $invoice->client->address }}</div>
         @endif
+        @if ($invoice->client?->company?->bank_account)
+            <div class="row">Tekući račun: {{ $invoice->client->company->bank_account }}</div>
+        @endif
     </div>
 
     <div class="clear"></div>
