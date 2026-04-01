@@ -203,6 +203,7 @@ return [
         'badge_tomorrow' => 'Sutra',
         'badge_overdue' => 'Kasni',
         'badge_scheduled' => 'Zakazano',
+        'badge_follow_up' => 'Sledeći',
         'comments' => 'Komentari',
         'history' => 'Istorija kontakta',
         'main_info' => 'Osnovne informacije',

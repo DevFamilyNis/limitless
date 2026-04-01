@@ -17,7 +17,7 @@
                     <x-ui.table.td>{{ $status->key }}</x-ui.table.td>
                     <x-ui.table.td>
                         <span
-                            class="inline-flex rounded-full border px-2 py-1 text-xs font-medium"
+                            class="inline-flex rounded-md border px-2 py-1 text-xs font-medium"
                             style="background-color: {{ $statusColor['soft_bg'] }}; border-color: {{ $statusColor['border'] }}; border-width: {{ $statusColor['border_width'] }}; color: {{ $statusColor['hex'] }}; font-weight: {{ $statusColor['font_weight'] }};"
                         >
                             {{ $status->name }}

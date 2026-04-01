@@ -69,20 +69,35 @@
                         <a href="{{ route('leads.show', $lead) }}" wire:navigate class="font-medium text-blue-600 hover:text-blue-700 hover:underline dark:text-blue-400 dark:hover:text-blue-300">
                             {{ $lead->company_name }}
                         </a>
-                        <div class="mt-1 text-xs text-zinc-500">
-                            @lang('messages.leads.comments'): {{ $lead->comments_count }}
+                        <div class="mt-1 flex items-center gap-1.5 text-xs text-zinc-500">
+                            <x-ui.icons.chat-bubble class="size-3.5" />
+                            <span>{{ $lead->comments_count }}</span>
                         </div>
                     </x-ui.table.td>
                     <x-ui.table.td>
-                        <div>{{ $lead->email ?: '-' }}</div>
-                        <div class="text-xs text-zinc-500">{{ $lead->phone ?: '-' }}</div>
+                        @if ($lead->email)
+                            <div>{{ $lead->email }}</div>
+                        @endif
+                        @if ($lead->phone)
+                            <div class="text-xs text-zinc-500">{{ $lead->phone }}</div>
+                        @endif
                     </x-ui.table.td>
+                        <x-ui.table.td>
+                            @if ($lead->status?->name)
+                                <x-ui.badge color="lime">
+                                    {{ $lead->status->name }}
+                                </x-ui.badge>
+                            @endif
+                        </x-ui.table.td>
                     <x-ui.table.td>
-                        <flux:badge color="sky">{{ $lead->status?->name ?? '-' }}</flux:badge>
-                    </x-ui.table.td>
-                    <x-ui.table.td>
-                        <div>{{ $lead->last_contacted_at?->format('d.m.Y H:i') ?: '-' }}</div>
-                        <div class="text-xs text-zinc-500">{{ $lead->last_contact_method ?: '-' }}</div>
+                        @if ($lead->last_contacted_at)
+                            <x-ui.badge class="text-zinc-600" color="zinc">
+                                {{ $lead->last_contacted_at->format('d.m.Y H:i') }}
+                            </x-ui.badge>
+                        @endif
+                        @if ($lead->last_contact_method)
+                            <div class="mt-1 text-xs text-zinc-500">{{ $lead->last_contact_method }}</div>
+                        @endif
                     </x-ui.table.td>
                     <x-ui.table.td>
                         @if ($nextFollowUp)
@@ -91,30 +106,32 @@
                             @php($nextFollowUpDay = $nextFollowUp->copy()->startOfDay())
 
                             @if ($nextFollowUpDay->lt($today))
-                                @php($badgeClass = 'border-rose-200 bg-rose-50 text-rose-700 dark:border-rose-500/30 dark:bg-rose-500/10 dark:text-rose-200')
-                                @php($badgeText = __('messages.leads.badge_overdue'))
+                                @php($urgencyBadgeClass = 'bg-rose-50 text-rose-700 ring-rose-600/20 dark:bg-rose-500/10 dark:text-rose-200 dark:ring-rose-500/30')
+                                @php($urgencyBadgeText = __('messages.leads.badge_overdue'))
                             @elseif ($nextFollowUpDay->equalTo($today))
-                                @php($badgeClass = 'border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-200')
-                                @php($badgeText = __('messages.leads.badge_today'))
+                                @php($urgencyBadgeClass = 'bg-amber-50 text-amber-700 ring-amber-600/20 dark:bg-amber-500/10 dark:text-amber-200 dark:ring-amber-500/30')
+                                @php($urgencyBadgeText = __('messages.leads.badge_today'))
                             @elseif ($nextFollowUpDay->equalTo($tomorrow))
-                                @php($badgeClass = 'border-sky-200 bg-sky-50 text-sky-700 dark:border-sky-500/30 dark:bg-sky-500/10 dark:text-sky-200')
-                                @php($badgeText = __('messages.leads.badge_tomorrow'))
+                                @php($urgencyBadgeClass = 'bg-sky-50 text-sky-700 ring-sky-600/20 dark:bg-sky-500/10 dark:text-sky-200 dark:ring-sky-500/30')
+                                @php($urgencyBadgeText = __('messages.leads.badge_tomorrow'))
                             @else
-                                @php($badgeClass = 'border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-200')
-                                @php($badgeText = __('messages.leads.badge_scheduled'))
+                                @php($urgencyBadgeClass = 'bg-emerald-50 text-emerald-700 ring-emerald-600/20 dark:bg-emerald-500/10 dark:text-emerald-200 dark:ring-emerald-500/30')
+                                @php($urgencyBadgeText = __('messages.leads.badge_scheduled'))
                             @endif
 
-                            <div class="inline-flex rounded-full border px-3 py-1 text-sm font-semibold {{ $badgeClass }}">
-                                {{ $badgeText }}
+                            <div class="flex flex-wrap items-center gap-1.5">
+                                <x-ui.badge class="text-zinc-600" color="zinc">
+                                    @lang('messages.leads.badge_follow_up')
+                                </x-ui.badge>
+                                <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset {{ $urgencyBadgeClass }}">
+                                    {{ $urgencyBadgeText }}
+                                </span>
                             </div>
                             <div class="mt-2 font-medium text-zinc-800 dark:text-zinc-100">
                                 {{ $nextFollowUp->format('d.m.Y H:i') }}
                             </div>
-                            <div class="text-xs text-zinc-500">
-                                {{ $nextFollowUp->isPast() && ! $nextFollowUpDay->equalTo($today) ? __('messages.leads.overdue_next_contact') : __('messages.leads.scheduled_next_contact') }}
-                            </div>
                         @else
-                            <span class="text-zinc-400">-</span>
+                            <span class="text-zinc-300"></span>
                         @endif
                     </x-ui.table.td>
                     <x-ui.table.td align="right">

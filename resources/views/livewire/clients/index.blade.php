@@ -65,14 +65,16 @@
                             @endif
                         </x-ui.table.td>
                         <x-ui.table.td>
-                             @if ($client->type?->key === 'person')
-                            <flux:badge icon="user-circle" color="yellow">
-                                {{ $client->type->name }}
-                            </flux:badge>
-                            @else
-                                <flux:badge icon="building-office" color="teal">
+                            @if ($client->type?->key === 'person')
+                                <x-ui.badge color="amber">
+                                    <flux:icon.user-circle class="size-3.5" />
                                     {{ $client->type->name }}
-                                </flux:badge>
+                                </x-ui.badge>
+                            @else
+                                <x-ui.badge color="teal">
+                                    <flux:icon.building-office class="size-3.5" />
+                                    {{ $client->type->name }}
+                                </x-ui.badge>
                             @endif
                         </x-ui.table.td>
                         <x-ui.table.td>
@@ -81,9 +83,9 @@
                         </x-ui.table.td>
                         <x-ui.table.td>
                             @if ($client->is_active)
-                                <span class="inline-flex rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-700 dark:bg-green-900/40 dark:text-green-300">@lang('messages.status_labels.active_m')</span>
+                                <x-ui.badge color="green">@lang('messages.status_labels.active_m')</x-ui.badge>
                             @else
-                                <span class="inline-flex rounded-full bg-zinc-100 px-2 py-1 text-xs font-medium text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">@lang('messages.status_labels.inactive_m')</span>
+                                <x-ui.badge>@lang('messages.status_labels.inactive_m')</x-ui.badge>
                             @endif
                         </x-ui.table.td>
                         <x-ui.table.td align="right">
