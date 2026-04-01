@@ -19,6 +19,7 @@ test('leads tables have expected structure', function () {
         'last_contacted_at',
         'last_contact_method',
         'last_response_at',
+        'next_follow_up_at',
         'converted_at',
         'created_at',
         'updated_at',
