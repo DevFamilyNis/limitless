@@ -18,6 +18,10 @@ final class LeadListQuery
     {
         return Lead::query()
             ->with('status')
+            ->with(['comments' => fn ($query) => $query
+                ->select(['id', 'lead_id', 'next_follow_up_at'])
+                ->whereNotNull('next_follow_up_at')
+                ->orderBy('next_follow_up_at')])
             ->withCount('comments')
             ->when($dto->search !== null, function (Builder $query) use ($dto): void {
                 $query->where(function (Builder $innerQuery) use ($dto): void {

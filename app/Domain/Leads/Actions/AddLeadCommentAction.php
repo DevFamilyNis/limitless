@@ -31,12 +31,14 @@ final class AddLeadCommentAction
             ]);
 
             $statusKey = LeadStatus::query()->whereKey($statusId)->value('key');
+            $lead->load('comments');
 
             $lead->fill([
                 'lead_status_id' => $statusId,
                 'last_contact_method' => $dto->contactMethod ?? $lead->last_contact_method,
                 'last_contacted_at' => $dto->contactedAt ?? $lead->last_contacted_at,
                 'last_response_at' => $dto->respondedAt ?? $lead->last_response_at,
+                'next_follow_up_at' => $lead->determineNextFollowUpAt(),
                 'converted_at' => $statusKey === 'converted' ? ($lead->converted_at ?? now()) : null,
             ]);
 

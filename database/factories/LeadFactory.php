@@ -20,6 +20,7 @@ class LeadFactory extends Factory
             'last_contacted_at' => null,
             'last_contact_method' => null,
             'last_response_at' => null,
+            'next_follow_up_at' => null,
             'converted_at' => null,
         ];
     }

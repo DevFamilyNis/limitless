@@ -36,11 +36,11 @@
                     </flux:sidebar.item>
                 </flux:sidebar.group>
 
-                <div x-data="{ open: @js($clientProjectOpen) }" class="px-3">
+                <div x-data="{ open: @js($clientProjectOpen) }">
                     <button
                         type="button"
                         @click="open = !open"
-                        class="flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 dark:text-zinc-200 dark:hover:bg-zinc-800"
+                        class="flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm font-medium text-zinc-500 transition hover:bg-zinc-100 hover:text-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-200"
                     >
                         <span class="flex items-center gap-2">
                             <svg class="size-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -69,11 +69,11 @@
                     </div>
                 </div>
 
-                <div x-data="{ open: @js($financeOpen) }" class="px-3">
+                <div x-data="{ open: @js($financeOpen) }">
                     <button
                         type="button"
                         @click="open = !open"
-                        class="flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 dark:text-zinc-200 dark:hover:bg-zinc-800"
+                        class="flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm font-medium text-zinc-500 transition hover:bg-zinc-100 hover:text-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-200"
                     >
                         <span class="flex items-center gap-2">
                             <svg class="size-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -108,11 +108,11 @@
                     </div>
                 </div>
 
-                <div x-data="{ open: @js($reportsOpen) }" class="px-3">
+                <div x-data="{ open: @js($reportsOpen) }">
                     <button
                         type="button"
                         @click="open = !open"
-                        class="flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 dark:text-zinc-200 dark:hover:bg-zinc-800"
+                        class="flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm font-medium text-zinc-500 transition hover:bg-zinc-100 hover:text-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-200"
                     >
                         <span class="flex items-center gap-2">
                             <svg class="size-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -132,11 +132,11 @@
                     </div>
                 </div>
 
-                <div x-data="{ open: @js($settingsOpen) }" class="px-3">
+                <div x-data="{ open: @js($settingsOpen) }">
                     <button
                         type="button"
                         @click="open = !open"
-                        class="flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 dark:text-zinc-200 dark:hover:bg-zinc-800"
+                        class="flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm font-medium text-zinc-500 transition hover:bg-zinc-100 hover:text-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-200"
                     >
                         <span class="flex items-center gap-2">
                             <svg class="size-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
