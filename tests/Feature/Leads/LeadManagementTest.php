@@ -22,7 +22,7 @@ test('create lead page is displayed', function () {
     $this->actingAs($user)
         ->get(route('leads.create'))
         ->assertOk()
-        ->assertSee('Novi lead');
+        ->assertSee(__('messages.leads.form_new_title'));
 });
 
 test('lead show page is displayed for another user in shared workspace', function () {

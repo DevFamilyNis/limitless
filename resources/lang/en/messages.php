@@ -28,7 +28,7 @@ return [
     ],
     'menu' => [
         'dashboard' => 'Početna strana',
-        'leads' => 'Leadovi',
+        'leads' => 'Klijenti',
         'clients' => 'Korisnici',
         'clients_projects' => 'Klijenti i projekti',
         'projects' => 'Projekti',
