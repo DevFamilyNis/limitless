@@ -14,6 +14,7 @@ function fakeInvoiceForPdfView(): object
     $clientCompany = new stdClass;
     $clientCompany->mb = '66579484';
     $clientCompany->pib = '113101530';
+    $clientCompany->bank_account = '205-1234567890123-45';
 
     $client = new stdClass;
     $client->display_name = 'QR Test Klijent';
@@ -112,6 +113,8 @@ test('invoice pdf blade renders qr image when qr data is present', function () {
 
     expect($html)->toContain('alt="IPS QR"');
     expect($html)->toContain('data:image/png;base64,TEST123');
+    expect($html)->toContain('Test adresa 1');
+    expect($html)->toContain('205-1234567890123-45');
 });
 
 test('invoice pdf blade does not render qr image when qr data is missing', function () {
