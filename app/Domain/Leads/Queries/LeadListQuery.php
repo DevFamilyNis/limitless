@@ -33,6 +33,6 @@ final class LeadListQuery
             })
             ->when($dto->statusKey !== null, fn (Builder $query) => $query->whereHas('status', fn (Builder $statusQuery) => $statusQuery->where('key', $dto->statusKey)))
             ->orderByDesc('id')
-            ->paginate(6);
+            ->paginate(10);
     }
 }
