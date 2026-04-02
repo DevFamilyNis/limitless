@@ -242,6 +242,64 @@ test('user can create invoice with multiple services and total is sum of items',
     ]);
 });
 
+test('user can create invoice when due date is before service period end', function () {
+    $user = User::factory()->create();
+    $companyTypeId = ClientType::query()->where('key', 'company')->value('id');
+    $draftStatusId = InvoiceStatus::query()->where('key', 'draft')->value('id');
+
+    $client = Client::query()->create([
+        'user_id' => $user->id,
+        'client_type_id' => $companyTypeId,
+        'display_name' => 'Advance Payment Client',
+        'is_active' => true,
+    ]);
+
+    $project = Project::query()->create([
+        'user_id' => $user->id,
+        'code' => 'ADV',
+        'name' => 'Advance Service',
+        'is_active' => true,
+    ]);
+
+    $issueDate = now()->startOfMonth()->toDateString();
+    $issueDateTo = now()->endOfMonth()->toDateString();
+    $dueDate = now()->startOfMonth()->addDays(5)->toDateString();
+
+    Livewire::actingAs($user)->test(Form::class)
+        ->set('clientId', (string) $client->id)
+        ->set('statusId', (string) $draftStatusId)
+        ->set('issueDate', $issueDate)
+        ->set('issueDateTo', $issueDateTo)
+        ->set('dueDate', $dueDate)
+        ->set('items', [
+            [
+                'id' => null,
+                'projectId' => (string) $project->id,
+                'clientProjectRateId' => '',
+                'description' => 'Advance Service',
+                'quantity' => '1.00',
+                'unitPrice' => '12000.00',
+                'amount' => '12000.00',
+            ],
+        ])
+        ->call('save')
+        ->assertHasNoErrors()
+        ->assertRedirect(route('invoices.index', absolute: false));
+
+    $invoice = Invoice::query()
+        ->where('client_id', $client->id)
+        ->latest('id')
+        ->first();
+
+    expect($invoice)->not->toBeNull();
+    expect($invoice->status_id)->toBe($draftStatusId);
+    expect($invoice->issue_date?->toDateString())->toBe($issueDate);
+    expect($invoice->issue_date_to?->toDateString())->toBe($issueDateTo);
+    expect($invoice->due_date?->toDateString())->toBe($dueDate);
+    expect((float) $invoice->subtotal)->toBe(12000.0);
+    expect((float) $invoice->total)->toBe(12000.0);
+});
+
 test('user can search invoices', function () {
     $user = User::factory()->create();
     $personTypeId = ClientType::query()->where('key', 'person')->value('id');
