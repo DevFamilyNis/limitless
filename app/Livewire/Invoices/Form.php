@@ -112,7 +112,7 @@ class Form extends Component
             'statusId' => ['required', 'exists:invoice_statuses,id'],
             'issueDate' => ['required', 'date'],
             'issueDateTo' => ['required', 'date', 'after_or_equal:issueDate'],
-            'dueDate' => ['nullable', 'date', 'after_or_equal:issueDateTo'],
+            'dueDate' => ['nullable', 'date', 'after_or_equal:issueDate'],
             'total' => ['required', 'numeric', 'min:0'],
             'note' => ['nullable', 'string'],
             'items' => ['required', 'array', 'min:1'],
