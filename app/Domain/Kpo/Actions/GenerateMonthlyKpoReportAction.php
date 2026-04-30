@@ -49,8 +49,9 @@ final class GenerateMonthlyKpoReportAction
 
         $servicesTotal = (float) $invoices->sum(fn (Invoice $invoice): float => (float) $invoice->total);
 
-        DB::transaction(function () use ($report, $periodFrom, $periodTo, $invoices, $servicesTotal): void {
+        DB::transaction(function () use ($dto, $report, $periodFrom, $periodTo, $invoices, $servicesTotal): void {
             $report->update([
+                'user_id' => $dto->userId,
                 'period_from' => $periodFrom->toDateString(),
                 'period_to' => $periodTo->toDateString(),
                 'products_total' => 0,
