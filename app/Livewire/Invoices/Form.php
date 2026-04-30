@@ -12,7 +12,7 @@ use App\Models\InvoiceStatus;
 use App\Models\Project;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Auth;
+// use Illuminate\Support\Facades\Auth; // TODO: odkomentarisati kada se ukloni hardkodovanje
 use Livewire\Component;
 
 class Form extends Component
@@ -216,7 +216,7 @@ class Form extends Component
 
         $invoice = app(UpsertInvoiceAction::class)->execute(
             UpsertInvoiceData::fromArray([
-                'user_id' => Auth::id(),
+                'user_id' => $this->getInvoiceUserId(),
                 'invoice_id' => $this->invoiceId,
                 'client_id' => (int) $validated['clientId'],
                 'status_id' => (int) $validated['statusId'],
@@ -240,6 +240,13 @@ class Form extends Component
             : __('messages.invoices.flash_updated'));
 
         $this->redirectRoute('invoices.index');
+    }
+
+    private function getInvoiceUserId(): int
+    {
+        // TODO: ukloniti hardkodovanje, vratiti na Auth::id()
+        // return (int) Auth::id();
+        return (int) \App\Models\User::where('name', 'Igor Mitrinovic')->value('id');
     }
 
     public function render(): View

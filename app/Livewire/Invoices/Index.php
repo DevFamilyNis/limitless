@@ -12,7 +12,7 @@ use App\Domain\Invoices\Exceptions\InvoicePdfGenerationException;
 use App\Models\Invoice;
 use App\Models\InvoiceStatus;
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\Auth;
+// use Illuminate\Support\Facades\Auth; // TODO: odkomentarisati kada se ukloni hardkodovanje
 use Livewire\Component;
 use Livewire\WithPagination;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -39,7 +39,7 @@ class Index extends Component
     {
         app(MarkInvoicePaidAction::class)->execute(
             MarkInvoicePaidData::fromArray([
-                'user_id' => Auth::id(),
+                'user_id' => $this->getInvoiceUserId(),
                 'invoice_id' => $invoiceId,
             ])
         );
@@ -51,7 +51,7 @@ class Index extends Component
     {
         app(DeleteInvoiceAction::class)->execute(
             DeleteInvoiceData::fromArray([
-                'user_id' => Auth::id(),
+                'user_id' => $this->getInvoiceUserId(),
                 'invoice_id' => $invoiceId,
             ])
         );
@@ -64,7 +64,7 @@ class Index extends Component
         try {
             $result = app(GenerateInvoicePdfAction::class)->execute(
                 GenerateInvoicePdfData::fromArray([
-                    'user_id' => Auth::id(),
+                    'user_id' => $this->getInvoiceUserId(),
                     'invoice_id' => $invoiceId,
                 ])
             );
@@ -77,6 +77,13 @@ class Index extends Component
         return response()
             ->download($result['path'], $result['filename'])
             ->deleteFileAfterSend(true);
+    }
+
+    private function getInvoiceUserId(): int
+    {
+        // TODO: ukloniti hardkodovanje, vratiti na Auth::id()
+        // return (int) Auth::id();
+        return (int) \App\Models\User::where('name', 'Igor Mitrinovic')->value('id');
     }
 
     public function render(): View
