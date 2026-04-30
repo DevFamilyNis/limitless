@@ -418,7 +418,7 @@ test('user can update invoice while keeping generated number fields', function (
 });
 
 test('user can mark invoice as paid from list', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->create(['name' => 'Igor Mitrinovic']);
     $personTypeId = ClientType::query()->where('key', 'person')->value('id');
     $draftStatusId = InvoiceStatus::query()->where('key', 'draft')->value('id');
     $paidStatusId = InvoiceStatus::query()->where('key', 'paid')->value('id');

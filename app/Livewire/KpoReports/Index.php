@@ -12,7 +12,7 @@ use App\Domain\Kpo\Exceptions\LockedKpoReportException;
 use App\Models\KpoReport;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Auth;
+// use Illuminate\Support\Facades\Auth; // TODO: odkomentarisati kada se ukloni hardkodovanje
 use Livewire\Component;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
@@ -30,7 +30,7 @@ class Index extends Component
         try {
             $report = app(GenerateMonthlyKpoReportAction::class)->execute(
                 GenerateMonthlyKpoReportData::fromArray([
-                    'user_id' => Auth::id(),
+                    'user_id' => $this->getKpoUserId(),
                     'year' => $this->year,
                     'month' => $month,
                 ])
@@ -38,7 +38,7 @@ class Index extends Component
 
             app(GenerateKpoReportPdfAction::class)->execute(
                 GenerateKpoReportPdfData::fromArray([
-                    'user_id' => Auth::id(),
+                    'user_id' => $this->getKpoUserId(),
                     'kpo_report_id' => $report->id,
                 ])
             );
@@ -53,7 +53,7 @@ class Index extends Component
     {
         app(LockKpoReportAction::class)->execute(
             LockKpoReportData::fromArray([
-                'user_id' => Auth::id(),
+                'user_id' => $this->getKpoUserId(),
                 'kpo_report_id' => $reportId,
             ])
         );
@@ -71,7 +71,7 @@ class Index extends Component
         if (! $report) {
             $report = app(GenerateMonthlyKpoReportAction::class)->execute(
                 GenerateMonthlyKpoReportData::fromArray([
-                    'user_id' => Auth::id(),
+                    'user_id' => $this->getKpoUserId(),
                     'year' => $this->year,
                     'month' => $month,
                 ])
@@ -83,13 +83,20 @@ class Index extends Component
         if (! $media) {
             $media = app(GenerateKpoReportPdfAction::class)->execute(
                 GenerateKpoReportPdfData::fromArray([
-                    'user_id' => Auth::id(),
+                    'user_id' => $this->getKpoUserId(),
                     'kpo_report_id' => $report->id,
                 ])
             );
         }
 
         return response()->download($media->getPath(), $media->file_name);
+    }
+
+    private function getKpoUserId(): int
+    {
+        // TODO: ukloniti hardkodovanje, vratiti na Auth::id()
+        // return (int) Auth::id();
+        return (int) \App\Models\User::where('name', 'Igor Mitrinovic')->value('id');
     }
 
     public function render(): View

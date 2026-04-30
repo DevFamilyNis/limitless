@@ -93,6 +93,28 @@ test('user can search leads', function () {
         ->assertDontSee('Beta Systems');
 });
 
+test('leads pagination shows 10 leads per page', function () {
+    $user = User::factory()->create();
+    $statusId = LeadStatus::query()->where('key', 'new')->value('id');
+
+    foreach (range(1, 11) as $number) {
+        Lead::query()->create([
+            'lead_status_id' => $statusId,
+            'company_name' => sprintf('Pagination Lead %02d', $number),
+            'email' => sprintf('pagination-%02d@example.com', $number),
+            'phone' => sprintf('+3816000%04d', $number),
+        ]);
+    }
+
+    Livewire::actingAs($user)->test(Index::class)
+        ->assertSee('Pagination Lead 11')
+        ->assertSee('Pagination Lead 02')
+        ->assertDontSee('Pagination Lead 01')
+        ->call('gotoPage', 2)
+        ->assertSee('Pagination Lead 01')
+        ->assertDontSee('Pagination Lead 02');
+});
+
 test('user can update lead', function () {
     $user = User::factory()->create();
     $newStatusId = LeadStatus::query()->where('key', 'new')->value('id');
