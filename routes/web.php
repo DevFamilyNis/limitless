@@ -1,9 +1,8 @@
 <?php
 
-use App\Domain\Invoices\Services\IpsQrPayloadBuilder;
 use App\Http\Controllers\Auth\SendMagicLoginLinkController;
 use App\Http\Controllers\MagicLoginController;
-use App\Infrastructure\Qr\QrCodeGenerator;
+use App\Livewire\Admin\Users\Index as AdminUsersIndex;
 use App\Livewire\Auth\MagicLoginRequest;
 use App\Livewire\Categories\Form as CategoryForm;
 use App\Livewire\Categories\Index as CategoryIndex;
@@ -37,19 +36,6 @@ use App\Livewire\TaxYears\Form as TaxYearForm;
 use App\Livewire\TaxYears\Index as TaxYearIndex;
 use App\Livewire\Transactions\Index as TransactionIndex;
 use Illuminate\Support\Facades\Route;
-
-Route::get('/test-qr', function () {
-    $payload = app(IpsQrPayloadBuilder::class)->build(
-        payeeName: 'DEV FAMILY PR',
-        recipientAccount: '160-0000000000000-00',
-        amountRsd: '1200.00',
-        purpose: 'Placanje po fakturi FIZ-000123/2026',
-    );
-
-    $qr = app(QrCodeGenerator::class)->generate($payload);
-
-    return '<pre>'.htmlspecialchars($payload)."</pre><img src='{$qr}' style='width:180px;height:180px'>";
-});
 
 Route::redirect('/', '/magic-login')->name('home');
 Route::redirect('/login', '/magic-login')->name('login');
@@ -111,6 +97,11 @@ Route::middleware('auth')->group(function () {
     Route::livewire('settings/issue-categories', IssueCategoryIndex::class)->name('settings.issue-categories.index');
     Route::livewire('settings/issue-categories/create', IssueCategoryForm::class)->name('settings.issue-categories.create');
     Route::livewire('settings/issue-categories/{issueCategory}/edit', IssueCategoryForm::class)->name('settings.issue-categories.edit');
+
+    // Admin panel — requires manage-users permission (super-admin bypasses via Gate::before)
+    Route::middleware('can:manage-users')->group(function () {
+        Route::livewire('admin/users', AdminUsersIndex::class)->name('admin.users.index');
+    });
 });
 
 require __DIR__.'/settings.php';

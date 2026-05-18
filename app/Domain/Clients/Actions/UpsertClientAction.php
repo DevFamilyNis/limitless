@@ -7,14 +7,22 @@ namespace App\Domain\Clients\Actions;
 use App\Domain\Clients\DTO\UpsertClientData;
 use App\Models\Client;
 use App\Models\ClientType;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 final class UpsertClientAction
 {
     public function execute(UpsertClientData $dto): Client
     {
+        return DB::transaction(function () use ($dto): Client {
+            return $this->upsert($dto);
+        });
+    }
+
+    private function upsert(UpsertClientData $dto): Client
+    {
         $client = $dto->clientId
-            ? Client::query()->findOrFail($dto->clientId)
+            ? Client::query()->lockForUpdate()->findOrFail($dto->clientId)
             : new Client;
 
         $client->fill([

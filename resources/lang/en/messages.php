@@ -469,4 +469,19 @@ return [
             'flash_deleted' => 'Kategorija je obrisana.',
         ],
     ],
+    'errors' => [
+        'official_signer_not_configured' => 'Zvanični potpisnik dokumenata nije podešen. Kontaktirajte administratora.',
+    ],
+    'admin' => [
+        'users_title' => 'Korisnici',
+        'users_subtitle' => 'Upravljanje korisnicima i njihovim rolama.',
+        'search_placeholder' => 'Pretraži po imenu ili email-u...',
+        'col_name' => 'Ime',
+        'col_email' => 'Email',
+        'col_roles' => 'Role',
+        'col_actions' => 'Akcije',
+        'select_role' => '— dodeli rolu —',
+        'flash_role_assigned' => 'Rola je dodeljena.',
+        'flash_role_revoked' => 'Rola je uklonjena.',
+    ],
 ];

@@ -2,9 +2,11 @@
 
 namespace App\Providers;
 
+use App\Enums\RoleKey;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 
@@ -24,11 +26,20 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->configureDefaults();
+        $this->configureSuperAdminGate();
     }
 
     /**
      * Configure default behaviors for production-ready applications.
      */
+    protected function configureSuperAdminGate(): void
+    {
+        // super-admin bypasses all permission checks
+        Gate::before(function ($user, $ability) {
+            return $user->hasRole(RoleKey::SuperAdmin->value) ? true : null;
+        });
+    }
+
     protected function configureDefaults(): void
     {
         Date::use(CarbonImmutable::class);
