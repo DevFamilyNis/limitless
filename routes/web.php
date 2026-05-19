@@ -88,15 +88,18 @@ Route::middleware('auth')->group(function () {
     Route::livewire('issues/create', IssueForm::class)->name('issues.create');
     Route::livewire('issues/{issue}', IssueShow::class)->name('issues.show');
     Route::livewire('issues/{issue}/edit', IssueForm::class)->name('issues.edit');
-    Route::livewire('settings/issue-statuses', IssueStatusIndex::class)->name('settings.issue-statuses.index');
-    Route::livewire('settings/issue-statuses/create', IssueStatusForm::class)->name('settings.issue-statuses.create');
-    Route::livewire('settings/issue-statuses/{issueStatus}/edit', IssueStatusForm::class)->name('settings.issue-statuses.edit');
-    Route::livewire('settings/issue-priorities', IssuePriorityIndex::class)->name('settings.issue-priorities.index');
-    Route::livewire('settings/issue-priorities/create', IssuePriorityForm::class)->name('settings.issue-priorities.create');
-    Route::livewire('settings/issue-priorities/{issuePriority}/edit', IssuePriorityForm::class)->name('settings.issue-priorities.edit');
-    Route::livewire('settings/issue-categories', IssueCategoryIndex::class)->name('settings.issue-categories.index');
-    Route::livewire('settings/issue-categories/create', IssueCategoryForm::class)->name('settings.issue-categories.create');
-    Route::livewire('settings/issue-categories/{issueCategory}/edit', IssueCategoryForm::class)->name('settings.issue-categories.edit');
+    // System configuration — requires manage-settings permission (super-admin bypasses via Gate::before)
+    Route::middleware('can:manage-settings')->group(function () {
+        Route::livewire('settings/issue-statuses', IssueStatusIndex::class)->name('settings.issue-statuses.index');
+        Route::livewire('settings/issue-statuses/create', IssueStatusForm::class)->name('settings.issue-statuses.create');
+        Route::livewire('settings/issue-statuses/{issueStatus}/edit', IssueStatusForm::class)->name('settings.issue-statuses.edit');
+        Route::livewire('settings/issue-priorities', IssuePriorityIndex::class)->name('settings.issue-priorities.index');
+        Route::livewire('settings/issue-priorities/create', IssuePriorityForm::class)->name('settings.issue-priorities.create');
+        Route::livewire('settings/issue-priorities/{issuePriority}/edit', IssuePriorityForm::class)->name('settings.issue-priorities.edit');
+        Route::livewire('settings/issue-categories', IssueCategoryIndex::class)->name('settings.issue-categories.index');
+        Route::livewire('settings/issue-categories/create', IssueCategoryForm::class)->name('settings.issue-categories.create');
+        Route::livewire('settings/issue-categories/{issueCategory}/edit', IssueCategoryForm::class)->name('settings.issue-categories.edit');
+    });
 
     // Admin panel — requires manage-users permission (super-admin bypasses via Gate::before)
     Route::middleware('can:manage-users')->group(function () {
