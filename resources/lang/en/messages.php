@@ -483,5 +483,6 @@ return [
         'select_role' => '— dodeli rolu —',
         'flash_role_assigned' => 'Rola je dodeljena.',
         'flash_role_revoked' => 'Rola je uklonjena.',
+        'flash_last_super_admin_protected' => 'Nije moguće ukloniti super-admin rolu poslednjem super-admin korisniku.',
     ],
 ];

@@ -25,6 +25,22 @@ class Index extends Component
     public function assignRole(int $userId, string $roleName): void
     {
         $user = User::query()->findOrFail($userId);
+
+        $superAdminValue = RoleKey::SuperAdmin->value;
+
+        if ($user->hasRole($superAdminValue) && $roleName !== $superAdminValue) {
+            $otherSuperAdminCount = User::query()
+                ->whereHas('roles', fn ($q) => $q->where('name', $superAdminValue))
+                ->where('id', '!=', $userId)
+                ->count();
+
+            if ($otherSuperAdminCount === 0) {
+                session()->flash('error', __('messages.admin.flash_last_super_admin_protected'));
+
+                return;
+            }
+        }
+
         $user->syncRoles([$roleName]);
 
         session()->flash('status', __('messages.admin.flash_role_assigned'));
@@ -33,6 +49,22 @@ class Index extends Component
     public function revokeRole(int $userId, string $roleName): void
     {
         $user = User::query()->findOrFail($userId);
+
+        $superAdminValue = RoleKey::SuperAdmin->value;
+
+        if ($roleName === $superAdminValue) {
+            $otherSuperAdminCount = User::query()
+                ->whereHas('roles', fn ($q) => $q->where('name', $superAdminValue))
+                ->where('id', '!=', $userId)
+                ->count();
+
+            if ($otherSuperAdminCount === 0) {
+                session()->flash('error', __('messages.admin.flash_last_super_admin_protected'));
+
+                return;
+            }
+        }
+
         $user->removeRole($roleName);
 
         session()->flash('status', __('messages.admin.flash_role_revoked'));
