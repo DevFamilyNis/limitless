@@ -4,6 +4,7 @@ namespace App\Livewire\Settings\IssueCategories;
 
 use App\Domain\Settings\Issues\Actions\DeleteIssueCategoryAction;
 use App\Domain\Settings\Issues\DTO\DeleteIssueCategoryData;
+use App\Enums\PermissionKey;
 use App\Models\IssueCategory;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
@@ -12,6 +13,8 @@ class Index extends Component
 {
     public function deleteCategory(int $categoryId): void
     {
+        $this->authorize(PermissionKey::ManageSettings->value);
+
         app(DeleteIssueCategoryAction::class)->execute(
             DeleteIssueCategoryData::fromArray([
                 'category_id' => $categoryId,

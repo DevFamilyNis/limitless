@@ -4,6 +4,7 @@ namespace App\Livewire\Settings\IssueStatuses;
 
 use App\Domain\Settings\Issues\Actions\DeleteIssueStatusAction;
 use App\Domain\Settings\Issues\DTO\DeleteIssueStatusData;
+use App\Enums\PermissionKey;
 use App\Models\IssueStatus;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
@@ -12,6 +13,8 @@ class Index extends Component
 {
     public function deleteStatus(int $statusId): void
     {
+        $this->authorize(PermissionKey::ManageSettings->value);
+
         app(DeleteIssueStatusAction::class)->execute(
             DeleteIssueStatusData::fromArray([
                 'status_id' => $statusId,
