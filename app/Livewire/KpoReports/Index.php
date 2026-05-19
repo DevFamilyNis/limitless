@@ -9,6 +9,7 @@ use App\Domain\Kpo\DTO\GenerateKpoReportPdfData;
 use App\Domain\Kpo\DTO\GenerateMonthlyKpoReportData;
 use App\Domain\Kpo\DTO\LockKpoReportData;
 use App\Domain\Kpo\Exceptions\LockedKpoReportException;
+use App\Enums\PermissionKey;
 use App\Models\AppSetting;
 use App\Models\KpoReport;
 use Illuminate\Contracts\View\View;
@@ -27,6 +28,8 @@ class Index extends Component
 
     public function generateReport(int $month): void
     {
+        $this->authorize(PermissionKey::ManageKpo->value);
+
         try {
             $report = app(GenerateMonthlyKpoReportAction::class)->execute(
                 GenerateMonthlyKpoReportData::fromArray([
@@ -51,6 +54,8 @@ class Index extends Component
 
     public function lockReport(int $reportId): void
     {
+        $this->authorize(PermissionKey::ManageKpo->value);
+
         app(LockKpoReportAction::class)->execute(
             LockKpoReportData::fromArray([
                 'user_id' => $this->getDocumentSignerUserId(),
