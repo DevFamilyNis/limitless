@@ -56,7 +56,11 @@ test('invoices are visible to another user in shared workspace', function () {
 });
 
 test('create invoice page is displayed with previewed invoice number fields', function () {
+    app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+    (new \Database\Seeders\RolesAndPermissionsSeeder)->run();
+
     $user = User::factory()->create();
+    $user->givePermissionTo('manage-invoices');
 
     $this->actingAs($user)
         ->get(route('invoices.create'))

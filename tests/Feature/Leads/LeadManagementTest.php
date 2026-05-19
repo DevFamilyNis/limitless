@@ -17,7 +17,11 @@ test('leads page is displayed', function () {
 });
 
 test('create lead page is displayed', function () {
+    app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+    (new \Database\Seeders\RolesAndPermissionsSeeder)->run();
+
     $user = User::factory()->create();
+    $user->givePermissionTo('manage-leads');
 
     $this->actingAs($user)
         ->get(route('leads.create'))

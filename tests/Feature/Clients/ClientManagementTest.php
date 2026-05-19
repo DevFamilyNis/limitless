@@ -18,7 +18,11 @@ test('clients page is displayed', function () {
 });
 
 test('create client page is displayed', function () {
+    app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+    (new \Database\Seeders\RolesAndPermissionsSeeder)->run();
+
     $user = User::factory()->create();
+    $user->givePermissionTo('manage-clients');
 
     $this->actingAs($user)
         ->get(route('clients.create'))

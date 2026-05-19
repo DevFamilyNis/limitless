@@ -16,7 +16,11 @@ test('categories page is displayed', function () {
 });
 
 test('create category page is displayed', function () {
+    app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+    (new \Database\Seeders\RolesAndPermissionsSeeder)->run();
+
     $user = User::factory()->create();
+    $user->givePermissionTo('manage-categories');
 
     $this->actingAs($user)
         ->get(route('categories.create'))

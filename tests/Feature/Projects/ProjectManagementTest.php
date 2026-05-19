@@ -15,7 +15,11 @@ test('projects page is displayed', function () {
 });
 
 test('create project page is displayed', function () {
+    app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+    (new \Database\Seeders\RolesAndPermissionsSeeder)->run();
+
     $user = User::factory()->create();
+    $user->givePermissionTo('manage-projects');
 
     $this->actingAs($user)
         ->get(route('projects.create'))

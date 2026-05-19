@@ -19,7 +19,11 @@ test('client project rates page is displayed', function () {
 });
 
 test('create client project rate page is displayed', function () {
+    app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+    (new \Database\Seeders\RolesAndPermissionsSeeder)->run();
+
     $user = User::factory()->create();
+    $user->givePermissionTo('manage-clients');
 
     $this->actingAs($user)
         ->get(route('client-project-rates.create'))

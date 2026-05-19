@@ -15,7 +15,11 @@ test('tax years page is displayed', function () {
 });
 
 test('create tax year page is displayed', function () {
+    app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+    (new \Database\Seeders\RolesAndPermissionsSeeder)->run();
+
     $user = User::factory()->create();
+    $user->givePermissionTo('manage-tax-years');
 
     $this->actingAs($user)
         ->get(route('tax-years.create'))
