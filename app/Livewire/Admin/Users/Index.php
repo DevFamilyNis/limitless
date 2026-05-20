@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Livewire\Admin\Users;
 
+use App\Enums\PermissionKey;
 use App\Enums\RoleKey;
 use App\Models\User;
 use Illuminate\Contracts\View\View;
@@ -24,6 +25,8 @@ class Index extends Component
 
     public function assignRole(int $userId, string $roleName): void
     {
+        $this->authorize(PermissionKey::ManageUsers->value);
+
         $user = User::query()->findOrFail($userId);
 
         $superAdminValue = RoleKey::SuperAdmin->value;
@@ -48,6 +51,8 @@ class Index extends Component
 
     public function revokeRole(int $userId, string $roleName): void
     {
+        $this->authorize(PermissionKey::ManageUsers->value);
+
         $user = User::query()->findOrFail($userId);
 
         $superAdminValue = RoleKey::SuperAdmin->value;
