@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\SendMagicLoginLinkController;
 use App\Http\Controllers\MagicLoginController;
+use App\Livewire\Admin\Roles\Index as AdminRolesIndex;
 use App\Livewire\Admin\Users\Index as AdminUsersIndex;
 use App\Livewire\Auth\MagicLoginRequest;
 use App\Livewire\Categories\Form as CategoryForm;
@@ -104,6 +105,11 @@ Route::middleware('auth')->group(function () {
     // Admin panel — requires manage-users permission (super-admin bypasses via Gate::before)
     Route::middleware('can:manage-users')->group(function () {
         Route::livewire('admin/users', AdminUsersIndex::class)->name('admin.users.index');
+    });
+
+    // Role & permission management — requires manage-roles permission
+    Route::middleware('can:manage-roles')->group(function () {
+        Route::livewire('admin/roles', AdminRolesIndex::class)->name('admin.roles.index');
     });
 });
 
