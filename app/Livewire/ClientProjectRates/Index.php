@@ -6,6 +6,7 @@ use App\Domain\ClientProjectRates\Actions\DeleteClientProjectRateAction;
 use App\Domain\ClientProjectRates\Actions\ToggleClientProjectRateAction;
 use App\Domain\ClientProjectRates\DTO\DeleteClientProjectRateData;
 use App\Domain\ClientProjectRates\DTO\ToggleClientProjectRateData;
+use App\Enums\PermissionKey;
 use App\Models\ClientProjectRate;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
@@ -32,6 +33,8 @@ class Index extends Component
 
     public function toggleActive(int $rateId): void
     {
+        $this->authorize(PermissionKey::ManageClients->value);
+
         app(ToggleClientProjectRateAction::class)->execute(
             ToggleClientProjectRateData::fromArray([
                 'user_id' => Auth::id(),
@@ -44,6 +47,8 @@ class Index extends Component
 
     public function deleteRate(int $rateId): void
     {
+        $this->authorize(PermissionKey::ManageClients->value);
+
         app(DeleteClientProjectRateAction::class)->execute(
             DeleteClientProjectRateData::fromArray([
                 'user_id' => Auth::id(),

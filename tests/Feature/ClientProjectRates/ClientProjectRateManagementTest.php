@@ -32,7 +32,11 @@ test('create client project rate page is displayed', function () {
 });
 
 test('user can create client project rate', function () {
+    app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+    (new \Database\Seeders\RolesAndPermissionsSeeder)->run();
+
     $user = User::factory()->create();
+    $user->givePermissionTo('manage-clients');
     $companyTypeId = ClientType::query()->where('key', 'company')->value('id');
     $monthlyId = BillingPeriod::query()->where('key', 'monthly')->value('id');
     $projectCode = 'EMPAY-'.fake()->unique()->numberBetween(1000, 9999);
@@ -122,7 +126,11 @@ test('user can search client project rates', function () {
 });
 
 test('user can update client project rate', function () {
+    app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+    (new \Database\Seeders\RolesAndPermissionsSeeder)->run();
+
     $user = User::factory()->create();
+    $user->givePermissionTo('manage-clients');
     $companyTypeId = ClientType::query()->where('key', 'company')->value('id');
     $monthlyId = BillingPeriod::query()->where('key', 'monthly')->value('id');
     $yearlyId = BillingPeriod::query()->where('key', 'yearly')->value('id');
@@ -165,7 +173,11 @@ test('user can update client project rate', function () {
 });
 
 test('user can deactivate and activate client project rate', function () {
+    app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+    (new \Database\Seeders\RolesAndPermissionsSeeder)->run();
+
     $user = User::factory()->create();
+    $user->givePermissionTo('manage-clients');
     $companyTypeId = ClientType::query()->where('key', 'company')->value('id');
     $monthlyId = BillingPeriod::query()->where('key', 'monthly')->value('id');
     $projectCode = 'EMPAY-'.fake()->unique()->numberBetween(1000, 9999);
@@ -211,7 +223,11 @@ test('user can deactivate and activate client project rate', function () {
 });
 
 test('user can delete client project rate', function () {
+    app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+    (new \Database\Seeders\RolesAndPermissionsSeeder)->run();
+
     $user = User::factory()->create();
+    $user->givePermissionTo('manage-clients');
     $companyTypeId = ClientType::query()->where('key', 'company')->value('id');
     $monthlyId = BillingPeriod::query()->where('key', 'monthly')->value('id');
     $projectCode = 'EMPAY-'.fake()->unique()->numberBetween(1000, 9999);
