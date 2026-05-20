@@ -17,7 +17,11 @@ test('paid expenses page is displayed', function () {
 });
 
 test('user can create paid expense', function () {
+    app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+    (new \Database\Seeders\RolesAndPermissionsSeeder)->run();
+
     $user = User::factory()->create();
+    $user->givePermissionTo('manage-transactions');
     $expenseTypeId = CategoryType::query()->where('key', 'expense')->value('id');
 
     $expenseCategory = Category::query()->create([
@@ -48,7 +52,11 @@ test('user can create paid expense', function () {
 });
 
 test('user can update paid expense', function () {
+    app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+    (new \Database\Seeders\RolesAndPermissionsSeeder)->run();
+
     $user = User::factory()->create();
+    $user->givePermissionTo('manage-transactions');
     $expenseTypeId = CategoryType::query()->where('key', 'expense')->value('id');
 
     $categoryA = Category::query()->create([
@@ -91,7 +99,11 @@ test('user can update paid expense', function () {
 });
 
 test('user can delete paid expense', function () {
+    app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+    (new \Database\Seeders\RolesAndPermissionsSeeder)->run();
+
     $user = User::factory()->create();
+    $user->givePermissionTo('manage-transactions');
     $expenseTypeId = CategoryType::query()->where('key', 'expense')->value('id');
 
     $expenseCategory = Category::query()->create([

@@ -16,7 +16,11 @@ test('monthly expenses page is displayed', function () {
 });
 
 test('user can create monthly expense', function () {
+    app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+    (new \Database\Seeders\RolesAndPermissionsSeeder)->run();
+
     $user = User::factory()->create();
+    $user->givePermissionTo('manage-transactions');
     $monthlyId = BillingPeriod::query()->where('key', 'monthly')->value('id');
 
     Livewire::actingAs($user)->test(Index::class)
@@ -36,7 +40,11 @@ test('user can create monthly expense', function () {
 });
 
 test('user can update monthly expense', function () {
+    app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+    (new \Database\Seeders\RolesAndPermissionsSeeder)->run();
+
     $user = User::factory()->create();
+    $user->givePermissionTo('manage-transactions');
     $monthlyId = BillingPeriod::query()->where('key', 'monthly')->value('id');
 
     $expense = MonthlyExpenseItem::query()->create([
@@ -62,7 +70,11 @@ test('user can update monthly expense', function () {
 });
 
 test('user can delete monthly expense', function () {
+    app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+    (new \Database\Seeders\RolesAndPermissionsSeeder)->run();
+
     $user = User::factory()->create();
+    $user->givePermissionTo('manage-transactions');
     $monthlyId = BillingPeriod::query()->where('key', 'monthly')->value('id');
 
     $expense = MonthlyExpenseItem::query()->create([
