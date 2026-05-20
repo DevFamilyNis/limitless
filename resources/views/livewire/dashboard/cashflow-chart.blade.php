@@ -63,7 +63,7 @@
     @if ($availableYears === [])
         <div class="flex flex-col items-center justify-center rounded-lg border border-dashed border-zinc-300 py-16 text-center dark:border-zinc-700">
             <svg class="mb-3 size-10 text-zinc-300 dark:text-zinc-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18 9 11.25l4.306 4.306a11.95 11.95 0 0 1 5.814-5.518l2.74-1.22m0 0-5.94-2.281m5.94 2.28-2.28 5.941" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 3v1.5M3 19.5V21M21 3v1.5M21 19.5V21M8.25 6.75h7.5M7.5 21h9a2.25 2.25 0 0 0 2.25-2.25V5.25A2.25 2.25 0 0 0 16.5 3h-9A2.25 2.25 0 0 0 5.25 5.25v13.5A2.25 2.25 0 0 0 7.5 21ZM8.25 10.5h7.5M8.25 14.25h4.5" />
             </svg>
             <p class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Nema podataka</p>
             <p class="mt-1 text-xs text-zinc-400 dark:text-zinc-500">Evidentirajte prihode i rashode da biste videli grafikon.</p>

@@ -5,9 +5,9 @@
     $months = $data['months'];
 
     $signalConfig = [
-        'safe'    => ['color' => 'emerald', 'icon' => '✓', 'bg' => 'bg-emerald-50 dark:bg-emerald-900/20', 'border' => 'border-emerald-200 dark:border-emerald-800', 'text' => 'text-emerald-700 dark:text-emerald-300'],
-        'caution' => ['color' => 'amber',   'icon' => '⚠', 'bg' => 'bg-amber-50 dark:bg-amber-900/20',     'border' => 'border-amber-200 dark:border-amber-800',     'text' => 'text-amber-700 dark:text-amber-300'],
-        'unsafe'  => ['color' => 'red',     'icon' => '✕', 'bg' => 'bg-red-50 dark:bg-red-900/20',         'border' => 'border-red-200 dark:border-red-800',         'text' => 'text-red-700 dark:text-red-300'],
+        'safe'    => ['color' => 'emerald', 'icon' => 'check-circle',        'bg' => 'bg-emerald-50 dark:bg-emerald-900/20', 'border' => 'border-emerald-200 dark:border-emerald-800', 'text' => 'text-emerald-700 dark:text-emerald-300'],
+        'caution' => ['color' => 'amber',   'icon' => 'exclamation-triangle', 'bg' => 'bg-amber-50 dark:bg-amber-900/20',     'border' => 'border-amber-200 dark:border-amber-800',     'text' => 'text-amber-700 dark:text-amber-300'],
+        'unsafe'  => ['color' => 'red',     'icon' => 'x-circle',            'bg' => 'bg-red-50 dark:bg-red-900/20',         'border' => 'border-red-200 dark:border-red-800',         'text' => 'text-red-700 dark:text-red-300'],
     ];
     $sc = $signalConfig[$signal['status']];
 @endphp
@@ -36,8 +36,8 @@
     {{-- Signal card --}}
     <div class="rounded-xl border p-6 {{ $sc['bg'] }} {{ $sc['border'] }}">
         <div class="flex items-start gap-4">
-            <div class="flex size-10 items-center justify-center rounded-full text-xl font-bold {{ $sc['text'] }} bg-white dark:bg-zinc-900">
-                {{ $sc['icon'] }}
+            <div class="flex size-10 shrink-0 items-center justify-center rounded-full bg-white dark:bg-zinc-900">
+                <flux:icon :icon="$sc['icon']" class="size-6 {{ $sc['text'] }}" variant="outline" />
             </div>
             <div class="flex-1">
                 <h2 class="text-lg font-semibold {{ $sc['text'] }}">{{ $signal['label'] }}</h2>

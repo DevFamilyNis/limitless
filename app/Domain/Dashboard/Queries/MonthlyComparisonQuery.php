@@ -151,7 +151,8 @@ final class MonthlyComparisonQuery
 
     private function pct(float $current, float $average): ?float
     {
-        if ($average == 0) {
+        // No comparison makes sense when either side is zero
+        if ($average == 0 || $current == 0) {
             return null;
         }
 
