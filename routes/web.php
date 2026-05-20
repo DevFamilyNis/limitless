@@ -4,6 +4,8 @@ use App\Http\Controllers\Auth\SendMagicLoginLinkController;
 use App\Http\Controllers\MagicLoginController;
 use App\Livewire\Admin\Roles\Index as AdminRolesIndex;
 use App\Livewire\Admin\Users\Index as AdminUsersIndex;
+use App\Livewire\Dashboard\CashflowChart;
+use App\Livewire\Dashboard\InvestmentSignalPage;
 use App\Livewire\Auth\MagicLoginRequest;
 use App\Livewire\Categories\Form as CategoryForm;
 use App\Livewire\Categories\Index as CategoryIndex;
@@ -54,6 +56,14 @@ Route::middleware('guest')->group(function () {
 Route::livewire('dashboard', DashboardPage::class)
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
+
+Route::livewire('dashboard/cashflow', CashflowChart::class)
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard.cashflow');
+
+Route::livewire('dashboard/investment-signal', InvestmentSignalPage::class)
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard.investment-signal');
 
 Route::middleware('auth')->group(function () {
     Route::livewire('leads', LeadIndex::class)->name('leads.index');
