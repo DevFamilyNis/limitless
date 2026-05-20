@@ -63,7 +63,11 @@ test('project show page is displayed for another user in shared workspace', func
 });
 
 test('user can create project', function () {
+    app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+    (new \Database\Seeders\RolesAndPermissionsSeeder)->run();
+
     $user = User::factory()->create();
+    $user->givePermissionTo('manage-projects');
     $projectCode = 'EMPAY-'.fake()->unique()->numberBetween(1000, 9999);
 
     Livewire::actingAs($user)->test(Form::class)
@@ -109,7 +113,11 @@ test('user can search projects', function () {
 });
 
 test('user can update project', function () {
+    app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+    (new \Database\Seeders\RolesAndPermissionsSeeder)->run();
+
     $user = User::factory()->create();
+    $user->givePermissionTo('manage-projects');
     $projectCode = 'EMPAY-'.fake()->unique()->numberBetween(1000, 9999);
 
     $project = Project::query()->create([
@@ -135,7 +143,11 @@ test('user can update project', function () {
 });
 
 test('user can deactivate and activate project', function () {
+    app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+    (new \Database\Seeders\RolesAndPermissionsSeeder)->run();
+
     $user = User::factory()->create();
+    $user->givePermissionTo('manage-projects');
     $projectCode = 'EMPAY-'.fake()->unique()->numberBetween(1000, 9999);
 
     $project = Project::query()->create([
@@ -163,7 +175,11 @@ test('user can deactivate and activate project', function () {
 });
 
 test('user can delete project', function () {
+    app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+    (new \Database\Seeders\RolesAndPermissionsSeeder)->run();
+
     $user = User::factory()->create();
+    $user->givePermissionTo('manage-projects');
     $projectCode = 'EMPAY-'.fake()->unique()->numberBetween(1000, 9999);
 
     $project = Project::query()->create([

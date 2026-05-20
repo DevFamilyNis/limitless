@@ -4,6 +4,7 @@ namespace App\Livewire\Projects;
 
 use App\Domain\Projects\Actions\UpsertProjectAction;
 use App\Domain\Projects\DTO\UpsertProjectData;
+use App\Enums\PermissionKey;
 use App\Models\Project;
 use App\Support\ProjectColorPalette;
 use Illuminate\Contracts\View\View;
@@ -54,6 +55,8 @@ class Form extends Component
 
     public function save(): void
     {
+        $this->authorize(PermissionKey::ManageProjects->value);
+
         $validated = $this->validate();
 
         $project = app(UpsertProjectAction::class)->execute(
