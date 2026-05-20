@@ -54,7 +54,11 @@ test('lead show page is displayed for another user in shared workspace', functio
 });
 
 test('user can create lead', function () {
+    app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+    (new \Database\Seeders\RolesAndPermissionsSeeder)->run();
+
     $user = User::factory()->create();
+    $user->givePermissionTo('manage-leads');
     $interestedStatusId = LeadStatus::query()->where('key', 'interested')->value('id');
 
     Livewire::actingAs($user)->test(Form::class)
@@ -120,7 +124,11 @@ test('leads pagination shows 10 leads per page', function () {
 });
 
 test('user can update lead', function () {
+    app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+    (new \Database\Seeders\RolesAndPermissionsSeeder)->run();
+
     $user = User::factory()->create();
+    $user->givePermissionTo('manage-leads');
     $newStatusId = LeadStatus::query()->where('key', 'new')->value('id');
     $respondedStatusId = LeadStatus::query()->where('key', 'responded')->value('id');
 
@@ -147,7 +155,11 @@ test('user can update lead', function () {
 });
 
 test('user can delete lead', function () {
+    app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+    (new \Database\Seeders\RolesAndPermissionsSeeder)->run();
+
     $user = User::factory()->create();
+    $user->givePermissionTo('manage-leads');
 
     $lead = Lead::query()->create([
         'lead_status_id' => LeadStatus::query()->where('key', 'new')->value('id'),
@@ -165,7 +177,11 @@ test('user can delete lead', function () {
 });
 
 test('user can add lead comment and update lead tracking fields', function () {
+    app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+    (new \Database\Seeders\RolesAndPermissionsSeeder)->run();
+
     $user = User::factory()->create();
+    $user->givePermissionTo('manage-leads');
     $newStatusId = LeadStatus::query()->where('key', 'new')->value('id');
     $respondedStatusId = LeadStatus::query()->where('key', 'responded')->value('id');
 

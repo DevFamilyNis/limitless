@@ -9,6 +9,7 @@ use App\Domain\Leads\DTO\DeleteLeadData;
 use App\Domain\Leads\DTO\LeadFiltersData;
 use App\Domain\Leads\Queries\LeadListQuery;
 use App\Domain\Leads\Queries\LeadStatisticsQuery;
+use App\Enums\PermissionKey;
 use App\Models\LeadStatus;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
@@ -35,6 +36,8 @@ class Index extends Component
 
     public function deleteLead(int $leadId): void
     {
+        $this->authorize(PermissionKey::ManageLeads->value);
+
         app(DeleteLeadAction::class)->execute(
             DeleteLeadData::fromArray([
                 'user_id' => Auth::id(),
