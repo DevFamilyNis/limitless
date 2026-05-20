@@ -6,6 +6,7 @@ use App\Domain\Clients\Actions\DeleteClientAction;
 use App\Domain\Clients\Actions\ToggleClientActiveAction;
 use App\Domain\Clients\DTO\DeleteClientData;
 use App\Domain\Clients\DTO\ToggleClientActiveData;
+use App\Enums\PermissionKey;
 use App\Models\Client;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
@@ -32,6 +33,8 @@ class Index extends Component
 
     public function toggleActive(int $clientId): void
     {
+        $this->authorize(PermissionKey::ManageClients->value);
+
         app(ToggleClientActiveAction::class)->execute(
             ToggleClientActiveData::fromArray([
                 'user_id' => Auth::id(),
@@ -44,6 +47,8 @@ class Index extends Component
 
     public function deleteClient(int $clientId): void
     {
+        $this->authorize(PermissionKey::ManageClients->value);
+
         $deleted = app(DeleteClientAction::class)->execute(
             DeleteClientData::fromArray([
                 'user_id' => Auth::id(),

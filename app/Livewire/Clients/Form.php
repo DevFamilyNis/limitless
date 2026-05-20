@@ -4,6 +4,7 @@ namespace App\Livewire\Clients;
 
 use App\Domain\Clients\Actions\UpsertClientAction;
 use App\Domain\Clients\DTO\UpsertClientData;
+use App\Enums\PermissionKey;
 use App\Models\Client;
 use App\Models\ClientType;
 use Illuminate\Contracts\View\View;
@@ -187,6 +188,8 @@ class Form extends Component
 
     public function save(): void
     {
+        $this->authorize(PermissionKey::ManageClients->value);
+
         if ($this->isPersonType()) {
             $fullName = trim($this->firstName.' '.$this->lastName);
 
