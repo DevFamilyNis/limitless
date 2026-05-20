@@ -4,6 +4,7 @@ namespace App\Livewire\Categories;
 
 use App\Domain\Categories\Actions\DeleteCategoryAction;
 use App\Domain\Categories\DTO\DeleteCategoryData;
+use App\Enums\PermissionKey;
 use App\Models\Category;
 use App\Models\CategoryType;
 use Illuminate\Contracts\View\View;
@@ -31,6 +32,8 @@ class Index extends Component
 
     public function deleteCategory(int $categoryId): void
     {
+        $this->authorize(PermissionKey::ManageCategories->value);
+
         app(DeleteCategoryAction::class)->execute(
             DeleteCategoryData::fromArray([
                 'user_id' => Auth::id(),
