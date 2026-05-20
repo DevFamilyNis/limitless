@@ -4,6 +4,7 @@ namespace App\Livewire\Settings\IssuePriorities;
 
 use App\Domain\Settings\Issues\Actions\UpsertIssuePriorityAction;
 use App\Domain\Settings\Issues\DTO\UpsertIssuePriorityData;
+use App\Enums\PermissionKey;
 use App\Models\IssuePriority;
 use Illuminate\Contracts\View\View;
 use Illuminate\Validation\Rule;
@@ -40,6 +41,8 @@ class Form extends Component
 
     public function save(): void
     {
+        $this->authorize(PermissionKey::ManageSettings->value);
+
         $validated = $this->validate();
 
         app(UpsertIssuePriorityAction::class)->execute(

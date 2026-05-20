@@ -9,10 +9,11 @@ use App\Domain\Invoices\DTO\DeleteInvoiceData;
 use App\Domain\Invoices\DTO\GenerateInvoicePdfData;
 use App\Domain\Invoices\DTO\MarkInvoicePaidData;
 use App\Domain\Invoices\Exceptions\InvoicePdfGenerationException;
+use App\Enums\PermissionKey;
+use App\Models\AppSetting;
 use App\Models\Invoice;
 use App\Models\InvoiceStatus;
 use Illuminate\Contracts\View\View;
-// use Illuminate\Support\Facades\Auth; // TODO: odkomentarisati kada se ukloni hardkodovanje
 use Livewire\Component;
 use Livewire\WithPagination;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -37,9 +38,11 @@ class Index extends Component
 
     public function markAsPaid(int $invoiceId): void
     {
+        $this->authorize(PermissionKey::ManageInvoices->value);
+
         app(MarkInvoicePaidAction::class)->execute(
             MarkInvoicePaidData::fromArray([
-                'user_id' => $this->getInvoiceUserId(),
+                'user_id' => $this->getDocumentSignerUserId(),
                 'invoice_id' => $invoiceId,
             ])
         );
@@ -49,9 +52,11 @@ class Index extends Component
 
     public function deleteInvoice(int $invoiceId): void
     {
+        $this->authorize(PermissionKey::ManageInvoices->value);
+
         app(DeleteInvoiceAction::class)->execute(
             DeleteInvoiceData::fromArray([
-                'user_id' => $this->getInvoiceUserId(),
+                'user_id' => $this->getDocumentSignerUserId(),
                 'invoice_id' => $invoiceId,
             ])
         );
@@ -64,7 +69,7 @@ class Index extends Component
         try {
             $result = app(GenerateInvoicePdfAction::class)->execute(
                 GenerateInvoicePdfData::fromArray([
-                    'user_id' => $this->getInvoiceUserId(),
+                    'user_id' => $this->getDocumentSignerUserId(),
                     'invoice_id' => $invoiceId,
                 ])
             );
@@ -79,11 +84,9 @@ class Index extends Component
             ->deleteFileAfterSend(true);
     }
 
-    private function getInvoiceUserId(): int
+    private function getDocumentSignerUserId(): int
     {
-        // TODO: ukloniti hardkodovanje, vratiti na Auth::id()
-        // return (int) Auth::id();
-        return (int) \App\Models\User::where('name', 'Igor Mitrinovic')->value('id');
+        return AppSetting::resolveOfficialSignerOrFail()->id;
     }
 
     public function render(): View

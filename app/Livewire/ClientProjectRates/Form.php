@@ -4,6 +4,7 @@ namespace App\Livewire\ClientProjectRates;
 
 use App\Domain\ClientProjectRates\Actions\UpsertClientProjectRateAction;
 use App\Domain\ClientProjectRates\DTO\UpsertClientProjectRateData;
+use App\Enums\PermissionKey;
 use App\Models\BillingPeriod;
 use App\Models\Client;
 use App\Models\ClientProjectRate;
@@ -69,6 +70,8 @@ class Form extends Component
 
     public function save(): void
     {
+        $this->authorize(PermissionKey::ManageClients->value);
+
         $validated = $this->validate();
 
         $rate = app(UpsertClientProjectRateAction::class)->execute(

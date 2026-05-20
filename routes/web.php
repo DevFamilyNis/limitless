@@ -1,9 +1,11 @@
 <?php
 
-use App\Domain\Invoices\Services\IpsQrPayloadBuilder;
 use App\Http\Controllers\Auth\SendMagicLoginLinkController;
 use App\Http\Controllers\MagicLoginController;
-use App\Infrastructure\Qr\QrCodeGenerator;
+use App\Livewire\Admin\Roles\Index as AdminRolesIndex;
+use App\Livewire\Admin\Users\Index as AdminUsersIndex;
+use App\Livewire\Dashboard\CashflowChart;
+use App\Livewire\Dashboard\InvestmentSignalPage;
 use App\Livewire\Auth\MagicLoginRequest;
 use App\Livewire\Categories\Form as CategoryForm;
 use App\Livewire\Categories\Index as CategoryIndex;
@@ -38,19 +40,6 @@ use App\Livewire\TaxYears\Index as TaxYearIndex;
 use App\Livewire\Transactions\Index as TransactionIndex;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/test-qr', function () {
-    $payload = app(IpsQrPayloadBuilder::class)->build(
-        payeeName: 'DEV FAMILY PR',
-        recipientAccount: '160-0000000000000-00',
-        amountRsd: '1200.00',
-        purpose: 'Placanje po fakturi FIZ-000123/2026',
-    );
-
-    $qr = app(QrCodeGenerator::class)->generate($payload);
-
-    return '<pre>'.htmlspecialchars($payload)."</pre><img src='{$qr}' style='width:180px;height:180px'>";
-});
-
 Route::redirect('/', '/magic-login')->name('home');
 Route::redirect('/login', '/magic-login')->name('login');
 
@@ -68,49 +57,70 @@ Route::livewire('dashboard', DashboardPage::class)
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
+Route::livewire('dashboard/cashflow', CashflowChart::class)
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard.cashflow');
+
+Route::livewire('dashboard/investment-signal', InvestmentSignalPage::class)
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard.investment-signal');
+
 Route::middleware('auth')->group(function () {
     Route::livewire('leads', LeadIndex::class)->name('leads.index');
-    Route::livewire('leads/create', LeadForm::class)->name('leads.create');
-    Route::livewire('leads/{lead}/edit', LeadForm::class)->name('leads.edit');
+    Route::livewire('leads/create', LeadForm::class)->middleware('can:manage-leads')->name('leads.create');
+    Route::livewire('leads/{lead}/edit', LeadForm::class)->middleware('can:manage-leads')->name('leads.edit');
     Route::livewire('leads/{lead}', LeadShow::class)->name('leads.show');
     Route::livewire('clients', ClientIndex::class)->name('clients.index');
-    Route::livewire('clients/create', ClientForm::class)->name('clients.create');
-    Route::livewire('clients/{client}/edit', ClientForm::class)->name('clients.edit');
+    Route::livewire('clients/create', ClientForm::class)->middleware('can:manage-clients')->name('clients.create');
+    Route::livewire('clients/{client}/edit', ClientForm::class)->middleware('can:manage-clients')->name('clients.edit');
     Route::livewire('clients/{client}', ClientShow::class)->name('clients.show');
     Route::livewire('projects', ProjectIndex::class)->name('projects.index');
-    Route::livewire('projects/create', ProjectForm::class)->name('projects.create');
-    Route::livewire('projects/{project}/edit', ProjectForm::class)->name('projects.edit');
+    Route::livewire('projects/create', ProjectForm::class)->middleware('can:manage-projects')->name('projects.create');
+    Route::livewire('projects/{project}/edit', ProjectForm::class)->middleware('can:manage-projects')->name('projects.edit');
     Route::livewire('projects/{project}', ProjectShow::class)->name('projects.show');
     Route::livewire('client-project-rates', ClientProjectRateIndex::class)->name('client-project-rates.index');
-    Route::livewire('client-project-rates/create', ClientProjectRateForm::class)->name('client-project-rates.create');
-    Route::livewire('client-project-rates/{clientProjectRate}/edit', ClientProjectRateForm::class)->name('client-project-rates.edit');
+    Route::livewire('client-project-rates/create', ClientProjectRateForm::class)->middleware('can:manage-clients')->name('client-project-rates.create');
+    Route::livewire('client-project-rates/{clientProjectRate}/edit', ClientProjectRateForm::class)->middleware('can:manage-clients')->name('client-project-rates.edit');
     Route::livewire('invoices', InvoiceIndex::class)->name('invoices.index');
-    Route::livewire('invoices/create', InvoiceForm::class)->name('invoices.create');
-    Route::livewire('invoices/{invoice}/edit', InvoiceForm::class)->name('invoices.edit');
+    Route::livewire('invoices/create', InvoiceForm::class)->middleware('can:manage-invoices')->name('invoices.create');
+    Route::livewire('invoices/{invoice}/edit', InvoiceForm::class)->middleware('can:manage-invoices')->name('invoices.edit');
     Route::livewire('categories', CategoryIndex::class)->name('categories.index');
-    Route::livewire('categories/create', CategoryForm::class)->name('categories.create');
-    Route::livewire('categories/{category}/edit', CategoryForm::class)->name('categories.edit');
+    Route::livewire('categories/create', CategoryForm::class)->middleware('can:manage-categories')->name('categories.create');
+    Route::livewire('categories/{category}/edit', CategoryForm::class)->middleware('can:manage-categories')->name('categories.edit');
     Route::livewire('transactions', TransactionIndex::class)->name('transactions.index');
     Route::livewire('monthly-expenses', MonthlyExpenseIndex::class)->name('monthly-expenses.index');
     Route::livewire('paid-expenses', PaidExpenseIndex::class)->name('paid-expenses.index');
     Route::livewire('tax-years', TaxYearIndex::class)->name('tax-years.index');
-    Route::livewire('tax-years/create', TaxYearForm::class)->name('tax-years.create');
-    Route::livewire('tax-years/{taxYear}/edit', TaxYearForm::class)->name('tax-years.edit');
+    Route::livewire('tax-years/create', TaxYearForm::class)->middleware('can:manage-tax-years')->name('tax-years.create');
+    Route::livewire('tax-years/{taxYear}/edit', TaxYearForm::class)->middleware('can:manage-tax-years')->name('tax-years.edit');
     Route::livewire('kpo-reports', KpoReportIndex::class)->name('kpo-reports.index');
     Route::redirect('issue-board', 'issues')->name('issues.board');
     Route::livewire('issues', IssueIndex::class)->name('issues.index');
-    Route::livewire('issues/create', IssueForm::class)->name('issues.create');
+    Route::livewire('issues/create', IssueForm::class)->middleware('can:manage-issues')->name('issues.create');
     Route::livewire('issues/{issue}', IssueShow::class)->name('issues.show');
-    Route::livewire('issues/{issue}/edit', IssueForm::class)->name('issues.edit');
-    Route::livewire('settings/issue-statuses', IssueStatusIndex::class)->name('settings.issue-statuses.index');
-    Route::livewire('settings/issue-statuses/create', IssueStatusForm::class)->name('settings.issue-statuses.create');
-    Route::livewire('settings/issue-statuses/{issueStatus}/edit', IssueStatusForm::class)->name('settings.issue-statuses.edit');
-    Route::livewire('settings/issue-priorities', IssuePriorityIndex::class)->name('settings.issue-priorities.index');
-    Route::livewire('settings/issue-priorities/create', IssuePriorityForm::class)->name('settings.issue-priorities.create');
-    Route::livewire('settings/issue-priorities/{issuePriority}/edit', IssuePriorityForm::class)->name('settings.issue-priorities.edit');
-    Route::livewire('settings/issue-categories', IssueCategoryIndex::class)->name('settings.issue-categories.index');
-    Route::livewire('settings/issue-categories/create', IssueCategoryForm::class)->name('settings.issue-categories.create');
-    Route::livewire('settings/issue-categories/{issueCategory}/edit', IssueCategoryForm::class)->name('settings.issue-categories.edit');
+    Route::livewire('issues/{issue}/edit', IssueForm::class)->middleware('can:manage-issues')->name('issues.edit');
+    // System configuration — requires manage-settings permission (super-admin bypasses via Gate::before)
+    Route::middleware('can:manage-settings')->group(function () {
+        Route::livewire('settings/issue-statuses', IssueStatusIndex::class)->name('settings.issue-statuses.index');
+        Route::livewire('settings/issue-statuses/create', IssueStatusForm::class)->name('settings.issue-statuses.create');
+        Route::livewire('settings/issue-statuses/{issueStatus}/edit', IssueStatusForm::class)->name('settings.issue-statuses.edit');
+        Route::livewire('settings/issue-priorities', IssuePriorityIndex::class)->name('settings.issue-priorities.index');
+        Route::livewire('settings/issue-priorities/create', IssuePriorityForm::class)->name('settings.issue-priorities.create');
+        Route::livewire('settings/issue-priorities/{issuePriority}/edit', IssuePriorityForm::class)->name('settings.issue-priorities.edit');
+        Route::livewire('settings/issue-categories', IssueCategoryIndex::class)->name('settings.issue-categories.index');
+        Route::livewire('settings/issue-categories/create', IssueCategoryForm::class)->name('settings.issue-categories.create');
+        Route::livewire('settings/issue-categories/{issueCategory}/edit', IssueCategoryForm::class)->name('settings.issue-categories.edit');
+    });
+
+    // Admin panel — requires manage-users permission (super-admin bypasses via Gate::before)
+    Route::middleware('can:manage-users')->group(function () {
+        Route::livewire('admin/users', AdminUsersIndex::class)->name('admin.users.index');
+    });
+
+    // Role & permission management — requires manage-roles permission
+    Route::middleware('can:manage-roles')->group(function () {
+        Route::livewire('admin/roles', AdminRolesIndex::class)->name('admin.roles.index');
+    });
 });
 
 require __DIR__.'/settings.php';

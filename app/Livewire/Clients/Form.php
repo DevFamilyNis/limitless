@@ -4,6 +4,7 @@ namespace App\Livewire\Clients;
 
 use App\Domain\Clients\Actions\UpsertClientAction;
 use App\Domain\Clients\DTO\UpsertClientData;
+use App\Enums\PermissionKey;
 use App\Models\Client;
 use App\Models\ClientType;
 use Illuminate\Contracts\View\View;
@@ -26,6 +27,8 @@ class Form extends Component
     public string $address = '';
 
     public string $note = '';
+
+    public string $clientTypeKey = '';
 
     public string $pib = '';
 
@@ -50,11 +53,12 @@ class Form extends Component
     public function mount(?Client $client = null): void
     {
 
-        $client = $client?->load(['company', 'person', 'contacts', 'appLinks']);
+        $client = $client?->load(['company', 'person', 'contacts', 'appLinks', 'type']);
 
         if ($client) {
             $this->clientId = $client->id;
             $this->clientTypeId = (string) $client->client_type_id;
+            $this->clientTypeKey = (string) $client->type?->key;
             $this->displayName = $client->display_name;
             $this->email = (string) $client->email;
             $this->phone = (string) $client->phone;
@@ -89,11 +93,9 @@ class Form extends Component
             return;
         }
 
-        $defaultTypeId = ClientType::query()
-            ->where('key', 'person')
-            ->value('id');
-
-        $this->clientTypeId = (string) $defaultTypeId;
+        $defaultType = ClientType::query()->where('key', 'person')->first();
+        $this->clientTypeId = (string) $defaultType?->id;
+        $this->clientTypeKey = (string) $defaultType?->key;
     }
 
     /**
@@ -126,6 +128,13 @@ class Form extends Component
             'appLinks.*.label' => ['nullable', 'string', 'max:255'],
             'appLinks.*.url' => ['nullable', 'url', 'max:255'],
         ];
+    }
+
+    public function updatedClientTypeId(): void
+    {
+        $this->clientTypeKey = ClientType::query()
+            ->whereKey($this->clientTypeId)
+            ->value('key') ?? '';
     }
 
     public function addContact(): void
@@ -179,6 +188,8 @@ class Form extends Component
 
     public function save(): void
     {
+        $this->authorize(PermissionKey::ManageClients->value);
+
         if ($this->isPersonType()) {
             $fullName = trim($this->firstName.' '.$this->lastName);
 
@@ -229,26 +240,12 @@ class Form extends Component
 
     public function isCompanyType(): bool
     {
-        if ($this->clientTypeId === '') {
-            return false;
-        }
-
-        return ClientType::query()
-            ->whereKey($this->clientTypeId)
-            ->where('key', 'company')
-            ->exists();
+        return $this->clientTypeKey === 'company';
     }
 
     public function isPersonType(): bool
     {
-        if ($this->clientTypeId === '') {
-            return false;
-        }
-
-        return ClientType::query()
-            ->whereKey($this->clientTypeId)
-            ->where('key', 'person')
-            ->exists();
+        return $this->clientTypeKey === 'person';
     }
 
     public function render(): View

@@ -6,6 +6,8 @@ namespace App\Livewire\Dashboard;
 
 use App\Domain\Dashboard\Queries\DashboardMetricsQuery;
 use App\Domain\Dashboard\Queries\DashboardUpcomingDeadlinesQuery;
+use App\Domain\Dashboard\Queries\MonthlyComparisonQuery;
+use App\Domain\Dashboard\Queries\OperationalOverviewQuery;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
@@ -18,6 +20,8 @@ class DashboardPage extends Component
         $metrics = app(DashboardMetricsQuery::class)->execute($userId);
         $deadlines = app(DashboardUpcomingDeadlinesQuery::class)->execute($userId);
         $netThisMonth = (float) $metrics['incomeThisMonth'] - (float) $metrics['expenseThisMonth'];
+        $monthlyReport = app(MonthlyComparisonQuery::class)->execute();
+        $operationalItems = app(OperationalOverviewQuery::class)->execute();
 
         return view('livewire.dashboard.dashboard-page', [
             'incomeYear' => $metrics['incomeYear'],
@@ -36,6 +40,8 @@ class DashboardPage extends Component
             'issueHighOpenCount' => $metrics['issueHighOpenCount'],
             'issueOverdueRemindersCount' => $metrics['issueOverdueRemindersCount'],
             'deadlines' => $deadlines,
+            'monthlyReport' => $monthlyReport,
+            'operationalItems' => $operationalItems,
         ])->layout('layouts.app', [
             'title' => __('messages.menu.dashboard'),
         ]);

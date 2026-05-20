@@ -8,6 +8,7 @@ use App\Domain\MonthlyExpenses\DTO\DeleteMonthlyExpenseItemData;
 use App\Domain\MonthlyExpenses\DTO\MonthlyExpenseItemsFiltersData;
 use App\Domain\MonthlyExpenses\DTO\UpsertMonthlyExpenseItemData;
 use App\Domain\MonthlyExpenses\Queries\MonthlyExpenseItemsListQuery;
+use App\Enums\PermissionKey;
 use App\Models\BillingPeriod;
 use App\Models\MonthlyExpenseItem;
 use Illuminate\Contracts\View\View;
@@ -62,6 +63,8 @@ class Index extends Component
 
     public function saveItem(): void
     {
+        $this->authorize(PermissionKey::ManageTransactions->value);
+
         $validated = $this->validate();
 
         app(UpsertMonthlyExpenseItemAction::class)->execute(
@@ -107,6 +110,8 @@ class Index extends Component
 
     public function deleteItem(int $itemId): void
     {
+        $this->authorize(PermissionKey::ManageTransactions->value);
+
         app(DeleteMonthlyExpenseItemAction::class)->execute(
             DeleteMonthlyExpenseItemData::fromArray([
                 'user_id' => Auth::id(),

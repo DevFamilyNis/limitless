@@ -4,6 +4,7 @@ namespace App\Livewire\Transactions;
 
 use App\Domain\Transactions\Actions\UpsertTransactionAction;
 use App\Domain\Transactions\DTO\UpsertTransactionData;
+use App\Enums\PermissionKey;
 use App\Models\Category;
 use App\Models\Client;
 use App\Models\Invoice;
@@ -103,6 +104,8 @@ class Form extends Component
 
     public function save(): void
     {
+        $this->authorize(PermissionKey::ManageTransactions->value);
+
         $validated = $this->validate();
 
         $transaction = app(UpsertTransactionAction::class)->execute(

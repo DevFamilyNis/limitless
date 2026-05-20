@@ -18,7 +18,11 @@ test('clients page is displayed', function () {
 });
 
 test('create client page is displayed', function () {
+    app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+    (new \Database\Seeders\RolesAndPermissionsSeeder)->run();
+
     $user = User::factory()->create();
+    $user->givePermissionTo('manage-clients');
 
     $this->actingAs($user)
         ->get(route('clients.create'))
@@ -62,7 +66,11 @@ test('client show page is displayed for another user in shared workspace', funct
 });
 
 test('user can create company client with company details', function () {
+    app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+    (new \Database\Seeders\RolesAndPermissionsSeeder)->run();
+
     $user = User::factory()->create();
+    $user->givePermissionTo('manage-clients');
     $companyTypeId = ClientType::query()->where('key', 'company')->value('id');
 
     $client = Client::query()->create([
@@ -133,7 +141,11 @@ test('user can search clients', function () {
 });
 
 test('user can update client details', function () {
+    app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+    (new \Database\Seeders\RolesAndPermissionsSeeder)->run();
+
     $user = User::factory()->create();
+    $user->givePermissionTo('manage-clients');
     $personTypeId = ClientType::query()->where('key', 'person')->value('id');
 
     $client = Client::query()->create([
@@ -159,7 +171,11 @@ test('user can update client details', function () {
 });
 
 test('user can save person details for person client', function () {
+    app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+    (new \Database\Seeders\RolesAndPermissionsSeeder)->run();
+
     $user = User::factory()->create();
+    $user->givePermissionTo('manage-clients');
     $personTypeId = ClientType::query()->where('key', 'person')->value('id');
 
     $client = Client::query()->create([
@@ -183,7 +199,11 @@ test('user can save person details for person client', function () {
 });
 
 test('person client save auto-fills display name from first and last name', function () {
+    app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+    (new \Database\Seeders\RolesAndPermissionsSeeder)->run();
+
     $user = User::factory()->create();
+    $user->givePermissionTo('manage-clients');
     $personTypeId = ClientType::query()->where('key', 'person')->value('id');
 
     $client = Client::query()->create([
@@ -211,7 +231,11 @@ test('person client save auto-fills display name from first and last name', func
 });
 
 test('user can manage company contacts in client form', function () {
+    app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+    (new \Database\Seeders\RolesAndPermissionsSeeder)->run();
+
     $user = User::factory()->create();
+    $user->givePermissionTo('manage-clients');
     $companyTypeId = ClientType::query()->where('key', 'company')->value('id');
 
     $client = Client::query()->create([
@@ -291,7 +315,11 @@ test('user can manage company contacts in client form', function () {
 });
 
 test('user can deactivate and activate client', function () {
+    app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+    (new \Database\Seeders\RolesAndPermissionsSeeder)->run();
+
     $user = User::factory()->create();
+    $user->givePermissionTo('manage-clients');
     $personTypeId = ClientType::query()->where('key', 'person')->value('id');
 
     $client = Client::query()->create([
@@ -319,7 +347,11 @@ test('user can deactivate and activate client', function () {
 });
 
 test('client can be deleted only when there are no dependent documents', function () {
+    app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+    (new \Database\Seeders\RolesAndPermissionsSeeder)->run();
+
     $user = User::factory()->create();
+    $user->givePermissionTo('manage-clients');
     $personTypeId = ClientType::query()->where('key', 'person')->value('id');
 
     $client = Client::query()->create([

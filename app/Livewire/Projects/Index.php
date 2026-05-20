@@ -6,6 +6,7 @@ use App\Domain\Projects\Actions\DeleteProjectAction;
 use App\Domain\Projects\Actions\ToggleProjectActiveAction;
 use App\Domain\Projects\DTO\DeleteProjectData;
 use App\Domain\Projects\DTO\ToggleProjectActiveData;
+use App\Enums\PermissionKey;
 use App\Models\ClientProjectRate;
 use App\Models\InvoiceItem;
 use App\Models\Project;
@@ -34,6 +35,8 @@ class Index extends Component
 
     public function toggleActive(int $projectId): void
     {
+        $this->authorize(PermissionKey::ManageProjects->value);
+
         app(ToggleProjectActiveAction::class)->execute(
             ToggleProjectActiveData::fromArray([
                 'user_id' => Auth::id(),
@@ -46,6 +49,8 @@ class Index extends Component
 
     public function deleteProject(int $projectId): void
     {
+        $this->authorize(PermissionKey::ManageProjects->value);
+
         app(DeleteProjectAction::class)->execute(
             DeleteProjectData::fromArray([
                 'user_id' => Auth::id(),

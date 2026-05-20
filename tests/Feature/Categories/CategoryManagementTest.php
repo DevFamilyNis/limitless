@@ -16,7 +16,11 @@ test('categories page is displayed', function () {
 });
 
 test('create category page is displayed', function () {
+    app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+    (new \Database\Seeders\RolesAndPermissionsSeeder)->run();
+
     $user = User::factory()->create();
+    $user->givePermissionTo('manage-categories');
 
     $this->actingAs($user)
         ->get(route('categories.create'))
@@ -25,7 +29,11 @@ test('create category page is displayed', function () {
 });
 
 test('user can create category', function () {
+    app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+    (new \Database\Seeders\RolesAndPermissionsSeeder)->run();
+
     $user = User::factory()->create();
+    $user->givePermissionTo('manage-categories');
     $expenseTypeId = CategoryType::query()->where('key', 'expense')->value('id');
 
     Livewire::actingAs($user)->test(Form::class)
@@ -65,7 +73,11 @@ test('user can filter categories by type', function () {
 });
 
 test('user can update category', function () {
+    app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+    (new \Database\Seeders\RolesAndPermissionsSeeder)->run();
+
     $user = User::factory()->create();
+    $user->givePermissionTo('manage-categories');
     $expenseTypeId = CategoryType::query()->where('key', 'expense')->value('id');
 
     $category = Category::query()->create([
@@ -86,7 +98,11 @@ test('user can update category', function () {
 });
 
 test('user can delete category', function () {
+    app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+    (new \Database\Seeders\RolesAndPermissionsSeeder)->run();
+
     $user = User::factory()->create();
+    $user->givePermissionTo('manage-categories');
     $expenseTypeId = CategoryType::query()->where('key', 'expense')->value('id');
 
     $category = Category::query()->create([

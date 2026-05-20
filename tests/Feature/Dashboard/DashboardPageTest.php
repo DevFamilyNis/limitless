@@ -18,7 +18,19 @@ test('dashboard page is displayed for authenticated user', function () {
         ->assertOk()
         ->assertSee('Prihod ove godine')
         ->assertSee('Neto ovaj mesec')
-        ->assertSee(__('messages.text.sentInvoices'));
+        ->assertSee(__('messages.text.sentInvoices'))
+        ->assertSee('Operativni pregled')
+        ->assertSee('Pregled zadataka');
+});
+
+test('operational overview shows empty state when no tasks exist', function () {
+    $user = User::factory()->create();
+
+    $this->actingAs($user)
+        ->get(route('dashboard'))
+        ->assertOk()
+        ->assertSee('Operativni pregled')
+        ->assertSee('Nema aktivnih zadataka');
 });
 
 test('dashboard uses fallback paucal thresholds when tax year is missing', function () {

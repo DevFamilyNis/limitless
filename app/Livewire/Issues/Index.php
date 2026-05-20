@@ -6,6 +6,7 @@ use App\Domain\Issues\Actions\MoveIssueAction;
 use App\Domain\Issues\DTO\IssueFiltersData;
 use App\Domain\Issues\DTO\MoveIssueData;
 use App\Domain\Issues\Queries\IssueFilteredListQuery;
+use App\Enums\PermissionKey;
 use App\Models\IssueCategory;
 use App\Models\IssuePriority;
 use App\Models\IssueStatus;
@@ -51,6 +52,8 @@ class Index extends Component
 
     public function moveIssue(int $issueId, int $toStatusId): void
     {
+        $this->authorize(PermissionKey::ManageIssues->value);
+
         app(MoveIssueAction::class)->execute(
             MoveIssueData::fromArray([
                 'user_id' => Auth::id(),

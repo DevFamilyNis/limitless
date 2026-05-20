@@ -4,6 +4,7 @@ namespace App\Livewire\Settings\IssueCategories;
 
 use App\Domain\Settings\Issues\Actions\UpsertIssueCategoryAction;
 use App\Domain\Settings\Issues\DTO\UpsertIssueCategoryData;
+use App\Enums\PermissionKey;
 use App\Models\IssueCategory;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
@@ -35,6 +36,8 @@ class Form extends Component
 
     public function save(): void
     {
+        $this->authorize(PermissionKey::ManageSettings->value);
+
         $validated = $this->validate();
 
         app(UpsertIssueCategoryAction::class)->execute(

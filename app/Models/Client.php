@@ -7,8 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
 
 class Client extends Model
 {
@@ -83,16 +81,6 @@ class Client extends Model
 
     public function canBeDeleted(): bool
     {
-        foreach (['invoices', 'transactions'] as $table) {
-            if (! Schema::hasTable($table) || ! Schema::hasColumn($table, 'client_id')) {
-                continue;
-            }
-
-            if (DB::table($table)->where('client_id', $this->id)->exists()) {
-                return false;
-            }
-        }
-
-        return true;
+        return ! ($this->invoices()->exists() || $this->transactions()->exists());
     }
 }
