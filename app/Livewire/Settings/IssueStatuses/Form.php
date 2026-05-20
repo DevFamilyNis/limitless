@@ -4,6 +4,7 @@ namespace App\Livewire\Settings\IssueStatuses;
 
 use App\Domain\Settings\Issues\Actions\UpsertIssueStatusAction;
 use App\Domain\Settings\Issues\DTO\UpsertIssueStatusData;
+use App\Enums\PermissionKey;
 use App\Models\IssueStatus;
 use Illuminate\Contracts\View\View;
 use Illuminate\Validation\Rule;
@@ -44,6 +45,8 @@ class Form extends Component
 
     public function save(): void
     {
+        $this->authorize(PermissionKey::ManageSettings->value);
+
         $validated = $this->validate();
 
         app(UpsertIssueStatusAction::class)->execute(
