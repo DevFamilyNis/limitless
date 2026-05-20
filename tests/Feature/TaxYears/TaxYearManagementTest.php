@@ -42,7 +42,11 @@ test('current year default thresholds are created for user', function () {
 });
 
 test('user can create tax year', function () {
+    app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+    (new \Database\Seeders\RolesAndPermissionsSeeder)->run();
+
     $user = User::factory()->create();
+    $user->givePermissionTo('manage-tax-years');
 
     Livewire::actingAs($user)->test(Form::class)
         ->set('year', '2028')
@@ -60,7 +64,11 @@ test('user can create tax year', function () {
 });
 
 test('second threshold must be greater than first threshold', function () {
+    app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+    (new \Database\Seeders\RolesAndPermissionsSeeder)->run();
+
     $user = User::factory()->create();
+    $user->givePermissionTo('manage-tax-years');
 
     Livewire::actingAs($user)->test(Form::class)
         ->set('year', '2027')
@@ -71,7 +79,11 @@ test('second threshold must be greater than first threshold', function () {
 });
 
 test('user can update tax year', function () {
+    app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+    (new \Database\Seeders\RolesAndPermissionsSeeder)->run();
+
     $user = User::factory()->create();
+    $user->givePermissionTo('manage-tax-years');
 
     $taxYear = TaxYear::query()->create([
         'user_id' => $user->id,
@@ -94,7 +106,11 @@ test('user can update tax year', function () {
 });
 
 test('user can delete tax year', function () {
+    app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+    (new \Database\Seeders\RolesAndPermissionsSeeder)->run();
+
     $user = User::factory()->create();
+    $user->givePermissionTo('manage-tax-years');
 
     $taxYear = TaxYear::query()->create([
         'user_id' => $user->id,

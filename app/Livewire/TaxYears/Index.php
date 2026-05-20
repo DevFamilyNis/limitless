@@ -6,6 +6,7 @@ use App\Domain\TaxYears\Actions\DeleteTaxYearAction;
 use App\Domain\TaxYears\Actions\EnsureCurrentTaxYearAction;
 use App\Domain\TaxYears\DTO\DeleteTaxYearData;
 use App\Domain\TaxYears\DTO\EnsureCurrentTaxYearData;
+use App\Enums\PermissionKey;
 use App\Models\TaxYear;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
@@ -34,6 +35,8 @@ class Index extends Component
 
     public function deleteTaxYear(int $taxYearId): void
     {
+        $this->authorize(PermissionKey::ManageTaxYears->value);
+
         app(DeleteTaxYearAction::class)->execute(
             DeleteTaxYearData::fromArray([
                 'user_id' => Auth::id(),
