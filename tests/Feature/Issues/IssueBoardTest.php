@@ -25,7 +25,11 @@ test('issue board page is displayed', function () {
 });
 
 test('move issue to done sets completed at', function () {
+    app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+    (new \Database\Seeders\RolesAndPermissionsSeeder)->run();
+
     $user = User::factory()->create();
+    $user->givePermissionTo('manage-issues');
     $project = Project::factory()->create(['user_id' => $user->id]);
 
     $this->seed(IssueDictionarySeeder::class);

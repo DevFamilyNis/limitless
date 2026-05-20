@@ -4,6 +4,7 @@ namespace App\Livewire\Issues;
 
 use App\Domain\Issues\Actions\UpsertIssueAction;
 use App\Domain\Issues\DTO\UpsertIssueData;
+use App\Enums\PermissionKey;
 use App\Models\Issue;
 use App\Models\IssueCategory;
 use App\Models\IssuePriority;
@@ -88,6 +89,8 @@ class Form extends Component
 
     public function save(): void
     {
+        $this->authorize(PermissionKey::ManageIssues->value);
+
         $validated = $this->validate();
 
         $issue = app(UpsertIssueAction::class)->execute(
