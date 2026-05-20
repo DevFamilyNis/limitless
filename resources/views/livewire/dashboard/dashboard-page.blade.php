@@ -2,8 +2,7 @@
 <div class="flex h-full w-full flex-1 flex-col gap-6">
 
     <div class="grid gap-4 md:grid-cols-3">
-        <div class="rounded-xl border border-zinc-200 p-5 bg-radial-[at_25%_25%] from-white to-zinc-100 to-75%
-        dark:border-zinc-700 dark:bg-radial-[at_25%_25%] dark:from-zinc-700 dark:to-zinc-950 to-75%">
+        <div class="rounded-xl border border-zinc-200 bg-radial-[at_25%_25%] from-white to-zinc-100 to-75% p-5 dark:border-zinc-700 dark:from-zinc-800 dark:to-zinc-900">
             <flux:heading size="lg">@lang('messages.text.incomeThisYear')</flux:heading>
             <div class="mt-3 text-2xl font-semibold">{{ number_format($incomeYear, 2, ',', '.') }} RSD</div>
             <div class="mt-3 text-sm text-zinc-600 dark:text-zinc-300">
@@ -15,8 +14,7 @@
             </div>
         </div>
 
-        <div class="rounded-xl border border-zinc-200 p-5 bg-radial-[at_25%_25%] from-white to-zinc-100 to-75%
-        dark:border-zinc-700 dark:bg-radial-[at_25%_25%] dark:from-zinc-700 dark:to-zinc-950 to-75% ">
+        <div class="rounded-xl border border-zinc-200 bg-radial-[at_25%_25%] from-white to-zinc-100 to-75% p-5 dark:border-zinc-700 dark:from-zinc-800 dark:to-zinc-900">
             <flux:heading size="lg">@lang('messages.text.netoThisMonth')</flux:heading>
             <div class="mt-4 space-y-2 text-sm">
                 <div class="flex items-center justify-between">
@@ -34,8 +32,7 @@
             </div>
         </div>
 
-        <div class="rounded-xl border border-zinc-200 p-5 bg-radial-[at_25%_25%] from-white to-zinc-100 to-75%
-        dark:border-zinc-700 dark:bg-radial-[at_25%_25%] dark:from-zinc-700 dark:to-zinc-950 to-75%">
+        <div class="rounded-xl border border-zinc-200 bg-radial-[at_25%_25%] from-white to-zinc-100 to-75% p-5 dark:border-zinc-700 dark:from-zinc-800 dark:to-zinc-900">
             <flux:heading size="lg">@lang('messages.text.sentInvoices')</flux:heading>
             <div class="mt-4 space-y-2 text-sm">
                 <div class="flex items-center justify-between">
