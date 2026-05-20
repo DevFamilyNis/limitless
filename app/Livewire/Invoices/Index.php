@@ -9,6 +9,7 @@ use App\Domain\Invoices\DTO\DeleteInvoiceData;
 use App\Domain\Invoices\DTO\GenerateInvoicePdfData;
 use App\Domain\Invoices\DTO\MarkInvoicePaidData;
 use App\Domain\Invoices\Exceptions\InvoicePdfGenerationException;
+use App\Enums\PermissionKey;
 use App\Models\AppSetting;
 use App\Models\Invoice;
 use App\Models\InvoiceStatus;
@@ -37,6 +38,8 @@ class Index extends Component
 
     public function markAsPaid(int $invoiceId): void
     {
+        $this->authorize(PermissionKey::ManageInvoices->value);
+
         app(MarkInvoicePaidAction::class)->execute(
             MarkInvoicePaidData::fromArray([
                 'user_id' => $this->getDocumentSignerUserId(),
@@ -49,6 +52,8 @@ class Index extends Component
 
     public function deleteInvoice(int $invoiceId): void
     {
+        $this->authorize(PermissionKey::ManageInvoices->value);
+
         app(DeleteInvoiceAction::class)->execute(
             DeleteInvoiceData::fromArray([
                 'user_id' => $this->getDocumentSignerUserId(),

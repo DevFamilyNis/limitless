@@ -4,6 +4,7 @@ namespace App\Livewire\Invoices;
 
 use App\Domain\Invoices\Actions\UpsertInvoiceAction;
 use App\Domain\Invoices\DTO\UpsertInvoiceData;
+use App\Enums\PermissionKey;
 use App\Models\AppSetting;
 use App\Models\Client;
 use App\Models\ClientProjectRate;
@@ -210,6 +211,8 @@ class Form extends Component
 
     public function save(): void
     {
+        $this->authorize(PermissionKey::ManageInvoices->value);
+
         $this->recalculateAllItems();
 
         $validated = $this->validate();

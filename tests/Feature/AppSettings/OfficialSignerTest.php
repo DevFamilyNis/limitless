@@ -34,8 +34,12 @@ test('official signer user is different from authenticated user', function () {
 });
 
 test('different user creates invoice but official signer is used as document owner', function () {
+    app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+    (new \Database\Seeders\RolesAndPermissionsSeeder)->run();
+
     $signer = User::factory()->create();
     $creator = User::factory()->create();
+    $creator->givePermissionTo('manage-invoices');
 
     AppSetting::setValue(AppSettingKey::OfficialSignerUserId, $signer->id);
 
@@ -73,7 +77,11 @@ test('different user creates invoice but official signer is used as document own
 });
 
 test('invoice system aborts with 503 when official signer is not configured', function () {
+    app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+    (new \Database\Seeders\RolesAndPermissionsSeeder)->run();
+
     $user = User::factory()->create();
+    $user->givePermissionTo('manage-invoices');
 
     $companyTypeId = ClientType::query()->where('key', 'company')->value('id');
     $draftStatusId = InvoiceStatus::query()->where('key', 'draft')->value('id');
@@ -117,6 +125,9 @@ test('official signer lookup does not depend on name string', function () {
 });
 
 test('invoice system aborts with 503 when official signer user was deleted from database', function () {
+    app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+    (new \Database\Seeders\RolesAndPermissionsSeeder)->run();
+
     // Scenarijo: ID je u settings-ima, ali korisnik je obrisan.
     // officialSignerUserId() vraća int, ali officialSignerUser() vraća null.
     // resolveOfficialSignerOrFail() mora da uhvati i to i vrati 503.
@@ -132,6 +143,7 @@ test('invoice system aborts with 503 when official signer user was deleted from 
     expect(AppSetting::officialSignerUser())->toBeNull();
 
     $creator = User::factory()->create();
+    $creator->givePermissionTo('manage-invoices');
     $companyTypeId = ClientType::query()->where('key', 'company')->value('id');
     $draftStatusId = InvoiceStatus::query()->where('key', 'draft')->value('id');
 
@@ -170,8 +182,12 @@ test('invoice system aborts with 503 when official signer user was deleted from 
 });
 
 test('mark as paid uses official signer not auth user', function () {
+    app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+    (new \Database\Seeders\RolesAndPermissionsSeeder)->run();
+
     $signer = User::factory()->create();
     $creator = User::factory()->create();
+    $creator->givePermissionTo('manage-invoices');
 
     AppSetting::setValue(AppSettingKey::OfficialSignerUserId, $signer->id);
 

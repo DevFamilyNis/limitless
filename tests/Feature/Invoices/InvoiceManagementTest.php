@@ -164,10 +164,14 @@ test('changing client loads client price list as invoice items', function () {
 });
 
 test('user can create invoice with multiple services and total is sum of items', function () {
+    app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+    (new \Database\Seeders\RolesAndPermissionsSeeder)->run();
+
     $signer = User::factory()->create();
     AppSetting::setValue(AppSettingKey::OfficialSignerUserId, $signer->id);
 
     $user = User::factory()->create();
+    $user->givePermissionTo('manage-invoices');
     $companyTypeId = ClientType::query()->where('key', 'company')->value('id');
     $draftStatusId = InvoiceStatus::query()->where('key', 'draft')->value('id');
 
@@ -252,10 +256,14 @@ test('user can create invoice with multiple services and total is sum of items',
 });
 
 test('user can create invoice when due date is before service period end', function () {
+    app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+    (new \Database\Seeders\RolesAndPermissionsSeeder)->run();
+
     $signer = User::factory()->create();
     AppSetting::setValue(AppSettingKey::OfficialSignerUserId, $signer->id);
 
     $user = User::factory()->create();
+    $user->givePermissionTo('manage-invoices');
     $companyTypeId = ClientType::query()->where('key', 'company')->value('id');
     $draftStatusId = InvoiceStatus::query()->where('key', 'draft')->value('id');
 
@@ -363,10 +371,14 @@ test('user can search invoices', function () {
 });
 
 test('user can update invoice while keeping generated number fields', function () {
+    app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+    (new \Database\Seeders\RolesAndPermissionsSeeder)->run();
+
     $signer = User::factory()->create();
     AppSetting::setValue(AppSettingKey::OfficialSignerUserId, $signer->id);
 
     $user = User::factory()->create();
+    $user->givePermissionTo('manage-invoices');
     $personTypeId = ClientType::query()->where('key', 'person')->value('id');
     $draftStatusId = InvoiceStatus::query()->where('key', 'draft')->value('id');
     $paidStatusId = InvoiceStatus::query()->where('key', 'paid')->value('id');
@@ -433,10 +445,14 @@ test('user can update invoice while keeping generated number fields', function (
 });
 
 test('user can mark invoice as paid from list', function () {
+    app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+    (new \Database\Seeders\RolesAndPermissionsSeeder)->run();
+
     $signer = User::factory()->create();
     AppSetting::setValue(AppSettingKey::OfficialSignerUserId, $signer->id);
 
     $user = User::factory()->create();
+    $user->givePermissionTo('manage-invoices');
     $personTypeId = ClientType::query()->where('key', 'person')->value('id');
     $draftStatusId = InvoiceStatus::query()->where('key', 'draft')->value('id');
     $paidStatusId = InvoiceStatus::query()->where('key', 'paid')->value('id');
@@ -472,10 +488,14 @@ test('user can mark invoice as paid from list', function () {
 });
 
 test('user can delete invoice', function () {
+    app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+    (new \Database\Seeders\RolesAndPermissionsSeeder)->run();
+
     $signer = User::factory()->create();
     AppSetting::setValue(AppSettingKey::OfficialSignerUserId, $signer->id);
 
     $user = User::factory()->create();
+    $user->givePermissionTo('manage-invoices');
     $personTypeId = ClientType::query()->where('key', 'person')->value('id');
     $draftStatusId = InvoiceStatus::query()->where('key', 'draft')->value('id');
     $year = (int) now()->year;
