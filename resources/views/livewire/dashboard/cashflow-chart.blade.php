@@ -14,7 +14,7 @@
     $sc = $signalColors[$signal['status'] ?? 'unsafe'] ?? $signalColors['unsafe'];
 @endphp
 
-<div class="rounded-xl border border-zinc-200 bg-white p-5 dark:border-zinc-700 dark:bg-zinc-900">
+<div class="min-w-0 rounded-xl border border-zinc-200 bg-white p-5 dark:border-zinc-700 dark:bg-zinc-900">
 
     {{-- Header --}}
     <div class="mb-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
@@ -162,7 +162,7 @@
         </div>
 
         {{-- Footer totals --}}
-        <div class="mt-5 grid grid-cols-3 gap-3 border-t border-zinc-100 pt-5 dark:border-zinc-800">
+        <div class="mt-5 grid grid-cols-1 gap-3 border-t border-zinc-100 pt-5 dark:border-zinc-800 sm:grid-cols-3">
             <div>
                 <p class="text-xs font-medium uppercase tracking-wide text-zinc-400 dark:text-zinc-500">Ukupan prihod</p>
                 <p class="mt-1 text-base font-semibold text-blue-600 dark:text-blue-400">{{ $fmt($totals['income']) }}</p>

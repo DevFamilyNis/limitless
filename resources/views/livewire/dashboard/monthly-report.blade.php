@@ -15,7 +15,7 @@
     $arrowDown = '<path fill-rule="evenodd" d="M10 2.75a.75.75 0 0 1 .75.75v10.69l3.22-3.22a.75.75 0 1 1 1.06 1.06l-4.5 4.5a.75.75 0 0 1-1.06 0l-4.5-4.5a.75.75 0 1 1 1.06-1.06l3.22 3.22V3.5a.75.75 0 0 1 .75-.75Z" clip-rule="evenodd"/>';
 @endphp
 
-<div class="flex h-full flex-col rounded-xl border border-zinc-200 bg-white p-5 dark:border-zinc-700 dark:bg-zinc-900">
+<div class="flex h-full min-w-0 flex-col rounded-xl border border-zinc-200 bg-white p-5 dark:border-zinc-700 dark:bg-zinc-900">
 
     {{-- Header --}}
     <div class="mb-4 flex items-start justify-between">
@@ -45,7 +45,7 @@
                 $noData = $val === null || ($val == 0 && $pct === null && $metric['format'] === 'currency');
             @endphp
 
-            <div class="flex items-center justify-between gap-3">
+            <div class="flex min-w-0 items-center justify-between gap-3">
                 <div class="min-w-0 flex-1">
 
                     {{-- Label + value row --}}
