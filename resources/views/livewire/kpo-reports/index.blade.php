@@ -62,17 +62,19 @@
                                     :title="$report ? __('messages.kpo.regenerate') : __('messages.kpo.generate')"
                                     color="primary"
                                 >
-                                    <x-ui.icons.pen :class="$actionIconClass" />
+                                    <x-ui.icons.receipt :class="$actionIconClass" />
                                 </x-ui.buttons.icon-action>
                             @endif
 
-                            <x-ui.buttons.icon-action
-                                wire:click="downloadPdf({{ $month['month'] }})"
-                                :title="__('messages.actions.download_pdf')"
-                                color="success"
-                            >
-                                <x-ui.icons.check :class="$actionIconClass" />
-                            </x-ui.buttons.icon-action>
+                            @if ($report)
+                                <x-ui.buttons.icon-action
+                                    wire:click="downloadPdf({{ $month['month'] }})"
+                                    :title="__('messages.actions.download_pdf')"
+                                    color="success"
+                                >
+                                    <x-ui.icons.download :class="$actionIconClass" />
+                                </x-ui.buttons.icon-action>
+                            @endif
 
                             @if ($report && ! $month['is_locked'])
                                 <x-ui.buttons.icon-action
@@ -80,7 +82,7 @@
                                     :title="__('messages.kpo.lock')"
                                     color="danger"
                                 >
-                                    <x-ui.icons.disable :class="$actionIconClass" />
+                                    <x-ui.icons.lock :class="$actionIconClass" />
                                 </x-ui.buttons.icon-action>
                             @endif
                         </x-ui.table.actions>

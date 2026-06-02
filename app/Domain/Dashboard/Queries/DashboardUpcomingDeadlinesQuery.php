@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Domain\Dashboard\Queries;
 
+use App\Enums\InvoiceStatusKey;
+use App\Enums\IssueStatusKey;
 use App\Models\Invoice;
 use App\Models\Issue;
 use Illuminate\Support\Carbon;
@@ -24,7 +26,7 @@ final class DashboardUpcomingDeadlinesQuery
             ->join('projects', 'projects.id', '=', 'issues.project_id')
             ->join('issue_statuses', 'issue_statuses.id', '=', 'issues.status_id')
             ->leftJoin('clients', 'clients.id', '=', 'issues.client_id')
-            ->where('issue_statuses.key', '!=', 'done')
+            ->where('issue_statuses.key', '!=', IssueStatusKey::Done->value)
             ->whereBetween('issues.due_date', [$today->toDateString(), $weekEnd->toDateString()])
             ->orderBy('issues.due_date')
             ->limit(8)
@@ -50,7 +52,7 @@ final class DashboardUpcomingDeadlinesQuery
         $invoiceDueItems = Invoice::query()
             ->join('clients', 'clients.id', '=', 'invoices.client_id')
             ->join('invoice_statuses', 'invoice_statuses.id', '=', 'invoices.status_id')
-            ->whereNotIn('invoice_statuses.key', ['paid', 'canceled'])
+            ->whereNotIn('invoice_statuses.key', [InvoiceStatusKey::Paid->value, InvoiceStatusKey::Canceled->value])
             ->whereBetween('invoices.due_date', [$today->toDateString(), $weekEnd->toDateString()])
             ->orderBy('invoices.due_date')
             ->limit(8)

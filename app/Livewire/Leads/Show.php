@@ -6,6 +6,7 @@ namespace App\Livewire\Leads;
 
 use App\Domain\Leads\Actions\AddLeadCommentAction;
 use App\Domain\Leads\DTO\AddLeadCommentData;
+use App\Enums\PermissionKey;
 use App\Models\Lead;
 use App\Models\LeadStatus;
 use Illuminate\Contracts\View\View;
@@ -53,6 +54,8 @@ class Show extends Component
 
     public function addComment(): void
     {
+        $this->authorize(PermissionKey::ManageLeads->value);
+
         $validated = $this->validate();
 
         app(AddLeadCommentAction::class)->execute(

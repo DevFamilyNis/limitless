@@ -8,6 +8,7 @@ use App\Domain\PaidExpenses\DTO\DeletePaidExpenseData;
 use App\Domain\PaidExpenses\DTO\PaidExpensesFiltersData;
 use App\Domain\PaidExpenses\DTO\UpsertPaidExpenseData;
 use App\Domain\PaidExpenses\Queries\PaidExpensesListQuery;
+use App\Enums\PermissionKey;
 use App\Models\Category;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
@@ -79,6 +80,8 @@ class Index extends Component
 
     public function saveExpense(): void
     {
+        $this->authorize(PermissionKey::ManageTransactions->value);
+
         $validated = $this->validate();
 
         app(UpsertPaidExpenseAction::class)->execute(
@@ -122,6 +125,8 @@ class Index extends Component
 
     public function deleteExpense(int $transactionId): void
     {
+        $this->authorize(PermissionKey::ManageTransactions->value);
+
         app(DeletePaidExpenseAction::class)->execute(
             DeletePaidExpenseData::fromArray([
                 'transaction_id' => $transactionId,

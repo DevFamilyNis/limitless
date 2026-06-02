@@ -4,6 +4,7 @@ namespace App\Livewire\TaxYears;
 
 use App\Domain\TaxYears\Actions\UpsertTaxYearAction;
 use App\Domain\TaxYears\DTO\UpsertTaxYearData;
+use App\Enums\PermissionKey;
 use App\Models\TaxYear;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
@@ -56,6 +57,8 @@ class Form extends Component
 
     public function save(): void
     {
+        $this->authorize(PermissionKey::ManageTaxYears->value);
+
         $validated = $this->validate();
 
         $taxYear = app(UpsertTaxYearAction::class)->execute(

@@ -4,6 +4,7 @@ namespace App\Livewire\Categories;
 
 use App\Domain\Categories\Actions\UpsertCategoryAction;
 use App\Domain\Categories\DTO\UpsertCategoryData;
+use App\Enums\PermissionKey;
 use App\Models\Category;
 use App\Models\CategoryType;
 use Illuminate\Contracts\View\View;
@@ -47,6 +48,8 @@ class Form extends Component
 
     public function save(): void
     {
+        $this->authorize(PermissionKey::ManageCategories->value);
+
         $validated = $this->validate();
 
         $category = app(UpsertCategoryAction::class)->execute(

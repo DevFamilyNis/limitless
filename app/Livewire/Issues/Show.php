@@ -10,6 +10,7 @@ use App\Domain\Issues\DTO\AddIssueCommentData;
 use App\Domain\Issues\DTO\DeleteIssueAttachmentData;
 use App\Domain\Issues\DTO\DeleteIssueCommentData;
 use App\Domain\Issues\DTO\UploadIssueAttachmentsData;
+use App\Enums\PermissionKey;
 use App\Models\Issue;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
@@ -44,6 +45,8 @@ class Show extends Component
 
     public function addComment(): void
     {
+        $this->authorize(PermissionKey::ManageIssues->value);
+
         $validated = $this->validate([
             'comment' => ['required', 'string', 'min:2'],
         ]);
@@ -62,6 +65,8 @@ class Show extends Component
 
     public function deleteComment(int $commentId): void
     {
+        $this->authorize(PermissionKey::ManageIssues->value);
+
         app(DeleteIssueCommentAction::class)->execute(
             DeleteIssueCommentData::fromArray([
                 'user_id' => Auth::id(),
@@ -75,6 +80,8 @@ class Show extends Component
 
     public function uploadAttachments(): void
     {
+        $this->authorize(PermissionKey::ManageIssues->value);
+
         $this->validate([
             'attachments.*' => ['required', 'file', 'max:10240'],
         ]);
@@ -93,6 +100,8 @@ class Show extends Component
 
     public function deleteAttachment(int $mediaId): void
     {
+        $this->authorize(PermissionKey::ManageIssues->value);
+
         app(DeleteIssueAttachmentAction::class)->execute(
             DeleteIssueAttachmentData::fromArray([
                 'user_id' => Auth::id(),

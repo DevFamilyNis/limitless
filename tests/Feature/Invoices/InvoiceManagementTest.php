@@ -1,8 +1,10 @@
 <?php
 
 use App\Actions\Invoices\GenerateInvoiceNumber;
+use App\Enums\AppSettingKey;
 use App\Livewire\Invoices\Form;
 use App\Livewire\Invoices\Index;
+use App\Models\AppSetting;
 use App\Models\BillingPeriod;
 use App\Models\Client;
 use App\Models\ClientProjectRate;
@@ -54,7 +56,11 @@ test('invoices are visible to another user in shared workspace', function () {
 });
 
 test('create invoice page is displayed with previewed invoice number fields', function () {
+    app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+    (new \Database\Seeders\RolesAndPermissionsSeeder)->run();
+
     $user = User::factory()->create();
+    $user->givePermissionTo('manage-invoices');
 
     $this->actingAs($user)
         ->get(route('invoices.create'))
@@ -158,7 +164,14 @@ test('changing client loads client price list as invoice items', function () {
 });
 
 test('user can create invoice with multiple services and total is sum of items', function () {
+    app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+    (new \Database\Seeders\RolesAndPermissionsSeeder)->run();
+
+    $signer = User::factory()->create();
+    AppSetting::setValue(AppSettingKey::OfficialSignerUserId, $signer->id);
+
     $user = User::factory()->create();
+    $user->givePermissionTo('manage-invoices');
     $companyTypeId = ClientType::query()->where('key', 'company')->value('id');
     $draftStatusId = InvoiceStatus::query()->where('key', 'draft')->value('id');
 
@@ -243,7 +256,14 @@ test('user can create invoice with multiple services and total is sum of items',
 });
 
 test('user can create invoice when due date is before service period end', function () {
+    app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+    (new \Database\Seeders\RolesAndPermissionsSeeder)->run();
+
+    $signer = User::factory()->create();
+    AppSetting::setValue(AppSettingKey::OfficialSignerUserId, $signer->id);
+
     $user = User::factory()->create();
+    $user->givePermissionTo('manage-invoices');
     $companyTypeId = ClientType::query()->where('key', 'company')->value('id');
     $draftStatusId = InvoiceStatus::query()->where('key', 'draft')->value('id');
 
@@ -351,7 +371,14 @@ test('user can search invoices', function () {
 });
 
 test('user can update invoice while keeping generated number fields', function () {
+    app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+    (new \Database\Seeders\RolesAndPermissionsSeeder)->run();
+
+    $signer = User::factory()->create();
+    AppSetting::setValue(AppSettingKey::OfficialSignerUserId, $signer->id);
+
     $user = User::factory()->create();
+    $user->givePermissionTo('manage-invoices');
     $personTypeId = ClientType::query()->where('key', 'person')->value('id');
     $draftStatusId = InvoiceStatus::query()->where('key', 'draft')->value('id');
     $paidStatusId = InvoiceStatus::query()->where('key', 'paid')->value('id');
@@ -418,14 +445,22 @@ test('user can update invoice while keeping generated number fields', function (
 });
 
 test('user can mark invoice as paid from list', function () {
-    $user = User::factory()->create(['name' => 'Igor Mitrinovic']);
+    app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+    (new \Database\Seeders\RolesAndPermissionsSeeder)->run();
+
+    $signer = User::factory()->create();
+    AppSetting::setValue(AppSettingKey::OfficialSignerUserId, $signer->id);
+
+    $user = User::factory()->create();
+    $user->givePermissionTo('manage-invoices');
     $personTypeId = ClientType::query()->where('key', 'person')->value('id');
     $draftStatusId = InvoiceStatus::query()->where('key', 'draft')->value('id');
     $paidStatusId = InvoiceStatus::query()->where('key', 'paid')->value('id');
     $year = (int) now()->year;
 
+    // Klijent pripada signaturu jer on potpisuje i njime upravlja
     $client = Client::query()->create([
-        'user_id' => $user->id,
+        'user_id' => $signer->id,
         'client_type_id' => $personTypeId,
         'display_name' => 'Paid Client',
         'is_active' => true,
@@ -453,7 +488,14 @@ test('user can mark invoice as paid from list', function () {
 });
 
 test('user can delete invoice', function () {
+    app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+    (new \Database\Seeders\RolesAndPermissionsSeeder)->run();
+
+    $signer = User::factory()->create();
+    AppSetting::setValue(AppSettingKey::OfficialSignerUserId, $signer->id);
+
     $user = User::factory()->create();
+    $user->givePermissionTo('manage-invoices');
     $personTypeId = ClientType::query()->where('key', 'person')->value('id');
     $draftStatusId = InvoiceStatus::query()->where('key', 'draft')->value('id');
     $year = (int) now()->year;

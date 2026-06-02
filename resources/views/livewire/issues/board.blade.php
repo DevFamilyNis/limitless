@@ -97,15 +97,15 @@
                                     @if ($issue->due_date)
                                         <div class="flex items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400">
                                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-4">
-                                                <path d="M6.75 2.25a.75.75 0 0 1 .75.75V4.5h9V3a.75.75 0 0 1 1.5 0V4.5h.75A2.25 2.25 0 0 1 21 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 17.25V6.75A2.25 2.25 0 0 1 5.25 4.5H6V3a.75.75 0 0 1 .75-.75ZM4.5 9.75v7.5c0 .414.336.75.75.75h13.5a.75.75 0 0 0 .75-.75v-7.5H4.5Z" />
+                                                <path fill-rule="evenodd" d="M6.75 2.25A.75.75 0 0 1 7.5 3v1.5h9V3A.75.75 0 0 1 18 3v1.5h.75a3 3 0 0 1 3 3v11.25a3 3 0 0 1-3 3H5.25a3 3 0 0 1-3-3V7.5a3 3 0 0 1 3-3H6V3a.75.75 0 0 1 .75-.75Zm13.5 9a1.5 1.5 0 0 0-1.5-1.5H5.25a1.5 1.5 0 0 0-1.5 1.5v7.5a1.5 1.5 0 0 0 1.5 1.5h13.5a1.5 1.5 0 0 0 1.5-1.5v-7.5Z" clip-rule="evenodd" />
                                             </svg>
                                             <span>{{ $issue->due_date->format('d.m.Y') }}</span>
                                         </div>
                                     @endif
                                     @if ($issue->comments_count > 0)
                                         <div class="flex items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400">
-                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-4">
-                                                <path fill-rule="evenodd" d="M4.804 4.644A6.75 6.75 0 0 1 9.578 3h4.844a6.75 6.75 0 0 1 6.75 6.75v2.25a6.75 6.75 0 0 1-6.75 6.75H10.91l-3.86 2.895A.75.75 0 0 1 5.85 21v-3.177a6.75 6.75 0 0 1-4.022-6.073V9.75a6.75 6.75 0 0 1 2.976-5.106ZM9.578 4.5A5.25 5.25 0 0 0 4.328 9.75V12a5.25 5.25 0 0 0 3.154 4.81.75.75 0 0 1 .45.686v1.995l2.902-2.177a.75.75 0 0 1 .45-.15h4.138A5.25 5.25 0 0 0 20.672 12V9.75A5.25 5.25 0 0 0 15.422 4.5H9.578Z" clip-rule="evenodd" />
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 0 1 .865-.501 48.172 48.172 0 0 0 3.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" />
                                             </svg>
                                             <span>{{ $issue->comments_count }}</span>
                                         </div>

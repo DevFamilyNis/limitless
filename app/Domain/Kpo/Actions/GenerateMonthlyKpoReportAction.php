@@ -41,6 +41,7 @@ final class GenerateMonthlyKpoReportAction
         $invoices = Invoice::query()
             ->with('client')
             ->whereBetween('created_at', [$periodFrom->copy()->startOfDay(), $periodTo->copy()->endOfDay()])
+            ->where('invoice_number', 'not like', 'FIZ-%')
             ->orderBy('issue_date')
             ->orderBy('invoice_number')
             ->orderBy('id')
