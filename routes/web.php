@@ -23,6 +23,7 @@ use App\Livewire\Leads\Form as LeadForm;
 use App\Livewire\Leads\Index as LeadIndex;
 use App\Livewire\Leads\Show as LeadShow;
 use App\Livewire\MonthlyExpenses\Index as MonthlyExpenseIndex;
+use App\Livewire\MonthlyIncomes\Index as MonthlyIncomeIndex;
 use App\Livewire\PaidExpenses\Index as PaidExpenseIndex;
 use App\Livewire\Projects\Form as ProjectForm;
 use App\Livewire\Projects\Index as ProjectIndex;
@@ -92,6 +93,7 @@ Route::middleware('auth')->group(function () {
     Route::livewire('categories/{category}/edit', CategoryForm::class)->name('categories.edit');
     Route::livewire('transactions', TransactionIndex::class)->name('transactions.index');
     Route::livewire('monthly-expenses', MonthlyExpenseIndex::class)->name('monthly-expenses.index');
+    Route::livewire('monthly-incomes', MonthlyIncomeIndex::class)->name('monthly-incomes.index');
     Route::livewire('paid-expenses', PaidExpenseIndex::class)->name('paid-expenses.index');
     Route::livewire('tax-years', TaxYearIndex::class)->name('tax-years.index');
     Route::livewire('tax-years/create', TaxYearForm::class)->name('tax-years.create');

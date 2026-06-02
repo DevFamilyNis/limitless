@@ -102,6 +102,9 @@
                         <flux:sidebar.item class="ps-9" icon="document-text" :href="route('monthly-expenses.index')" :current="request()->routeIs('monthly-expenses.*')" wire:navigate>
                             Spisak mesečnih obaveza
                         </flux:sidebar.item>
+                        <flux:sidebar.item class="ps-9" icon="arrow-trending-up" :href="route('monthly-incomes.index')" :current="request()->routeIs('monthly-incomes.*')" wire:navigate>
+                            @lang('messages.menu.monthly_incomes')
+                        </flux:sidebar.item>
                         <flux:sidebar.item class="ps-9" icon="tag" :href="route('categories.index')" :current="request()->routeIs('categories.*')" wire:navigate>
                             @lang('messages.menu.categories')
                         </flux:sidebar.item>
