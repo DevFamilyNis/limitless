@@ -11,8 +11,8 @@ The goal of the blueprint is **not** to audit the whole application.
 The goal is to confirm that the feature is clearly described, placed correctly,
 and planned layer by layer before any code is changed.
 
-Do not search broadly through the codebase during the first blueprint response
-unless the user explicitly asks for it.
+During Blueprint Mode, do not perform implementation discovery across unrelated files.
+Use the information provided by the user and only inspect files that are directly necessary to understand the requested feature.
 
 ---
 
@@ -25,10 +25,8 @@ The feature definition should include:
 - Feature name
 - Business purpose
 - Where the feature belongs in the application
-- Who can access it
-- Who can create it
-- Who can edit it
-- Who can delete it
+- Access rules, if this feature introduces or changes access control
+- Create, edit, and delete rules, if these actions apply
 - Which records or states are immutable
 - Any special business rules provided by the user
 - Any known constraints provided by the user
@@ -79,8 +77,8 @@ Layer plan:
 4. DTO / Action
 5. Authorization
 6. Validation
-7. Routes / Controller
-8. Livewire / Blade UI
+7. Routes / Livewire
+8. Livewire / Flux UI
 9. Translations
 10. Tests
 11. Verification

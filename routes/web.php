@@ -12,6 +12,9 @@ use App\Livewire\ClientProjectRates\Index as ClientProjectRateIndex;
 use App\Livewire\Clients\Form as ClientForm;
 use App\Livewire\Clients\Index as ClientIndex;
 use App\Livewire\Clients\Show as ClientShow;
+use App\Livewire\Contracts\Form as ContractForm;
+use App\Livewire\Contracts\Index as ContractIndex;
+use App\Livewire\Contracts\Show as ContractShow;
 use App\Livewire\Dashboard\DashboardPage;
 use App\Livewire\Invoices\Form as InvoiceForm;
 use App\Livewire\Invoices\Index as InvoiceIndex;
@@ -70,6 +73,17 @@ Route::livewire('dashboard', DashboardPage::class)
     ->name('dashboard');
 
 Route::middleware('auth')->group(function () {
+    Route::livewire('contracts', ContractIndex::class)->name('contracts.index');
+    Route::livewire('contracts/create', ContractForm::class)->name('contracts.create');
+    Route::livewire('contracts/{contract}/edit', ContractForm::class)->name('contracts.edit');
+    Route::livewire('contracts/{contract}', ContractShow::class)->name('contracts.show');
+    Route::get('contracts/{contract}/pdf', function (\App\Models\Contract $contract) {
+        abort_if($contract->user_id !== auth()->id(), 403);
+        $media = $contract->getFirstMedia('pdf');
+        abort_if($media === null, 404);
+
+        return response()->file($media->getPath(), ['Content-Type' => 'application/pdf']);
+    })->name('contracts.pdf');
     Route::livewire('leads', LeadIndex::class)->name('leads.index');
     Route::livewire('leads/create', LeadForm::class)->name('leads.create');
     Route::livewire('leads/{lead}/edit', LeadForm::class)->name('leads.edit');
