@@ -57,7 +57,7 @@
     </div>
 
     {{-- Annual totals --}}
-    <div class="grid grid-cols-3 gap-4">
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <div class="rounded-xl border border-zinc-200 bg-white p-5 dark:border-zinc-700 dark:bg-zinc-900">
             <p class="text-xs font-medium uppercase tracking-wide text-zinc-400">Ukupan prihod</p>
             <p class="mt-2 text-xl font-semibold text-blue-600 dark:text-blue-400">{{ $fmt($totals['income']) }}</p>
