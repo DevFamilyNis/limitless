@@ -4,8 +4,6 @@ use App\Http\Controllers\Auth\SendMagicLoginLinkController;
 use App\Http\Controllers\MagicLoginController;
 use App\Livewire\Admin\Roles\Index as AdminRolesIndex;
 use App\Livewire\Admin\Users\Index as AdminUsersIndex;
-use App\Livewire\Dashboard\CashflowChart;
-use App\Livewire\Dashboard\InvestmentSignalPage;
 use App\Livewire\Auth\MagicLoginRequest;
 use App\Livewire\Categories\Form as CategoryForm;
 use App\Livewire\Categories\Index as CategoryIndex;
@@ -14,7 +12,12 @@ use App\Livewire\ClientProjectRates\Index as ClientProjectRateIndex;
 use App\Livewire\Clients\Form as ClientForm;
 use App\Livewire\Clients\Index as ClientIndex;
 use App\Livewire\Clients\Show as ClientShow;
+use App\Livewire\Contracts\Form as ContractForm;
+use App\Livewire\Contracts\Index as ContractIndex;
+use App\Livewire\Contracts\Show as ContractShow;
+use App\Livewire\Dashboard\CashflowChart;
 use App\Livewire\Dashboard\DashboardPage;
+use App\Livewire\Dashboard\InvestmentSignalPage;
 use App\Livewire\Invoices\Form as InvoiceForm;
 use App\Livewire\Invoices\Index as InvoiceIndex;
 use App\Livewire\Issues\Form as IssueForm;
@@ -25,6 +28,7 @@ use App\Livewire\Leads\Form as LeadForm;
 use App\Livewire\Leads\Index as LeadIndex;
 use App\Livewire\Leads\Show as LeadShow;
 use App\Livewire\MonthlyExpenses\Index as MonthlyExpenseIndex;
+use App\Livewire\MonthlyIncomes\Index as MonthlyIncomeIndex;
 use App\Livewire\PaidExpenses\Index as PaidExpenseIndex;
 use App\Livewire\Projects\Form as ProjectForm;
 use App\Livewire\Projects\Index as ProjectIndex;
@@ -66,6 +70,17 @@ Route::livewire('dashboard/investment-signal', InvestmentSignalPage::class)
     ->name('dashboard.investment-signal');
 
 Route::middleware('auth')->group(function () {
+    Route::livewire('contracts', ContractIndex::class)->name('contracts.index');
+    Route::livewire('contracts/create', ContractForm::class)->name('contracts.create');
+    Route::livewire('contracts/{contract}/edit', ContractForm::class)->name('contracts.edit');
+    Route::livewire('contracts/{contract}', ContractShow::class)->name('contracts.show');
+    Route::get('contracts/{contract}/pdf', function (\App\Models\Contract $contract) {
+        abort_if($contract->user_id !== auth()->id(), 403);
+        $media = $contract->getFirstMedia('pdf');
+        abort_if($media === null, 404);
+
+        return response()->file($media->getPath(), ['Content-Type' => 'application/pdf']);
+    })->name('contracts.pdf');
     Route::livewire('leads', LeadIndex::class)->name('leads.index');
     Route::livewire('leads/create', LeadForm::class)->middleware('can:manage-leads')->name('leads.create');
     Route::livewire('leads/{lead}/edit', LeadForm::class)->middleware('can:manage-leads')->name('leads.edit');
@@ -89,6 +104,7 @@ Route::middleware('auth')->group(function () {
     Route::livewire('categories/{category}/edit', CategoryForm::class)->middleware('can:manage-categories')->name('categories.edit');
     Route::livewire('transactions', TransactionIndex::class)->name('transactions.index');
     Route::livewire('monthly-expenses', MonthlyExpenseIndex::class)->name('monthly-expenses.index');
+    Route::livewire('monthly-incomes', MonthlyIncomeIndex::class)->name('monthly-incomes.index');
     Route::livewire('paid-expenses', PaidExpenseIndex::class)->name('paid-expenses.index');
     Route::livewire('tax-years', TaxYearIndex::class)->name('tax-years.index');
     Route::livewire('tax-years/create', TaxYearForm::class)->middleware('can:manage-tax-years')->name('tax-years.create');
