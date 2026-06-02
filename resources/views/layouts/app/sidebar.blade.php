@@ -11,7 +11,7 @@
             </flux:sidebar.header>
 
             @php
-                $clientProjectOpen = request()->routeIs('leads.*') || request()->routeIs('clients.*') || request()->routeIs('projects.*') || request()->routeIs('client-project-rates.*');
+                $clientProjectOpen = request()->routeIs('leads.*') || request()->routeIs('clients.*') || request()->routeIs('projects.*') || request()->routeIs('client-project-rates.*') || request()->routeIs('contracts.*');
                 $financeOpen = request()->routeIs('invoices.*') || request()->routeIs('transactions.*') || request()->routeIs('paid-expenses.*') || request()->routeIs('monthly-expenses.*') || request()->routeIs('categories.*') || request()->routeIs('tax-years.*');
                 $reportsOpen = request()->routeIs('kpo-reports.*');
                 $settingsOpen = request()->routeIs('settings.issue-statuses.*') || request()->routeIs('settings.issue-priorities.*') || request()->routeIs('settings.issue-categories.*');
@@ -69,6 +69,9 @@
                         <flux:sidebar.item class="ps-9" icon="receipt-percent" :href="route('client-project-rates.index')" :current="request()->routeIs('client-project-rates.*')" wire:navigate>
                             @lang('messages.menu.projectsPrice')
                         </flux:sidebar.item>
+                        <flux:sidebar.item class="ps-9" icon="document-check" :href="route('contracts.index')" :current="request()->routeIs('contracts.*')" wire:navigate>
+                            @lang('messages.menu.contracts')
+                        </flux:sidebar.item>
                     </div>
                 </div>
 
@@ -101,6 +104,9 @@
                         </flux:sidebar.item>
                         <flux:sidebar.item class="ps-9" icon="document-text" :href="route('monthly-expenses.index')" :current="request()->routeIs('monthly-expenses.*')" wire:navigate>
                             Spisak mesečnih obaveza
+                        </flux:sidebar.item>
+                        <flux:sidebar.item class="ps-9" icon="arrow-trending-up" :href="route('monthly-incomes.index')" :current="request()->routeIs('monthly-incomes.*')" wire:navigate>
+                            @lang('messages.menu.monthly_incomes')
                         </flux:sidebar.item>
                         <flux:sidebar.item class="ps-9" icon="tag" :href="route('categories.index')" :current="request()->routeIs('categories.*')" wire:navigate>
                             @lang('messages.menu.categories')
