@@ -58,15 +58,15 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::livewire('dashboard', DashboardPage::class)
-    ->middleware(['auth', 'verified'])
+    ->middleware('auth')
     ->name('dashboard');
 
 Route::livewire('dashboard/cashflow', CashflowChart::class)
-    ->middleware(['auth', 'verified'])
+    ->middleware('auth')
     ->name('dashboard.cashflow');
 
 Route::livewire('dashboard/investment-signal', InvestmentSignalPage::class)
-    ->middleware(['auth', 'verified'])
+    ->middleware('auth')
     ->name('dashboard.investment-signal');
 
 Route::middleware('auth')->group(function () {
