@@ -139,7 +139,7 @@ class Form extends Component
         }
 
         return view('livewire.contracts.form', [
-            'clients' => Client::query()->where('user_id', Auth::id())->orderBy('display_name')->get(),
+            'clients' => Client::query()->where('user_id', Auth::id())->where('is_active', true)->orderBy('display_name')->get(),
             'parentContracts' => $parentContracts,
             'isEditing' => $this->contractId !== null,
             'types' => ContractType::cases(),
