@@ -15,8 +15,8 @@
     <form wire:submit="save" class="space-y-6 rounded-xl border border-zinc-200 p-6 dark:border-zinc-700">
 
         @if (! $isEditing)
-            <flux:select wire:model.live="clientId" :label="__('messages.contracts.client')" required>
-                <option value="">@lang('messages.contracts.select_client')</option>
+            <flux:select wire:model.live="clientId" :label="__('messages.contracts.customer')" required>
+                <option value="">@lang('messages.contracts.select_customer')</option>
                 @foreach ($clients as $client)
                     <option value="{{ $client->id }}">{{ $client->display_name }}</option>
                 @endforeach

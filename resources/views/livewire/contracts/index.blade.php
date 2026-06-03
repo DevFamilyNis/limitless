@@ -17,7 +17,7 @@
     @endif
 
     <div class="grid gap-3 md:grid-cols-3">
-        <flux:select wire:model.live="clientFilter" :label="__('messages.contracts.client')">
+        <flux:select wire:model.live="clientFilter" :label="__('messages.menu.clients')">
             <option value="">@lang('messages.common.all')</option>
             @foreach ($clients as $client)
                 <option value="{{ $client->id }}">{{ $client->display_name }}</option>

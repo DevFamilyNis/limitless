@@ -23,7 +23,7 @@ class Index extends Component
 
     public string $typeFilter = '';
 
-    public string $statusFilter = '';
+    public string $statusFilter = 'Aktivan';
 
     public function updatedClientFilter(): void
     {
@@ -74,7 +74,7 @@ class Index extends Component
 
         return view('livewire.contracts.index', [
             'contracts' => $query->paginate(15),
-            'clients' => Client::query()->where('user_id', Auth::id())->orderBy('display_name')->get(),
+            'clients' => Client::query()->where('user_id', Auth::id())->where('is_active', true)->orderBy('display_name')->get(),
             'types' => ContractType::cases(),
             'statuses' => ContractStatus::cases(),
         ])->layout('layouts.app', [
