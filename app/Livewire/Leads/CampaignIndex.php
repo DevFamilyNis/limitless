@@ -15,7 +15,6 @@ class CampaignIndex extends Component
     public function render(): View
     {
         $campaigns = LeadCampaign::query()
-            ->has('leads')
             ->orderBy('name')
             ->get();
 
