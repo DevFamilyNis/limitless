@@ -24,6 +24,8 @@ use App\Livewire\Issues\Form as IssueForm;
 use App\Livewire\Issues\Index as IssueIndex;
 use App\Livewire\Issues\Show as IssueShow;
 use App\Livewire\KpoReports\Index as KpoReportIndex;
+use App\Livewire\Leads\CampaignForm as LeadCampaignForm;
+use App\Livewire\Leads\CampaignIndex as LeadCampaignIndex;
 use App\Livewire\Leads\Form as LeadForm;
 use App\Livewire\Leads\Index as LeadIndex;
 use App\Livewire\Leads\Show as LeadShow;
@@ -81,10 +83,13 @@ Route::middleware('auth')->group(function () {
 
         return response()->file($media->getPath(), ['Content-Type' => 'application/pdf']);
     })->name('contracts.pdf');
-    Route::livewire('leads', LeadIndex::class)->name('leads.index');
-    Route::livewire('leads/create', LeadForm::class)->middleware('can:manage-leads')->name('leads.create');
-    Route::livewire('leads/{lead}/edit', LeadForm::class)->middleware('can:manage-leads')->name('leads.edit');
-    Route::livewire('leads/{lead}', LeadShow::class)->name('leads.show');
+    Route::livewire('leads', LeadCampaignIndex::class)->name('leads.index');
+    Route::livewire('leads/create-campaign', LeadCampaignForm::class)->middleware('can:manage-leads')->name('leads.campaign.create');
+    Route::livewire('leads/{campaign}/edit-campaign', LeadCampaignForm::class)->middleware('can:manage-leads')->name('leads.campaign.edit');
+    Route::livewire('leads/{campaign}/create', LeadForm::class)->middleware('can:manage-leads')->name('leads.create');
+    Route::livewire('leads/{campaign}/{lead}/edit', LeadForm::class)->middleware('can:manage-leads')->name('leads.edit');
+    Route::livewire('leads/{campaign}/{lead}', LeadShow::class)->name('leads.show');
+    Route::livewire('leads/{campaign}', LeadIndex::class)->name('leads.campaign');
     Route::livewire('clients', ClientIndex::class)->name('clients.index');
     Route::livewire('clients/create', ClientForm::class)->middleware('can:manage-clients')->name('clients.create');
     Route::livewire('clients/{client}/edit', ClientForm::class)->middleware('can:manage-clients')->name('clients.edit');

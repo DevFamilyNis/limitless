@@ -18,6 +18,7 @@ class Lead extends Model
     use HasFactory;
 
     protected $fillable = [
+        'lead_campaign_id',
         'lead_status_id',
         'company_name',
         'email',
@@ -35,6 +36,11 @@ class Lead extends Model
         'next_follow_up_at' => 'datetime',
         'converted_at' => 'datetime',
     ];
+
+    public function campaign(): BelongsTo
+    {
+        return $this->belongsTo(LeadCampaign::class, 'lead_campaign_id');
+    }
 
     public function status(): BelongsTo
     {

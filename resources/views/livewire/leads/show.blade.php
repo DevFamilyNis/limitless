@@ -8,10 +8,10 @@
         </div>
 
         <div class="flex items-center gap-2">
-            <flux:button variant="ghost" :href="route('leads.index')" wire:navigate>
+            <flux:button variant="ghost" :href="route('leads.campaign', $campaign)" wire:navigate>
                 @lang('messages.buttons.back')
             </flux:button>
-            <flux:button variant="primary" :href="route('leads.edit', $lead)" wire:navigate>
+            <flux:button variant="primary" :href="route('leads.edit', [$campaign, $lead])" wire:navigate>
                 @lang('messages.buttons.edit')
             </flux:button>
         </div>

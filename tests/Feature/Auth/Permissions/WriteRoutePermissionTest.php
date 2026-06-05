@@ -10,6 +10,7 @@ use App\Models\ClientProjectRate;
 use App\Models\Invoice;
 use App\Models\Issue;
 use App\Models\Lead;
+use App\Models\LeadCampaign;
 use App\Models\Project;
 use App\Models\TaxYear;
 use App\Models\User;
@@ -30,9 +31,10 @@ beforeEach(function () {
 test('user without manage-leads cannot access leads write routes', function () {
     $user = User::factory()->create();
     $lead = Lead::factory()->create();
+    $campaign = $lead->campaign;
 
-    $this->actingAs($user)->get(route('leads.create'))->assertForbidden();
-    $this->actingAs($user)->get(route('leads.edit', $lead))->assertForbidden();
+    $this->actingAs($user)->get(route('leads.create', $campaign))->assertForbidden();
+    $this->actingAs($user)->get(route('leads.edit', [$campaign, $lead]))->assertForbidden();
 });
 
 test('user without manage-clients cannot access clients write routes', function () {
@@ -96,8 +98,9 @@ test('user without manage-issues cannot access issues write routes', function ()
 test('user with manage-leads can access leads create route', function () {
     $user = User::factory()->create();
     $user->givePermissionTo(PermissionKey::ManageLeads->value);
+    $campaign = LeadCampaign::factory()->create();
 
-    $response = $this->actingAs($user)->get(route('leads.create'));
+    $response = $this->actingAs($user)->get(route('leads.create', $campaign));
     expect($response->getStatusCode())->not()->toBe(403);
 });
 

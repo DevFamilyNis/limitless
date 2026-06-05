@@ -4,11 +4,12 @@ use App\Livewire\Leads\Form;
 use App\Livewire\Leads\Index;
 use App\Livewire\Leads\Show;
 use App\Models\Lead;
+use App\Models\LeadCampaign;
 use App\Models\LeadStatus;
 use App\Models\User;
 use Livewire\Livewire;
 
-test('leads page is displayed', function () {
+test('leads campaign index page is displayed', function () {
     $user = User::factory()->create();
 
     $this->actingAs($user)
@@ -22,9 +23,10 @@ test('create lead page is displayed', function () {
 
     $user = User::factory()->create();
     $user->givePermissionTo('manage-leads');
+    $campaign = LeadCampaign::factory()->create();
 
     $this->actingAs($user)
-        ->get(route('leads.create'))
+        ->get(route('leads.create', $campaign))
         ->assertOk()
         ->assertSee(__('messages.leads.form_new_title'));
 });
@@ -33,8 +35,9 @@ test('lead show page is displayed for another user in shared workspace', functio
     $owner = User::factory()->create();
     $anotherUser = User::factory()->create();
 
-    $lead = Lead::query()->create([
-        'lead_status_id' => LeadStatus::query()->where('key', 'new')->value('id'),
+    $campaign = LeadCampaign::factory()->create();
+    $lead = Lead::factory()->create([
+        'lead_campaign_id' => $campaign->id,
         'company_name' => 'Shared Lead Company',
         'email' => 'shared@example.com',
         'phone' => '+38160123456',
@@ -43,7 +46,7 @@ test('lead show page is displayed for another user in shared workspace', functio
     $this->actingAs($owner);
 
     $this->actingAs($anotherUser)
-        ->get(route('leads.show', $lead))
+        ->get(route('leads.show', [$campaign, $lead]))
         ->assertOk()
         ->assertSee('Shared Lead Company')
         ->assertDontSee('Tip događaja')
@@ -59,43 +62,42 @@ test('user can create lead', function () {
 
     $user = User::factory()->create();
     $user->givePermissionTo('manage-leads');
+    $campaign = LeadCampaign::factory()->create();
     $interestedStatusId = LeadStatus::query()->where('key', 'interested')->value('id');
 
-    Livewire::actingAs($user)->test(Form::class)
+    Livewire::actingAs($user)->test(Form::class, ['campaign' => $campaign])
         ->set('companyName', 'Acme DOO')
         ->set('email', 'office@acme.test')
         ->set('phone', '+38160111222')
         ->set('leadStatusId', (string) $interestedStatusId)
+        ->set('leadCampaignId', (string) $campaign->id)
         ->call('save')
-        ->assertRedirect(route('leads.index', absolute: false));
+        ->assertRedirect(route('leads.campaign', $campaign, absolute: false));
 
     $this->assertDatabaseHas('leads', [
         'company_name' => 'Acme DOO',
         'email' => 'office@acme.test',
         'phone' => '+38160111222',
         'lead_status_id' => $interestedStatusId,
+        'lead_campaign_id' => $campaign->id,
     ]);
 });
 
-test('user can search leads', function () {
+test('user can search leads within a campaign', function () {
     $user = User::factory()->create();
-    $statusId = LeadStatus::query()->where('key', 'new')->value('id');
+    $campaign = LeadCampaign::factory()->create();
 
-    Lead::query()->create([
-        'lead_status_id' => $statusId,
+    Lead::factory()->create([
+        'lead_campaign_id' => $campaign->id,
         'company_name' => 'Alfa Systems',
-        'email' => 'alfa@example.com',
-        'phone' => '+38160111111',
     ]);
 
-    Lead::query()->create([
-        'lead_status_id' => $statusId,
+    Lead::factory()->create([
+        'lead_campaign_id' => $campaign->id,
         'company_name' => 'Beta Systems',
-        'email' => 'beta@example.com',
-        'phone' => '+38160222222',
     ]);
 
-    Livewire::actingAs($user)->test(Index::class)
+    Livewire::actingAs($user)->test(Index::class, ['campaign' => $campaign])
         ->set('search', 'Alfa')
         ->assertSee('Alfa Systems')
         ->assertDontSee('Beta Systems');
@@ -103,18 +105,16 @@ test('user can search leads', function () {
 
 test('leads pagination shows 10 leads per page', function () {
     $user = User::factory()->create();
-    $statusId = LeadStatus::query()->where('key', 'new')->value('id');
+    $campaign = LeadCampaign::factory()->create();
 
     foreach (range(1, 11) as $number) {
-        Lead::query()->create([
-            'lead_status_id' => $statusId,
+        Lead::factory()->create([
+            'lead_campaign_id' => $campaign->id,
             'company_name' => sprintf('Pagination Lead %02d', $number),
-            'email' => sprintf('pagination-%02d@example.com', $number),
-            'phone' => sprintf('+3816000%04d', $number),
         ]);
     }
 
-    Livewire::actingAs($user)->test(Index::class)
+    Livewire::actingAs($user)->test(Index::class, ['campaign' => $campaign])
         ->assertSee('Pagination Lead 11')
         ->assertSee('Pagination Lead 02')
         ->assertDontSee('Pagination Lead 01')
@@ -129,22 +129,23 @@ test('user can update lead', function () {
 
     $user = User::factory()->create();
     $user->givePermissionTo('manage-leads');
+    $campaign = LeadCampaign::factory()->create();
     $newStatusId = LeadStatus::query()->where('key', 'new')->value('id');
     $respondedStatusId = LeadStatus::query()->where('key', 'responded')->value('id');
 
-    $lead = Lead::query()->create([
+    $lead = Lead::factory()->create([
+        'lead_campaign_id' => $campaign->id,
         'lead_status_id' => $newStatusId,
         'company_name' => 'Old Name DOO',
         'email' => 'old@example.com',
-        'phone' => '+38160111222',
     ]);
 
-    Livewire::actingAs($user)->test(Form::class, ['lead' => $lead])
+    Livewire::actingAs($user)->test(Form::class, ['campaign' => $campaign, 'lead' => $lead])
         ->set('companyName', 'New Name DOO')
         ->set('email', 'new@example.com')
         ->set('leadStatusId', (string) $respondedStatusId)
         ->call('save')
-        ->assertRedirect(route('leads.index', absolute: false));
+        ->assertRedirect(route('leads.campaign', $campaign, absolute: false));
 
     $this->assertDatabaseHas('leads', [
         'id' => $lead->id,
@@ -160,15 +161,14 @@ test('user can delete lead', function () {
 
     $user = User::factory()->create();
     $user->givePermissionTo('manage-leads');
+    $campaign = LeadCampaign::factory()->create();
 
-    $lead = Lead::query()->create([
-        'lead_status_id' => LeadStatus::query()->where('key', 'new')->value('id'),
+    $lead = Lead::factory()->create([
+        'lead_campaign_id' => $campaign->id,
         'company_name' => 'Delete Me DOO',
-        'email' => 'delete@example.com',
-        'phone' => '+38160333444',
     ]);
 
-    Livewire::actingAs($user)->test(Index::class)
+    Livewire::actingAs($user)->test(Index::class, ['campaign' => $campaign])
         ->call('deleteLead', $lead->id);
 
     $this->assertDatabaseMissing('leads', [
@@ -182,17 +182,17 @@ test('user can add lead comment and update lead tracking fields', function () {
 
     $user = User::factory()->create();
     $user->givePermissionTo('manage-leads');
+    $campaign = LeadCampaign::factory()->create();
     $newStatusId = LeadStatus::query()->where('key', 'new')->value('id');
     $respondedStatusId = LeadStatus::query()->where('key', 'responded')->value('id');
 
-    $lead = Lead::query()->create([
+    $lead = Lead::factory()->create([
+        'lead_campaign_id' => $campaign->id,
         'lead_status_id' => $newStatusId,
         'company_name' => 'Timeline Lead',
-        'email' => 'timeline@example.com',
-        'phone' => '+38160444555',
     ]);
 
-    Livewire::actingAs($user)->test(Show::class, ['lead' => $lead])
+    Livewire::actingAs($user)->test(Show::class, ['campaign' => $campaign, 'lead' => $lead])
         ->set('commentLeadStatusId', (string) $respondedStatusId)
         ->set('commentContactMethod', 'phone')
         ->set('commentBody', 'Javili su se i tražili ponudu.')
@@ -225,13 +225,13 @@ test('user can add lead comment and update lead tracking fields', function () {
 
 test('lead uses first upcoming follow up across multiple comments', function () {
     $user = User::factory()->create();
+    $campaign = LeadCampaign::factory()->create();
     $statusId = LeadStatus::query()->where('key', 'contacted')->value('id');
 
-    $lead = Lead::query()->create([
+    $lead = Lead::factory()->create([
+        'lead_campaign_id' => $campaign->id,
         'lead_status_id' => $statusId,
         'company_name' => 'Future Follow Up Lead',
-        'email' => 'future@example.com',
-        'phone' => '+38160123123',
     ]);
 
     $lead->comments()->create([
@@ -263,7 +263,7 @@ test('lead uses first upcoming follow up across multiple comments', function () 
     expect($lead->current_next_follow_up_at?->format('Y-m-d'))->toBe(now()->addDays(2)->format('Y-m-d'));
 
     $this->actingAs($user)
-        ->get(route('leads.show', $lead))
+        ->get(route('leads.show', [$campaign, $lead]))
         ->assertOk()
         ->assertSee($lead->current_next_follow_up_at?->format('d.m.Y'));
 });

@@ -10,6 +10,7 @@ use App\Domain\Leads\DTO\LeadFiltersData;
 use App\Domain\Leads\Queries\LeadListQuery;
 use App\Domain\Leads\Queries\LeadStatisticsQuery;
 use App\Enums\PermissionKey;
+use App\Models\LeadCampaign;
 use App\Models\LeadStatus;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
@@ -20,9 +21,16 @@ class Index extends Component
 {
     use WithPagination;
 
+    public LeadCampaign $campaign;
+
     public string $search = '';
 
     public string $statusFilter = 'all';
+
+    public function mount(LeadCampaign $campaign): void
+    {
+        $this->campaign = $campaign;
+    }
 
     public function updatedSearch(): void
     {
@@ -51,16 +59,17 @@ class Index extends Component
     public function render(): View
     {
         $filters = LeadFiltersData::fromArray([
+            'campaign_id' => $this->campaign->id,
             'search' => $this->search,
             'status_key' => $this->statusFilter,
         ]);
 
         return view('livewire.leads.index', [
             'leads' => app(LeadListQuery::class)->execute($filters),
-            'statistics' => app(LeadStatisticsQuery::class)->get(),
+            'statistics' => app(LeadStatisticsQuery::class)->get($this->campaign->id),
             'statuses' => LeadStatus::query()->orderBy('id')->get(),
         ])->layout('layouts.app', [
-            'title' => __('messages.leads.title'),
+            'title' => $this->campaign->name,
         ]);
     }
 }

@@ -19,6 +19,7 @@ final class UpsertLeadAction
         $statusKey = LeadStatus::query()->whereKey($dto->leadStatusId)->value('key');
 
         $lead->fill([
+            'lead_campaign_id' => $dto->leadCampaignId,
             'lead_status_id' => $dto->leadStatusId,
             'company_name' => $dto->companyName,
             'email' => $dto->email,

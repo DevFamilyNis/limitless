@@ -8,6 +8,7 @@ use App\Domain\Leads\Actions\AddLeadCommentAction;
 use App\Domain\Leads\DTO\AddLeadCommentData;
 use App\Enums\PermissionKey;
 use App\Models\Lead;
+use App\Models\LeadCampaign;
 use App\Models\LeadStatus;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
@@ -15,6 +16,8 @@ use Livewire\Component;
 
 class Show extends Component
 {
+    public LeadCampaign $campaign;
+
     public Lead $lead;
 
     public string $commentLeadStatusId = '';
@@ -31,8 +34,9 @@ class Show extends Component
 
     public string $commentNextFollowUpAt = '';
 
-    public function mount(Lead $lead): void
+    public function mount(LeadCampaign $campaign, Lead $lead): void
     {
+        $this->campaign = $campaign;
         $this->lead = $lead->load(['status', 'comments.author', 'comments.status']);
         $this->commentLeadStatusId = (string) $lead->lead_status_id;
     }
@@ -92,6 +96,7 @@ class Show extends Component
 
         return view('livewire.leads.show', [
             'statuses' => LeadStatus::query()->orderBy('id')->get(),
+            'campaign' => $this->campaign,
         ])->layout('layouts.app', [
             'title' => __('messages.leads.title').': '.$this->lead->company_name,
         ]);

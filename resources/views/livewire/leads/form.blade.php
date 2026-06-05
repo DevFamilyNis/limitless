@@ -5,7 +5,7 @@
             <flux:text>@lang('messages.leads.form_subtitle')</flux:text>
         </div>
 
-        <flux:button variant="ghost" :href="route('leads.index')" wire:navigate>
+        <flux:button variant="ghost" :href="route('leads.campaign', $campaign)" wire:navigate>
             @lang('messages.buttons.back')
         </flux:button>
     </div>
@@ -17,6 +17,12 @@
             <flux:input wire:model="email" :label="__('messages.form.email')" type="email" />
             <flux:input wire:model="phone" :label="__('messages.form.phone')" />
         </div>
+
+        <flux:select wire:model="leadCampaignId" :label="__('messages.leads.select_campaign')" required>
+            @foreach ($campaigns as $c)
+                <option value="{{ $c->id }}">{{ $c->name }}</option>
+            @endforeach
+        </flux:select>
 
         <flux:select wire:model.live="leadStatusId" :label="__('messages.table.status')" required>
             @foreach ($statuses as $status)

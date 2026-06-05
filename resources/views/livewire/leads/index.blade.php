@@ -3,11 +3,15 @@
 
     <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
-            <flux:heading size="xl">@lang('messages.leads.title')</flux:heading>
+            <flux:breadcrumbs>
+                <flux:breadcrumbs.item :href="route('leads.index')" wire:navigate>@lang('messages.lead_campaigns.title')</flux:breadcrumbs.item>
+                <flux:breadcrumbs.item>{{ $campaign->name }}</flux:breadcrumbs.item>
+            </flux:breadcrumbs>
+            <flux:heading size="xl" class="mt-1">{{ $campaign->name }}</flux:heading>
             <flux:text>@lang('messages.leads.subtitle')</flux:text>
         </div>
 
-        <flux:button variant="primary" :href="route('leads.create')" wire:navigate>
+        <flux:button variant="primary" :href="route('leads.create', $campaign)" wire:navigate>
             @lang('messages.buttons.add')
         </flux:button>
     </div>
@@ -66,7 +70,7 @@
                 <x-ui.table.row wire:key="lead-{{ $lead->id }}">
                     @php($nextFollowUp = $lead->current_next_follow_up_at)
                     <x-ui.table.td>
-                        <a href="{{ route('leads.show', $lead) }}" wire:navigate class="font-medium text-blue-600 hover:text-blue-700 hover:underline dark:text-blue-400 dark:hover:text-blue-300">
+                        <a href="{{ route('leads.show', [$campaign, $lead]) }}" wire:navigate class="font-medium text-blue-600 hover:text-blue-700 hover:underline dark:text-blue-400 dark:hover:text-blue-300">
                             {{ $lead->company_name }}
                         </a>
                         <div class="mt-1 flex items-center gap-1.5 text-xs text-zinc-500">
@@ -137,7 +141,7 @@
                     <x-ui.table.td align="right">
                         <x-ui.table.actions>
                             <x-ui.buttons.icon-action
-                                :href="route('leads.show', $lead)"
+                                :href="route('leads.show', [$campaign, $lead])"
                                 :title="__('messages.actions.open')"
                                 color="primary"
                                 navigate
@@ -146,7 +150,7 @@
                             </x-ui.buttons.icon-action>
 
                             <x-ui.buttons.icon-action
-                                :href="route('leads.edit', $lead)"
+                                :href="route('leads.edit', [$campaign, $lead])"
                                 :title="__('messages.leads.edit_title')"
                                 color="warning"
                                 navigate

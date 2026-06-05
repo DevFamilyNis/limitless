@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\LeadCampaign;
 use App\Models\LeadStatus;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -13,6 +14,7 @@ class LeadFactory extends Factory
     public function definition(): array
     {
         return [
+            'lead_campaign_id' => LeadCampaign::factory(),
             'lead_status_id' => LeadStatus::factory(),
             'company_name' => fake()->company(),
             'email' => fake()->safeEmail(),
