@@ -17,6 +17,7 @@ final class LeadListQuery
     public function execute(LeadFiltersData $dto): LengthAwarePaginator
     {
         return Lead::query()
+            ->where('lead_campaign_id', $dto->campaignId)
             ->with('status')
             ->with(['comments' => fn ($query) => $query
                 ->select(['id', 'lead_id', 'next_follow_up_at'])

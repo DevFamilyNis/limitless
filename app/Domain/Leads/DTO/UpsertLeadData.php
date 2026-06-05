@@ -9,6 +9,7 @@ final class UpsertLeadData
     public function __construct(
         public readonly int $userId,
         public readonly ?int $leadId,
+        public readonly int $leadCampaignId,
         public readonly int $leadStatusId,
         public readonly string $companyName,
         public readonly ?string $email,
@@ -20,6 +21,7 @@ final class UpsertLeadData
         return new self(
             userId: (int) $data['user_id'],
             leadId: isset($data['lead_id']) ? (int) $data['lead_id'] : null,
+            leadCampaignId: (int) $data['lead_campaign_id'],
             leadStatusId: (int) $data['lead_status_id'],
             companyName: trim((string) $data['company_name']),
             email: self::nullableString($data['email'] ?? null),

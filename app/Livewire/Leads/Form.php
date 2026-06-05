@@ -8,6 +8,7 @@ use App\Domain\Leads\Actions\UpsertLeadAction;
 use App\Domain\Leads\DTO\UpsertLeadData;
 use App\Enums\PermissionKey;
 use App\Models\Lead;
+use App\Models\LeadCampaign;
 use App\Models\LeadStatus;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
@@ -17,6 +18,8 @@ class Form extends Component
 {
     public ?int $leadId = null;
 
+    public LeadCampaign $campaign;
+
     public string $companyName = '';
 
     public string $email = '';
@@ -25,14 +28,20 @@ class Form extends Component
 
     public string $leadStatusId = '';
 
-    public function mount(?Lead $lead = null): void
+    public string $leadCampaignId = '';
+
+    public function mount(LeadCampaign $campaign, ?Lead $lead = null): void
     {
+        $this->campaign = $campaign;
+        $this->leadCampaignId = (string) $campaign->id;
+
         if ($lead) {
             $this->leadId = $lead->id;
             $this->companyName = (string) $lead->company_name;
             $this->email = (string) $lead->email;
             $this->phone = (string) $lead->phone;
             $this->leadStatusId = (string) $lead->lead_status_id;
+            $this->leadCampaignId = (string) $lead->lead_campaign_id;
 
             return;
         }
@@ -50,6 +59,7 @@ class Form extends Component
             'email' => ['nullable', 'email:rfc', 'max:255'],
             'phone' => ['nullable', 'string', 'max:255'],
             'leadStatusId' => ['required', 'exists:lead_statuses,id'],
+            'leadCampaignId' => ['required', 'exists:lead_campaigns,id'],
         ];
     }
 
@@ -63,6 +73,7 @@ class Form extends Component
             UpsertLeadData::fromArray([
                 'user_id' => Auth::id(),
                 'lead_id' => $this->leadId,
+                'lead_campaign_id' => (int) $validated['leadCampaignId'],
                 'lead_status_id' => (int) $validated['leadStatusId'],
                 'company_name' => $validated['companyName'],
                 'email' => $validated['email'] ?? null,
@@ -75,7 +86,7 @@ class Form extends Component
             $this->leadId === null ? __('messages.leads.flash_created') : __('messages.leads.flash_updated')
         );
 
-        $this->redirectRoute('leads.index');
+        $this->redirectRoute('leads.campaign', $this->campaign);
     }
 
     public function render(): View
@@ -83,6 +94,7 @@ class Form extends Component
         return view('livewire.leads.form', [
             'statuses' => LeadStatus::query()->orderBy('id')->get(),
             'isEditing' => $this->leadId !== null,
+            'campaigns' => LeadCampaign::query()->orderBy('name')->get(),
         ])->layout('layouts.app', [
             'title' => $this->leadId !== null ? __('messages.leads.form_edit_title') : __('messages.leads.form_new_title'),
         ]);

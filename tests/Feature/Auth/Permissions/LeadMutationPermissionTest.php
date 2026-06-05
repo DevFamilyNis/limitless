@@ -8,6 +8,7 @@ use App\Livewire\Leads\Form as LeadForm;
 use App\Livewire\Leads\Index as LeadIndex;
 use App\Livewire\Leads\Show as LeadShow;
 use App\Models\Lead;
+use App\Models\LeadCampaign;
 use App\Models\LeadComment;
 use App\Models\LeadStatus;
 use App\Models\User;
@@ -25,7 +26,10 @@ beforeEach(function () {
 
 function makeLead(): Lead
 {
-    return Lead::query()->create([
+    $campaign = LeadCampaign::factory()->create();
+
+    return Lead::factory()->create([
+        'lead_campaign_id' => $campaign->id,
         'lead_status_id' => LeadStatus::query()->where('key', 'new')->value('id'),
         'company_name' => 'Test Lead DOO',
         'email' => 'test@lead.test',
@@ -81,9 +85,12 @@ test('user with manage-leads can save lead', function () {
     $user->givePermissionTo(PermissionKey::ManageLeads->value);
     $this->actingAs($user);
 
+    $campaign = LeadCampaign::factory()->create();
     $statusId = LeadStatus::query()->where('key', 'new')->value('id');
 
     $component = new LeadForm;
+    $component->campaign = $campaign;
+    $component->leadCampaignId = (string) $campaign->id;
     $component->companyName = 'Nova Firma DOO';
     $component->leadStatusId = (string) $statusId;
 

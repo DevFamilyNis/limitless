@@ -6,12 +6,22 @@ use App\Models\User;
 use Illuminate\Support\Facades\Schema;
 
 test('leads tables have expected structure', function () {
+    expect(Schema::hasTable('lead_campaigns'))->toBeTrue();
     expect(Schema::hasTable('lead_statuses'))->toBeTrue();
     expect(Schema::hasTable('leads'))->toBeTrue();
     expect(Schema::hasTable('lead_comments'))->toBeTrue();
 
+    expect(Schema::hasColumns('lead_campaigns', [
+        'id',
+        'name',
+        'description',
+        'created_at',
+        'updated_at',
+    ]))->toBeTrue();
+
     expect(Schema::hasColumns('leads', [
         'id',
+        'lead_campaign_id',
         'lead_status_id',
         'company_name',
         'email',
@@ -56,12 +66,7 @@ test('lead statuses table is seeded with default records', function () {
 
 test('lead comments are deleted when lead is deleted', function () {
     $author = User::factory()->create();
-    $lead = Lead::query()->create([
-        'lead_status_id' => LeadStatus::query()->where('key', 'new')->value('id'),
-        'company_name' => 'Acme Lead',
-        'email' => 'lead@example.com',
-        'phone' => '+38160111222',
-    ]);
+    $lead = Lead::factory()->create(['company_name' => 'Acme Lead']);
 
     $lead->comments()->create([
         'author_id' => $author->id,
