@@ -6,6 +6,8 @@ namespace App\Domain\WorkSessions\Actions;
 
 use App\Domain\WorkSessions\DTO\StartWorkSessionData;
 use App\Domain\WorkSessions\Exceptions\WorkSessionAlreadyStartedException;
+use App\Enums\AppSettingKey;
+use App\Models\AppSetting;
 use App\Models\WorkSession;
 
 final class StartWorkSessionAction
@@ -21,10 +23,14 @@ final class StartWorkSessionAction
             throw new WorkSessionAlreadyStartedException;
         }
 
+        $startedAt = now();
+        $delayMinutes = (int) AppSetting::getValue(AppSettingKey::WorkSessionReminderDelayMinutes, 120);
+
         return WorkSession::create([
             'user_id' => $dto->userId,
             'work_date' => $dto->workDate->toDateString(),
-            'started_at' => now(),
+            'started_at' => $startedAt,
+            'reminder_due_at' => $startedAt->copy()->addMinutes($delayMinutes),
         ]);
     }
 }
