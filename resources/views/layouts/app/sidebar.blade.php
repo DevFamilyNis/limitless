@@ -265,12 +265,18 @@
                                 {{ __('messages.menu.logOut') }}
                             </flux:menu.item>
                         </form>
+
+                        <livewire:work-sessions.finish-work-session-button />
                     </flux:menu>
                 </flux:dropdown>
             @endauth
         </flux:header>
 
         {{ $slot }}
+
+        @auth
+            <livewire:work-sessions.start-work-session-modal />
+        @endauth
 
         @fluxScripts
     </body>

@@ -10,7 +10,7 @@ use Livewire\Livewire;
 test('categories page is displayed', function () {
     $user = User::factory()->create();
 
-    $this->actingAs($user)
+    $this->actingAsWithSession($user)
         ->get(route('categories.index'))
         ->assertOk();
 });
@@ -22,7 +22,7 @@ test('create category page is displayed', function () {
     $user = User::factory()->create();
     $user->givePermissionTo('manage-categories');
 
-    $this->actingAs($user)
+    $this->actingAsWithSession($user)
         ->get(route('categories.create'))
         ->assertOk()
         ->assertSee('Nova kategorija');

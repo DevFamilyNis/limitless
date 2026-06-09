@@ -18,7 +18,7 @@ use Livewire\Livewire;
 test('invoices page is displayed', function () {
     $user = User::factory()->create();
 
-    $this->actingAs($user)
+    $this->actingAsWithSession($user)
         ->get(route('invoices.index'))
         ->assertOk();
 });
@@ -49,7 +49,7 @@ test('invoices are visible to another user in shared workspace', function () {
         'total' => 1000,
     ]);
 
-    $this->actingAs($anotherUser)
+    $this->actingAsWithSession($anotherUser)
         ->get(route('invoices.index'))
         ->assertOk()
         ->assertSee('010/'.$year);
@@ -62,7 +62,7 @@ test('create invoice page is displayed with previewed invoice number fields', fu
     $user = User::factory()->create();
     $user->givePermissionTo('manage-invoices');
 
-    $this->actingAs($user)
+    $this->actingAsWithSession($user)
         ->get(route('invoices.create'))
         ->assertOk()
         ->assertSee('Nova faktura')

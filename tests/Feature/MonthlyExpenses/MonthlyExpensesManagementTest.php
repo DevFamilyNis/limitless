@@ -9,7 +9,7 @@ use Livewire\Livewire;
 test('monthly expenses page is displayed', function () {
     $user = User::factory()->create();
 
-    $this->actingAs($user)
+    $this->actingAsWithSession($user)
         ->get(route('monthly-expenses.index'))
         ->assertOk()
         ->assertSee('Mesečni rashodi');

@@ -71,7 +71,7 @@ Route::livewire('dashboard/investment-signal', InvestmentSignalPage::class)
     ->middleware('auth')
     ->name('dashboard.investment-signal');
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'work.session'])->group(function () {
     Route::livewire('contracts', ContractIndex::class)->name('contracts.index');
     Route::livewire('contracts/create', ContractForm::class)->name('contracts.create');
     Route::livewire('contracts/{contract}/edit', ContractForm::class)->name('contracts.edit');

@@ -13,7 +13,7 @@ use Livewire\Livewire;
 test('client project rates page is displayed', function () {
     $user = User::factory()->create();
 
-    $this->actingAs($user)
+    $this->actingAsWithSession($user)
         ->get(route('client-project-rates.index'))
         ->assertOk();
 });
@@ -25,7 +25,7 @@ test('create client project rate page is displayed', function () {
     $user = User::factory()->create();
     $user->givePermissionTo('manage-clients');
 
-    $this->actingAs($user)
+    $this->actingAsWithSession($user)
         ->get(route('client-project-rates.create'))
         ->assertOk()
         ->assertSee('Nova cena klijenta');
