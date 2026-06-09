@@ -91,7 +91,11 @@ test('super-admin can force finish an active session', function () {
     ]);
 
     Livewire::test(Index::class)
-        ->call('forceFinish', $session->id);
+        ->call('confirmFinish', $session->id)
+        ->assertSet('pendingFinishId', $session->id)
+        ->assertSet('showFinishConfirm', true)
+        ->call('forceFinish')
+        ->assertSet('showFinishConfirm', false);
 
     expect($session->fresh()->ended_at)->not->toBeNull()
         ->and($session->fresh()->duration_minutes)->toBeGreaterThan(0);
@@ -110,12 +114,16 @@ test('super-admin can delete a session', function () {
     ]);
 
     Livewire::test(Index::class)
-        ->call('delete', $session->id);
+        ->call('confirmDelete', $session->id)
+        ->assertSet('pendingDeleteId', $session->id)
+        ->assertSet('showDeleteConfirm', true)
+        ->call('delete')
+        ->assertSet('showDeleteConfirm', false);
 
     expect(WorkSession::find($session->id))->toBeNull();
 });
 
-test('non-super-admin cannot force finish a session', function () {
+test('non-super-admin cannot open finish confirmation', function () {
     $admin = User::factory()->create();
     $admin->givePermissionTo('manage-users');
     $this->actingAs($admin);
@@ -128,11 +136,11 @@ test('non-super-admin cannot force finish a session', function () {
     ]);
 
     Livewire::test(Index::class)
-        ->call('forceFinish', $session->id)
+        ->call('confirmFinish', $session->id)
         ->assertForbidden();
 });
 
-test('non-super-admin cannot delete a session', function () {
+test('non-super-admin cannot open delete confirmation', function () {
     $admin = User::factory()->create();
     $admin->givePermissionTo('manage-users');
     $this->actingAs($admin);
@@ -145,7 +153,7 @@ test('non-super-admin cannot delete a session', function () {
     ]);
 
     Livewire::test(Index::class)
-        ->call('delete', $session->id)
+        ->call('confirmDelete', $session->id)
         ->assertForbidden();
 });
 
@@ -164,9 +172,77 @@ test('force finish is idempotent on already-finished session', function () {
     ]);
 
     Livewire::test(Index::class)
-        ->call('forceFinish', $session->id);
+        ->call('confirmFinish', $session->id)
+        ->call('forceFinish');
 
     expect($session->fresh()->duration_minutes)->toBe(60);
+});
+
+test('downloadReport returns pdf for all users in range', function () {
+    $admin = User::factory()->create();
+    $admin->givePermissionTo('manage-users');
+    $this->actingAs($admin);
+
+    $user = User::factory()->create();
+    WorkSession::create([
+        'user_id' => $user->id,
+        'work_date' => '2026-06-05',
+        'started_at' => now()->subHours(8),
+        'ended_at' => now()->subHour(),
+        'duration_minutes' => 420,
+    ]);
+
+    $response = Livewire::test(Index::class)
+        ->set('reportDateFrom', '2026-06-01')
+        ->set('reportDateTo', '2026-06-30')
+        ->call('downloadReport');
+
+    $response->assertFileDownloaded();
+});
+
+test('downloadReport returns pdf filtered by user', function () {
+    $admin = User::factory()->create();
+    $admin->givePermissionTo('manage-users');
+    $this->actingAs($admin);
+
+    $user = User::factory()->create();
+    WorkSession::create([
+        'user_id' => $user->id,
+        'work_date' => '2026-06-05',
+        'started_at' => now()->subHours(8),
+        'ended_at' => now()->subHour(),
+        'duration_minutes' => 420,
+    ]);
+
+    $response = Livewire::test(Index::class)
+        ->set('reportUserId', (string) $user->id)
+        ->set('reportDateFrom', '2026-06-01')
+        ->set('reportDateTo', '2026-06-30')
+        ->call('downloadReport');
+
+    $response->assertFileDownloaded();
+});
+
+test('downloadReport requires date range', function () {
+    $admin = User::factory()->create();
+    $admin->givePermissionTo('manage-users');
+    $this->actingAs($admin);
+
+    Livewire::test(Index::class)
+        ->call('downloadReport')
+        ->assertHasErrors(['reportDateFrom', 'reportDateTo']);
+});
+
+test('downloadReport requires dateTo not before dateFrom', function () {
+    $admin = User::factory()->create();
+    $admin->givePermissionTo('manage-users');
+    $this->actingAs($admin);
+
+    Livewire::test(Index::class)
+        ->set('reportDateFrom', '2026-06-30')
+        ->set('reportDateTo', '2026-06-01')
+        ->call('downloadReport')
+        ->assertHasErrors(['reportDateTo']);
 });
 
 test('index filters by date', function () {

@@ -4,6 +4,57 @@
         <flux:subheading>Pregled radnih sesija po korisniku i datumu.</flux:subheading>
     </div>
 
+    {{-- Export panel --}}
+    <div class="rounded-lg border border-zinc-200 bg-zinc-50 p-5 dark:border-zinc-700 dark:bg-zinc-800/50" x-data="{ open: false }">
+        <button
+            type="button"
+            @click="open = !open"
+            class="flex w-full items-center justify-between text-left"
+        >
+            <flux:heading size="lg">Izvezi PDF</flux:heading>
+            <svg class="size-5 text-zinc-400 transition-transform" :class="{ 'rotate-180': open }" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+            </svg>
+        </button>
+
+        <div x-show="open" x-collapse class="mt-4">
+            <div class="flex flex-col gap-3 md:flex-row md:items-end">
+                <flux:field class="w-full md:w-56">
+                    <flux:label>Korisnik</flux:label>
+                    <flux:select wire:model="reportUserId">
+                        <option value="">Svi korisnici</option>
+                        @foreach ($users as $user)
+                            <option value="{{ $user->id }}">{{ $user->name }}</option>
+                        @endforeach
+                    </flux:select>
+                </flux:field>
+
+                <flux:field class="w-full md:w-44">
+                    <flux:label>Od datuma</flux:label>
+                    <flux:input wire:model="reportDateFrom" type="date" />
+                    <flux:error name="reportDateFrom" />
+                </flux:field>
+
+                <flux:field class="w-full md:w-44">
+                    <flux:label>Do datuma</flux:label>
+                    <flux:input wire:model="reportDateTo" type="date" />
+                    <flux:error name="reportDateTo" />
+                </flux:field>
+
+                <flux:button
+                    variant="primary"
+                    icon="arrow-down-tray"
+                    wire:click="downloadReport"
+                    wire:loading.attr="disabled"
+                    class="shrink-0"
+                >
+                    Preuzmi PDF
+                </flux:button>
+            </div>
+        </div>
+    </div>
+
+    {{-- Table filters --}}
     <div class="flex flex-col gap-3 md:flex-row md:items-end">
         <flux:field class="w-full md:w-56">
             <flux:label>Korisnik</flux:label>
@@ -75,8 +126,7 @@
                                     <flux:button
                                         size="sm"
                                         variant="filled"
-                                        wire:click="forceFinish({{ $session->id }})"
-                                        wire:confirm="Završiti ovu sesiju?"
+                                        wire:click="confirmFinish({{ $session->id }})"
                                         wire:loading.attr="disabled"
                                     >
                                         Završi
@@ -85,8 +135,7 @@
                                 <flux:button
                                     size="sm"
                                     variant="danger"
-                                    wire:click="delete({{ $session->id }})"
-                                    wire:confirm="Obrisati ovu sesiju? Ova akcija je nepovratna."
+                                    wire:click="confirmDelete({{ $session->id }})"
                                     wire:loading.attr="disabled"
                                 >
                                     Obriši
@@ -104,4 +153,38 @@
     </x-ui.table>
 
     <div>{{ $sessions->links() }}</div>
+
+    <flux:modal name="confirm-finish-session" wire:model="showFinishConfirm" class="max-w-md">
+        <div class="space-y-5">
+            <div>
+                <flux:heading size="lg">Završiti sesiju?</flux:heading>
+                <flux:subheading>Sesija će biti označena kao završena sa trenutnim vremenom. Ova akcija se ne može poništiti.</flux:subheading>
+            </div>
+            <div class="flex justify-end gap-2">
+                <flux:modal.close>
+                    <flux:button variant="filled">Otkaži</flux:button>
+                </flux:modal.close>
+                <flux:button variant="primary" wire:click="forceFinish" wire:loading.attr="disabled">
+                    Završi sesiju
+                </flux:button>
+            </div>
+        </div>
+    </flux:modal>
+
+    <flux:modal name="confirm-delete-session" wire:model="showDeleteConfirm" class="max-w-md">
+        <div class="space-y-5">
+            <div>
+                <flux:heading size="lg">Obrisati sesiju?</flux:heading>
+                <flux:subheading>Sesija će biti trajno obrisana. Ova akcija je nepovratna.</flux:subheading>
+            </div>
+            <div class="flex justify-end gap-2">
+                <flux:modal.close>
+                    <flux:button variant="filled">Otkaži</flux:button>
+                </flux:modal.close>
+                <flux:button variant="danger" wire:click="delete" wire:loading.attr="disabled">
+                    Obriši sesiju
+                </flux:button>
+            </div>
+        </div>
+    </flux:modal>
 </div>
