@@ -1,4 +1,4 @@
-<flux:modal :show="$show" @close.prevent class="max-w-md">
+<flux:modal name="work-session-reminder" wire:model="show" :dismissible="false" :closable="false" x-on:cancel.prevent class="max-w-md">
     <div class="space-y-5">
         <div>
             <flux:heading size="lg">Podsetnik za radni dan</flux:heading>

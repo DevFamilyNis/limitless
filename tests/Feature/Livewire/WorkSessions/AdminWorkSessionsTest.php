@@ -78,6 +78,97 @@ test('index filters by user', function () {
         });
 });
 
+test('super-admin can force finish an active session', function () {
+    $admin = User::factory()->create();
+    $admin->assignRole('super-admin');
+    $this->actingAs($admin);
+
+    $user = User::factory()->create();
+    $session = WorkSession::create([
+        'user_id' => $user->id,
+        'work_date' => today()->toDateString(),
+        'started_at' => now()->subHours(2),
+    ]);
+
+    Livewire::test(Index::class)
+        ->call('forceFinish', $session->id);
+
+    expect($session->fresh()->ended_at)->not->toBeNull()
+        ->and($session->fresh()->duration_minutes)->toBeGreaterThan(0);
+});
+
+test('super-admin can delete a session', function () {
+    $admin = User::factory()->create();
+    $admin->assignRole('super-admin');
+    $this->actingAs($admin);
+
+    $user = User::factory()->create();
+    $session = WorkSession::create([
+        'user_id' => $user->id,
+        'work_date' => today()->toDateString(),
+        'started_at' => now()->subHours(2),
+    ]);
+
+    Livewire::test(Index::class)
+        ->call('delete', $session->id);
+
+    expect(WorkSession::find($session->id))->toBeNull();
+});
+
+test('non-super-admin cannot force finish a session', function () {
+    $admin = User::factory()->create();
+    $admin->givePermissionTo('manage-users');
+    $this->actingAs($admin);
+
+    $user = User::factory()->create();
+    $session = WorkSession::create([
+        'user_id' => $user->id,
+        'work_date' => today()->toDateString(),
+        'started_at' => now()->subHours(2),
+    ]);
+
+    Livewire::test(Index::class)
+        ->call('forceFinish', $session->id)
+        ->assertForbidden();
+});
+
+test('non-super-admin cannot delete a session', function () {
+    $admin = User::factory()->create();
+    $admin->givePermissionTo('manage-users');
+    $this->actingAs($admin);
+
+    $user = User::factory()->create();
+    $session = WorkSession::create([
+        'user_id' => $user->id,
+        'work_date' => today()->toDateString(),
+        'started_at' => now()->subHours(2),
+    ]);
+
+    Livewire::test(Index::class)
+        ->call('delete', $session->id)
+        ->assertForbidden();
+});
+
+test('force finish is idempotent on already-finished session', function () {
+    $admin = User::factory()->create();
+    $admin->assignRole('super-admin');
+    $this->actingAs($admin);
+
+    $user = User::factory()->create();
+    $session = WorkSession::create([
+        'user_id' => $user->id,
+        'work_date' => today()->toDateString(),
+        'started_at' => now()->subHours(2),
+        'ended_at' => now()->subHour(),
+        'duration_minutes' => 60,
+    ]);
+
+    Livewire::test(Index::class)
+        ->call('forceFinish', $session->id);
+
+    expect($session->fresh()->duration_minutes)->toBe(60);
+});
+
 test('index filters by date', function () {
     $admin = User::factory()->create();
     $admin->givePermissionTo('manage-users');

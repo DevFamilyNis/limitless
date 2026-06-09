@@ -30,6 +30,9 @@
                 <x-ui.table.th>Kraj</x-ui.table.th>
                 <x-ui.table.th>Trajanje</x-ui.table.th>
                 <x-ui.table.th>Podsetnik</x-ui.table.th>
+                @role('super-admin')
+                    <x-ui.table.th></x-ui.table.th>
+                @endrole
             </tr>
         </x-ui.table.head>
         <x-ui.table.body>
@@ -65,10 +68,36 @@
                             —
                         @endif
                     </x-ui.table.td>
+                    @role('super-admin')
+                        <x-ui.table.td>
+                            <div class="flex items-center gap-2">
+                                @if ($session->ended_at === null)
+                                    <flux:button
+                                        size="sm"
+                                        variant="filled"
+                                        wire:click="forceFinish({{ $session->id }})"
+                                        wire:confirm="Završiti ovu sesiju?"
+                                        wire:loading.attr="disabled"
+                                    >
+                                        Završi
+                                    </flux:button>
+                                @endif
+                                <flux:button
+                                    size="sm"
+                                    variant="danger"
+                                    wire:click="delete({{ $session->id }})"
+                                    wire:confirm="Obrisati ovu sesiju? Ova akcija je nepovratna."
+                                    wire:loading.attr="disabled"
+                                >
+                                    Obriši
+                                </flux:button>
+                            </div>
+                        </x-ui.table.td>
+                    @endrole
                 </x-ui.table.row>
             @empty
                 <x-ui.table.row>
-                    <x-ui.table.td colspan="6" class="text-center">Nema pronađenih sesija.</x-ui.table.td>
+                    <x-ui.table.td colspan="7" class="text-center">Nema pronađenih sesija.</x-ui.table.td>
                 </x-ui.table.row>
             @endforelse
         </x-ui.table.body>
