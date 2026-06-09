@@ -9,7 +9,7 @@ use Livewire\Livewire;
 test('tax years page is displayed', function () {
     $user = User::factory()->create();
 
-    $this->actingAs($user)
+    $this->actingAsWithSession($user)
         ->get(route('tax-years.index'))
         ->assertOk();
 });
@@ -21,7 +21,7 @@ test('create tax year page is displayed', function () {
     $user = User::factory()->create();
     $user->givePermissionTo('manage-tax-years');
 
-    $this->actingAs($user)
+    $this->actingAsWithSession($user)
         ->get(route('tax-years.create'))
         ->assertOk()
         ->assertSee('Nova poreska godina');

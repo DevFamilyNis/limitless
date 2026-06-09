@@ -14,7 +14,7 @@
                 $clientProjectOpen = request()->routeIs('leads.*') || request()->routeIs('clients.*') || request()->routeIs('projects.*') || request()->routeIs('client-project-rates.*') || request()->routeIs('contracts.*');
                 $financeOpen = request()->routeIs('invoices.*') || request()->routeIs('transactions.*') || request()->routeIs('paid-expenses.*') || request()->routeIs('monthly-expenses.*') || request()->routeIs('categories.*') || request()->routeIs('tax-years.*');
                 $reportsOpen = request()->routeIs('kpo-reports.*');
-                $settingsOpen = request()->routeIs('settings.issue-statuses.*') || request()->routeIs('settings.issue-priorities.*') || request()->routeIs('settings.issue-categories.*');
+                $settingsOpen = request()->routeIs('settings.issue-statuses.*') || request()->routeIs('settings.issue-priorities.*') || request()->routeIs('settings.issue-categories.*') || request()->routeIs('settings.work-session');
             @endphp
 
             <flux:sidebar.nav>
@@ -174,6 +174,11 @@
                         <flux:sidebar.item class="ps-9" icon="tag" :href="route('settings.issue-categories.index')" :current="request()->routeIs('settings.issue-categories.*')" wire:navigate>
                             @lang('messages.menu.catIssues')
                         </flux:sidebar.item>
+                        @can('manage-settings')
+                            <flux:sidebar.item class="ps-9" icon="clock" :href="route('settings.work-session')" :current="request()->routeIs('settings.work-session')" wire:navigate>
+                                Radni dan
+                            </flux:sidebar.item>
+                        @endcan
                     </div>
                 </div>
             </flux:sidebar.nav>
@@ -186,6 +191,9 @@
                 <flux:sidebar.group :heading="'Admin'" class="grid">
                     <flux:sidebar.item :icon="$adminUsersIcon" :href="route('admin.users.index')" :current="request()->routeIs('admin.users.*')" wire:navigate>
                         Korisnici
+                    </flux:sidebar.item>
+                    <flux:sidebar.item icon="clock" :href="route('admin.work-sessions.index')" :current="request()->routeIs('admin.work-sessions.*')" wire:navigate>
+                        Radni dani
                     </flux:sidebar.item>
                     @can('manage-roles')
                         <flux:sidebar.item :icon="$adminRolesIcon" :href="route('admin.roles.index')" :current="request()->routeIs('admin.roles.*')" wire:navigate>
@@ -265,12 +273,19 @@
                                 {{ __('messages.menu.logOut') }}
                             </flux:menu.item>
                         </form>
+
+                        <livewire:work-sessions.finish-work-session-button />
                     </flux:menu>
                 </flux:dropdown>
             @endauth
         </flux:header>
 
         {{ $slot }}
+
+        @auth
+            <livewire:work-sessions.start-work-session-modal />
+            <livewire:work-sessions.work-session-reminder-modal />
+        @endauth
 
         @fluxScripts
     </body>

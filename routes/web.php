@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\SendMagicLoginLinkController;
 use App\Http\Controllers\MagicLoginController;
 use App\Livewire\Admin\Roles\Index as AdminRolesIndex;
 use App\Livewire\Admin\Users\Index as AdminUsersIndex;
+use App\Livewire\Admin\WorkSessions\Index as AdminWorkSessionsIndex;
 use App\Livewire\Auth\MagicLoginRequest;
 use App\Livewire\Categories\Form as CategoryForm;
 use App\Livewire\Categories\Index as CategoryIndex;
@@ -41,6 +42,7 @@ use App\Livewire\Settings\IssuePriorities\Form as IssuePriorityForm;
 use App\Livewire\Settings\IssuePriorities\Index as IssuePriorityIndex;
 use App\Livewire\Settings\IssueStatuses\Form as IssueStatusForm;
 use App\Livewire\Settings\IssueStatuses\Index as IssueStatusIndex;
+use App\Livewire\Settings\WorkSessionSettings;
 use App\Livewire\TaxYears\Form as TaxYearForm;
 use App\Livewire\TaxYears\Index as TaxYearIndex;
 use App\Livewire\Transactions\Index as TransactionIndex;
@@ -71,7 +73,7 @@ Route::livewire('dashboard/investment-signal', InvestmentSignalPage::class)
     ->middleware('auth')
     ->name('dashboard.investment-signal');
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'work.session'])->group(function () {
     Route::livewire('contracts', ContractIndex::class)->name('contracts.index');
     Route::livewire('contracts/create', ContractForm::class)->name('contracts.create');
     Route::livewire('contracts/{contract}/edit', ContractForm::class)->name('contracts.edit');
@@ -131,11 +133,13 @@ Route::middleware('auth')->group(function () {
         Route::livewire('settings/issue-categories', IssueCategoryIndex::class)->name('settings.issue-categories.index');
         Route::livewire('settings/issue-categories/create', IssueCategoryForm::class)->name('settings.issue-categories.create');
         Route::livewire('settings/issue-categories/{issueCategory}/edit', IssueCategoryForm::class)->name('settings.issue-categories.edit');
+        Route::livewire('settings/work-session', WorkSessionSettings::class)->name('settings.work-session');
     });
 
     // Admin panel — requires manage-users permission (super-admin bypasses via Gate::before)
     Route::middleware('can:manage-users')->group(function () {
         Route::livewire('admin/users', AdminUsersIndex::class)->name('admin.users.index');
+        Route::livewire('admin/work-sessions', AdminWorkSessionsIndex::class)->name('admin.work-sessions.index');
     });
 
     // Role & permission management — requires manage-roles permission

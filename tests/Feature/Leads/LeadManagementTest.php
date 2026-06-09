@@ -12,7 +12,7 @@ use Livewire\Livewire;
 test('leads campaign index page is displayed', function () {
     $user = User::factory()->create();
 
-    $this->actingAs($user)
+    $this->actingAsWithSession($user)
         ->get(route('leads.index'))
         ->assertOk();
 });
@@ -25,7 +25,7 @@ test('create lead page is displayed', function () {
     $user->givePermissionTo('manage-leads');
     $campaign = LeadCampaign::factory()->create();
 
-    $this->actingAs($user)
+    $this->actingAsWithSession($user)
         ->get(route('leads.create', $campaign))
         ->assertOk()
         ->assertSee(__('messages.leads.form_new_title'));
@@ -43,9 +43,9 @@ test('lead show page is displayed for another user in shared workspace', functio
         'phone' => '+38160123456',
     ]);
 
-    $this->actingAs($owner);
+    $this->actingAsWithSession($owner);
 
-    $this->actingAs($anotherUser)
+    $this->actingAsWithSession($anotherUser)
         ->get(route('leads.show', [$campaign, $lead]))
         ->assertOk()
         ->assertSee('Shared Lead Company')
@@ -262,7 +262,7 @@ test('lead uses first upcoming follow up across multiple comments', function () 
 
     expect($lead->current_next_follow_up_at?->format('Y-m-d'))->toBe(now()->addDays(2)->format('Y-m-d'));
 
-    $this->actingAs($user)
+    $this->actingAsWithSession($user)
         ->get(route('leads.show', [$campaign, $lead]))
         ->assertOk()
         ->assertSee($lead->current_next_follow_up_at?->format('d.m.Y'));

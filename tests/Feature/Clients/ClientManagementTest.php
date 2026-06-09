@@ -12,7 +12,7 @@ use Livewire\Livewire;
 test('clients page is displayed', function () {
     $user = User::factory()->create();
 
-    $this->actingAs($user)
+    $this->actingAsWithSession($user)
         ->get(route('clients.index'))
         ->assertOk();
 });
@@ -24,7 +24,7 @@ test('create client page is displayed', function () {
     $user = User::factory()->create();
     $user->givePermissionTo('manage-clients');
 
-    $this->actingAs($user)
+    $this->actingAsWithSession($user)
         ->get(route('clients.create'))
         ->assertOk()
         ->assertSee('Novi klijent');
@@ -41,7 +41,7 @@ test('client show page is displayed for owner', function () {
         'is_active' => true,
     ]);
 
-    $this->actingAs($user)
+    $this->actingAsWithSession($user)
         ->get(route('clients.show', $client))
         ->assertOk()
         ->assertSee(__('messages.text.clientShowSubTitle'));
@@ -59,7 +59,7 @@ test('client show page is displayed for another user in shared workspace', funct
         'is_active' => true,
     ]);
 
-    $this->actingAs($anotherUser)
+    $this->actingAsWithSession($anotherUser)
         ->get(route('clients.show', $client))
         ->assertOk()
         ->assertSee('Privatni Klijent');
