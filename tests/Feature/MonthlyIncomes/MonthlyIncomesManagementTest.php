@@ -9,7 +9,7 @@ use Livewire\Livewire;
 test('monthly incomes page is displayed', function () {
     $user = User::factory()->create();
 
-    $this->actingAs($user)
+    $this->actingAsWithSession($user)
         ->get(route('monthly-incomes.index'))
         ->assertOk()
         ->assertSee('Redovni mesečni prihodi');

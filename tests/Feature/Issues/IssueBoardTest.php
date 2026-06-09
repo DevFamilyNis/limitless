@@ -18,7 +18,7 @@ test('issue board page is displayed', function () {
 
     $this->seed(IssueDictionarySeeder::class);
 
-    $this->actingAs($user)
+    $this->actingAsWithSession($user)
         ->get(route('issues.index'))
         ->assertOk()
         ->assertSee('Kanban');
@@ -89,7 +89,7 @@ test('issues are visible to another user in shared workspace', function () {
         'completed_at' => null,
     ]);
 
-    $this->actingAs($anotherUser)
+    $this->actingAsWithSession($anotherUser)
         ->get(route('issues.index'))
         ->assertOk()
         ->assertSee('Shared issue title');
@@ -120,7 +120,7 @@ test('issue details page can be opened', function () {
         'completed_at' => null,
     ]);
 
-    $this->actingAs($user)
+    $this->actingAsWithSession($user)
         ->get(route('issues.show', $issue))
         ->assertOk()
         ->assertSee('Issue details page');
@@ -167,7 +167,7 @@ test('issues index defaults to all projects', function () {
         'completed_at' => null,
     ]);
 
-    $this->actingAs($user)
+    $this->actingAsWithSession($user)
         ->get(route('issues.index'))
         ->assertOk()
         ->assertSee('Alpha task')
@@ -229,7 +229,7 @@ test('issues in kanban are ordered by due date ascending with undated tasks last
         'completed_at' => null,
     ]);
 
-    $this->actingAs($user)
+    $this->actingAsWithSession($user)
         ->get(route('issues.index'))
         ->assertOk()
         ->assertSeeInOrder(['Task today', 'Task tomorrow', 'Task no due date']);
@@ -284,7 +284,7 @@ test('kanban cards use priority colors, show client label, and gray card styling
         'completed_at' => now(),
     ]);
 
-    $this->actingAs($user)
+    $this->actingAsWithSession($user)
         ->get(route('issues.index'))
         ->assertOk()
         ->assertSee('Urgent board task')

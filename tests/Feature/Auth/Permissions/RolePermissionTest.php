@@ -51,7 +51,7 @@ test('admin users index route is inaccessible without manage-users permission', 
     $user = User::factory()->create();
     $user->assignRole(RoleKey::User->value);
 
-    $this->actingAs($user)
+    $this->actingAsWithSession($user)
         ->get(route('admin.users.index'))
         ->assertForbidden();
 });
@@ -61,14 +61,14 @@ test('super-admin can access admin users index route without being forbidden', f
     $superAdmin->assignRole(RoleKey::SuperAdmin->value);
 
     // Proveravamo da super-admin NIJE blokiran (ne dobija 403) — view rendering test je odvojeno
-    $response = $this->actingAs($superAdmin)->get(route('admin.users.index'));
+    $response = $this->actingAsWithSession($superAdmin)->get(route('admin.users.index'));
     expect($response->getStatusCode())->not()->toBe(403);
 });
 
 test('user without any role cannot access admin users route', function () {
     $user = User::factory()->create();
 
-    $this->actingAs($user)
+    $this->actingAsWithSession($user)
         ->get(route('admin.users.index'))
         ->assertForbidden();
 });

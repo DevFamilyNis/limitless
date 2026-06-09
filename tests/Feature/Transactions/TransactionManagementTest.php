@@ -10,7 +10,7 @@ use Livewire\Livewire;
 test('transactions page is displayed as read only report', function () {
     $user = User::factory()->create();
 
-    $this->actingAs($user)
+    $this->actingAsWithSession($user)
         ->get(route('transactions.index'))
         ->assertOk()
         ->assertDontSee('Dodaj');
@@ -19,8 +19,8 @@ test('transactions page is displayed as read only report', function () {
 test('create and edit transaction urls are not available', function () {
     $user = User::factory()->create();
 
-    $this->actingAs($user)->get('/transactions/create')->assertNotFound();
-    $this->actingAs($user)->get('/transactions/1/edit')->assertNotFound();
+    $this->actingAsWithSession($user)->get('/transactions/create')->assertNotFound();
+    $this->actingAsWithSession($user)->get('/transactions/1/edit')->assertNotFound();
 });
 
 test('user can filter transactions by month and year', function () {

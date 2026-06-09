@@ -33,64 +33,64 @@ test('user without manage-leads cannot access leads write routes', function () {
     $lead = Lead::factory()->create();
     $campaign = $lead->campaign;
 
-    $this->actingAs($user)->get(route('leads.create', $campaign))->assertForbidden();
-    $this->actingAs($user)->get(route('leads.edit', [$campaign, $lead]))->assertForbidden();
+    $this->actingAsWithSession($user)->get(route('leads.create', $campaign))->assertForbidden();
+    $this->actingAsWithSession($user)->get(route('leads.edit', [$campaign, $lead]))->assertForbidden();
 });
 
 test('user without manage-clients cannot access clients write routes', function () {
     $user = User::factory()->create();
     $client = Client::factory()->create();
 
-    $this->actingAs($user)->get(route('clients.create'))->assertForbidden();
-    $this->actingAs($user)->get(route('clients.edit', $client))->assertForbidden();
+    $this->actingAsWithSession($user)->get(route('clients.create'))->assertForbidden();
+    $this->actingAsWithSession($user)->get(route('clients.edit', $client))->assertForbidden();
 });
 
 test('user without manage-projects cannot access projects write routes', function () {
     $user = User::factory()->create();
     $project = Project::factory()->create();
 
-    $this->actingAs($user)->get(route('projects.create'))->assertForbidden();
-    $this->actingAs($user)->get(route('projects.edit', $project))->assertForbidden();
+    $this->actingAsWithSession($user)->get(route('projects.create'))->assertForbidden();
+    $this->actingAsWithSession($user)->get(route('projects.edit', $project))->assertForbidden();
 });
 
 test('user without manage-clients cannot access client-project-rates write routes', function () {
     $user = User::factory()->create();
     $rate = ClientProjectRate::factory()->create();
 
-    $this->actingAs($user)->get(route('client-project-rates.create'))->assertForbidden();
-    $this->actingAs($user)->get(route('client-project-rates.edit', $rate))->assertForbidden();
+    $this->actingAsWithSession($user)->get(route('client-project-rates.create'))->assertForbidden();
+    $this->actingAsWithSession($user)->get(route('client-project-rates.edit', $rate))->assertForbidden();
 });
 
 test('user without manage-invoices cannot access invoices write routes', function () {
     $user = User::factory()->create();
     $invoice = Invoice::factory()->create();
 
-    $this->actingAs($user)->get(route('invoices.create'))->assertForbidden();
-    $this->actingAs($user)->get(route('invoices.edit', $invoice))->assertForbidden();
+    $this->actingAsWithSession($user)->get(route('invoices.create'))->assertForbidden();
+    $this->actingAsWithSession($user)->get(route('invoices.edit', $invoice))->assertForbidden();
 });
 
 test('user without manage-categories cannot access categories write routes', function () {
     $user = User::factory()->create();
     $category = Category::factory()->create();
 
-    $this->actingAs($user)->get(route('categories.create'))->assertForbidden();
-    $this->actingAs($user)->get(route('categories.edit', $category))->assertForbidden();
+    $this->actingAsWithSession($user)->get(route('categories.create'))->assertForbidden();
+    $this->actingAsWithSession($user)->get(route('categories.edit', $category))->assertForbidden();
 });
 
 test('user without manage-tax-years cannot access tax-years write routes', function () {
     $user = User::factory()->create();
     $taxYear = TaxYear::factory()->create();
 
-    $this->actingAs($user)->get(route('tax-years.create'))->assertForbidden();
-    $this->actingAs($user)->get(route('tax-years.edit', $taxYear))->assertForbidden();
+    $this->actingAsWithSession($user)->get(route('tax-years.create'))->assertForbidden();
+    $this->actingAsWithSession($user)->get(route('tax-years.edit', $taxYear))->assertForbidden();
 });
 
 test('user without manage-issues cannot access issues write routes', function () {
     $user = User::factory()->create();
     $issue = Issue::factory()->create();
 
-    $this->actingAs($user)->get(route('issues.create'))->assertForbidden();
-    $this->actingAs($user)->get(route('issues.edit', $issue))->assertForbidden();
+    $this->actingAsWithSession($user)->get(route('issues.create'))->assertForbidden();
+    $this->actingAsWithSession($user)->get(route('issues.edit', $issue))->assertForbidden();
 });
 
 // ─── CAN: user with matching permission ───────────────────────────────────────
@@ -100,7 +100,7 @@ test('user with manage-leads can access leads create route', function () {
     $user->givePermissionTo(PermissionKey::ManageLeads->value);
     $campaign = LeadCampaign::factory()->create();
 
-    $response = $this->actingAs($user)->get(route('leads.create', $campaign));
+    $response = $this->actingAsWithSession($user)->get(route('leads.create', $campaign));
     expect($response->getStatusCode())->not()->toBe(403);
 });
 
@@ -108,7 +108,7 @@ test('user with manage-clients can access clients create route', function () {
     $user = User::factory()->create();
     $user->givePermissionTo(PermissionKey::ManageClients->value);
 
-    $response = $this->actingAs($user)->get(route('clients.create'));
+    $response = $this->actingAsWithSession($user)->get(route('clients.create'));
     expect($response->getStatusCode())->not()->toBe(403);
 });
 
@@ -116,7 +116,7 @@ test('user with manage-projects can access projects create route', function () {
     $user = User::factory()->create();
     $user->givePermissionTo(PermissionKey::ManageProjects->value);
 
-    $response = $this->actingAs($user)->get(route('projects.create'));
+    $response = $this->actingAsWithSession($user)->get(route('projects.create'));
     expect($response->getStatusCode())->not()->toBe(403);
 });
 
@@ -124,7 +124,7 @@ test('user with manage-clients can access client-project-rates create route', fu
     $user = User::factory()->create();
     $user->givePermissionTo(PermissionKey::ManageClients->value);
 
-    $response = $this->actingAs($user)->get(route('client-project-rates.create'));
+    $response = $this->actingAsWithSession($user)->get(route('client-project-rates.create'));
     expect($response->getStatusCode())->not()->toBe(403);
 });
 
@@ -132,7 +132,7 @@ test('user with manage-invoices can access invoices create route', function () {
     $user = User::factory()->create();
     $user->givePermissionTo(PermissionKey::ManageInvoices->value);
 
-    $response = $this->actingAs($user)->get(route('invoices.create'));
+    $response = $this->actingAsWithSession($user)->get(route('invoices.create'));
     expect($response->getStatusCode())->not()->toBe(403);
 });
 
@@ -140,7 +140,7 @@ test('user with manage-categories can access categories create route', function 
     $user = User::factory()->create();
     $user->givePermissionTo(PermissionKey::ManageCategories->value);
 
-    $response = $this->actingAs($user)->get(route('categories.create'));
+    $response = $this->actingAsWithSession($user)->get(route('categories.create'));
     expect($response->getStatusCode())->not()->toBe(403);
 });
 
@@ -148,7 +148,7 @@ test('user with manage-tax-years can access tax-years create route', function ()
     $user = User::factory()->create();
     $user->givePermissionTo(PermissionKey::ManageTaxYears->value);
 
-    $response = $this->actingAs($user)->get(route('tax-years.create'));
+    $response = $this->actingAsWithSession($user)->get(route('tax-years.create'));
     expect($response->getStatusCode())->not()->toBe(403);
 });
 
@@ -156,7 +156,7 @@ test('user with manage-issues can access issues create route', function () {
     $user = User::factory()->create();
     $user->givePermissionTo(PermissionKey::ManageIssues->value);
 
-    $response = $this->actingAs($user)->get(route('issues.create'));
+    $response = $this->actingAsWithSession($user)->get(route('issues.create'));
     expect($response->getStatusCode())->not()->toBe(403);
 });
 
@@ -166,7 +166,7 @@ test('super-admin can access invoices create route via gate bypass', function ()
     $superAdmin = User::factory()->create();
     $superAdmin->assignRole(RoleKey::SuperAdmin->value);
 
-    $response = $this->actingAs($superAdmin)->get(route('invoices.create'));
+    $response = $this->actingAsWithSession($superAdmin)->get(route('invoices.create'));
     expect($response->getStatusCode())->not()->toBe(403);
 });
 
@@ -174,7 +174,7 @@ test('super-admin can access clients create route via gate bypass', function () 
     $superAdmin = User::factory()->create();
     $superAdmin->assignRole(RoleKey::SuperAdmin->value);
 
-    $response = $this->actingAs($superAdmin)->get(route('clients.create'));
+    $response = $this->actingAsWithSession($superAdmin)->get(route('clients.create'));
     expect($response->getStatusCode())->not()->toBe(403);
 });
 
@@ -182,6 +182,6 @@ test('super-admin can access issues create route via gate bypass', function () {
     $superAdmin = User::factory()->create();
     $superAdmin->assignRole(RoleKey::SuperAdmin->value);
 
-    $response = $this->actingAs($superAdmin)->get(route('issues.create'));
+    $response = $this->actingAsWithSession($superAdmin)->get(route('issues.create'));
     expect($response->getStatusCode())->not()->toBe(403);
 });

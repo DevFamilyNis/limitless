@@ -9,7 +9,7 @@ use Livewire\Livewire;
 test('projects page is displayed', function () {
     $user = User::factory()->create();
 
-    $this->actingAs($user)
+    $this->actingAsWithSession($user)
         ->get(route('projects.index'))
         ->assertOk();
 });
@@ -21,7 +21,7 @@ test('create project page is displayed', function () {
     $user = User::factory()->create();
     $user->givePermissionTo('manage-projects');
 
-    $this->actingAs($user)
+    $this->actingAsWithSession($user)
         ->get(route('projects.create'))
         ->assertOk()
         ->assertSee('Novi projekat');
@@ -38,7 +38,7 @@ test('project show page is displayed for owner', function () {
         'is_active' => true,
     ]);
 
-    $this->actingAs($user)
+    $this->actingAsWithSession($user)
         ->get(route('projects.show', $project))
         ->assertOk()
         ->assertSee('Detalji projekta');
@@ -56,7 +56,7 @@ test('project show page is displayed for another user in shared workspace', func
         'is_active' => true,
     ]);
 
-    $this->actingAs($anotherUser)
+    $this->actingAsWithSession($anotherUser)
         ->get(route('projects.show', $project))
         ->assertOk()
         ->assertSee('Privatan projekat');

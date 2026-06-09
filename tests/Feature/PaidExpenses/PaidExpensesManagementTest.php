@@ -10,7 +10,7 @@ use Livewire\Livewire;
 test('paid expenses page is displayed', function () {
     $user = User::factory()->create();
 
-    $this->actingAs($user)
+    $this->actingAsWithSession($user)
         ->get(route('paid-expenses.index'))
         ->assertOk()
         ->assertSee('Plaćeni rashodi');

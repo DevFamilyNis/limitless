@@ -35,5 +35,7 @@
                 </flux:menu.item>
             </form>
         </flux:menu.radio.group>
+
+        <livewire:work-sessions.finish-work-session-button />
     </flux:menu>
 </flux:dropdown>
