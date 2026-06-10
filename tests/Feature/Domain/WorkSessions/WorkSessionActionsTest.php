@@ -6,6 +6,8 @@ use App\Domain\WorkSessions\DTO\FinishWorkSessionData;
 use App\Domain\WorkSessions\DTO\StartWorkSessionData;
 use App\Domain\WorkSessions\Exceptions\WorkSessionAlreadyStartedException;
 use App\Domain\WorkSessions\Exceptions\WorkSessionNotStartedException;
+use App\Enums\AppSettingKey;
+use App\Models\AppSetting;
 use App\Models\User;
 use App\Models\WorkSession;
 
@@ -20,11 +22,24 @@ test('StartWorkSessionAction creates a work session for today', function () {
         ->and($session->user_id)->toBe($user->id)
         ->and($session->work_date->toDateString())->toBe(today()->toDateString())
         ->and($session->started_at)->not->toBeNull()
-        ->and($session->ended_at)->toBeNull();
+        ->and($session->ended_at)->toBeNull()
+        ->and($session->reminder_due_at)->not->toBeNull();
 
     expect(
         WorkSession::query()->where('user_id', $user->id)->whereDate('work_date', today())->exists()
     )->toBeTrue();
+});
+
+test('StartWorkSessionAction does not set reminder_due_at when reminder is disabled', function () {
+    AppSetting::setValue(AppSettingKey::WorkSessionReminderEnabled, false);
+
+    $user = User::factory()->create();
+
+    $session = app(StartWorkSessionAction::class)->execute(
+        StartWorkSessionData::fromArray(['user_id' => $user->id])
+    );
+
+    expect($session->reminder_due_at)->toBeNull();
 });
 
 test('StartWorkSessionAction throws WorkSessionAlreadyStartedException if session exists today', function () {
