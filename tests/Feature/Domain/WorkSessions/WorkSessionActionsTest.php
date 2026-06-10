@@ -2,14 +2,17 @@
 
 use App\Domain\WorkSessions\Actions\FinishWorkSessionAction;
 use App\Domain\WorkSessions\Actions\StartWorkSessionAction;
+use App\Domain\WorkSessions\Actions\UpsertWorkSessionUserSettingAction;
 use App\Domain\WorkSessions\DTO\FinishWorkSessionData;
 use App\Domain\WorkSessions\DTO\StartWorkSessionData;
+use App\Domain\WorkSessions\DTO\UpsertWorkSessionUserSettingData;
 use App\Domain\WorkSessions\Exceptions\WorkSessionAlreadyStartedException;
 use App\Domain\WorkSessions\Exceptions\WorkSessionNotStartedException;
 use App\Enums\AppSettingKey;
 use App\Models\AppSetting;
 use App\Models\User;
 use App\Models\WorkSession;
+use App\Models\WorkSessionUserSetting;
 
 test('StartWorkSessionAction creates a work session for today', function () {
     $user = User::factory()->create();
@@ -34,6 +37,41 @@ test('StartWorkSessionAction does not set reminder_due_at when reminder is disab
     AppSetting::setValue(AppSettingKey::WorkSessionReminderEnabled, false);
 
     $user = User::factory()->create();
+
+    $session = app(StartWorkSessionAction::class)->execute(
+        StartWorkSessionData::fromArray(['user_id' => $user->id])
+    );
+
+    expect($session->reminder_due_at)->toBeNull();
+});
+
+test('StartWorkSessionAction uses per-user reminder override when global reminder is enabled', function () {
+    AppSetting::setValue(AppSettingKey::WorkSessionReminderEnabled, true);
+    AppSetting::setValue(AppSettingKey::WorkSessionReminderDelayMinutes, 120);
+
+    $user = User::factory()->create();
+    WorkSessionUserSetting::create([
+        'user_id' => $user->id,
+        'reminder_enabled' => true,
+        'reminder_delay_minutes' => 480,
+    ]);
+
+    $session = app(StartWorkSessionAction::class)->execute(
+        StartWorkSessionData::fromArray(['user_id' => $user->id])
+    );
+
+    expect($session->started_at->diffInMinutes($session->reminder_due_at))->toBe(480.0);
+});
+
+test('StartWorkSessionAction does not set reminder_due_at when per-user override disables it', function () {
+    AppSetting::setValue(AppSettingKey::WorkSessionReminderEnabled, true);
+
+    $user = User::factory()->create();
+    WorkSessionUserSetting::create([
+        'user_id' => $user->id,
+        'reminder_enabled' => false,
+        'reminder_delay_minutes' => null,
+    ]);
 
     $session = app(StartWorkSessionAction::class)->execute(
         StartWorkSessionData::fromArray(['user_id' => $user->id])
@@ -102,4 +140,64 @@ test('FinishWorkSessionAction is idempotent when session is already finished', f
 
     expect($result->duration_minutes)->toBe(90)
         ->and($result->ended_at->toDateTimeString())->toBe($endedAt->toDateTimeString());
+});
+
+test('UpsertWorkSessionUserSettingAction creates an override for a user', function () {
+    $user = User::factory()->create();
+
+    app(UpsertWorkSessionUserSettingAction::class)->execute(
+        UpsertWorkSessionUserSettingData::fromArray([
+            'user_id' => $user->id,
+            'reminder_enabled' => true,
+            'reminder_delay_minutes' => 30,
+        ])
+    );
+
+    $this->assertDatabaseHas('work_session_user_settings', [
+        'user_id' => $user->id,
+        'reminder_enabled' => true,
+        'reminder_delay_minutes' => 30,
+    ]);
+});
+
+test('UpsertWorkSessionUserSettingAction updates an existing override', function () {
+    $user = User::factory()->create();
+    WorkSessionUserSetting::create([
+        'user_id' => $user->id,
+        'reminder_enabled' => true,
+        'reminder_delay_minutes' => 30,
+    ]);
+
+    app(UpsertWorkSessionUserSettingAction::class)->execute(
+        UpsertWorkSessionUserSettingData::fromArray([
+            'user_id' => $user->id,
+            'reminder_enabled' => true,
+            'reminder_delay_minutes' => 480,
+        ])
+    );
+
+    $this->assertDatabaseHas('work_session_user_settings', [
+        'user_id' => $user->id,
+        'reminder_enabled' => true,
+        'reminder_delay_minutes' => 480,
+    ]);
+    $this->assertDatabaseCount('work_session_user_settings', 1);
+});
+
+test('UpsertWorkSessionUserSettingAction clears delay when reminder is disabled', function () {
+    $user = User::factory()->create();
+
+    app(UpsertWorkSessionUserSettingAction::class)->execute(
+        UpsertWorkSessionUserSettingData::fromArray([
+            'user_id' => $user->id,
+            'reminder_enabled' => false,
+            'reminder_delay_minutes' => 30,
+        ])
+    );
+
+    $this->assertDatabaseHas('work_session_user_settings', [
+        'user_id' => $user->id,
+        'reminder_enabled' => false,
+        'reminder_delay_minutes' => null,
+    ]);
 });

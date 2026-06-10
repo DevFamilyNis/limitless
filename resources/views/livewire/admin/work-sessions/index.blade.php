@@ -89,7 +89,19 @@
         <x-ui.table.body>
             @forelse ($sessions as $session)
                 <x-ui.table.row>
-                    <x-ui.table.td>{{ $session->user->name }}</x-ui.table.td>
+                    <x-ui.table.td>
+                        @role('super-admin')
+                            <button
+                                type="button"
+                                wire:click="openUserSettings({{ $session->user->id }})"
+                                class="underline decoration-dotted hover:text-zinc-900 dark:hover:text-zinc-100"
+                            >
+                                {{ $session->user->name }}
+                            </button>
+                        @else
+                            {{ $session->user->name }}
+                        @endrole
+                    </x-ui.table.td>
                     <x-ui.table.td>{{ $session->work_date->format('d.m.Y') }}</x-ui.table.td>
                     <x-ui.table.td>{{ $session->started_at->format('H:i') }}</x-ui.table.td>
                     <x-ui.table.td>
@@ -186,5 +198,38 @@
                 </flux:button>
             </div>
         </div>
+    </flux:modal>
+
+    <flux:modal name="work-session-user-settings" wire:model="showUserSettingsModal" class="max-w-md">
+        <form wire:submit.prevent="saveUserSettings" class="space-y-5" x-data="{ enabled: @entangle('userSettingsReminderEnabled') }">
+            <div>
+                <flux:heading size="lg">Podsetnik za korisnika</flux:heading>
+                <flux:subheading>{{ $userSettingsUserName }}</flux:subheading>
+            </div>
+
+            <flux:field variant="inline">
+                <flux:switch x-model="enabled" />
+                <flux:label>Podsetnik uključen</flux:label>
+                <flux:error name="userSettingsReminderEnabled" />
+            </flux:field>
+
+            <div x-show="enabled" x-collapse>
+                <flux:field>
+                    <flux:label>Kašnjenje podsetnika (minuti)</flux:label>
+                    <flux:description>Koliko minuta nakon početka radnog dana da se prikaže podsetnik ovom korisniku.</flux:description>
+                    <flux:input wire:model="userSettingsReminderDelayMinutes" type="number" min="15" max="480" />
+                    <flux:error name="userSettingsReminderDelayMinutes" />
+                </flux:field>
+            </div>
+
+            <div class="flex justify-end gap-2">
+                <flux:modal.close>
+                    <flux:button variant="filled">Otkaži</flux:button>
+                </flux:modal.close>
+                <flux:button type="submit" variant="primary" wire:loading.attr="disabled">
+                    Sačuvaj
+                </flux:button>
+            </div>
+        </form>
     </flux:modal>
 </div>
