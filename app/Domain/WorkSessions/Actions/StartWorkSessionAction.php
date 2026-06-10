@@ -24,13 +24,14 @@ final class StartWorkSessionAction
         }
 
         $startedAt = now();
+        $reminderEnabled = (bool) AppSetting::getValue(AppSettingKey::WorkSessionReminderEnabled, true);
         $delayMinutes = (int) AppSetting::getValue(AppSettingKey::WorkSessionReminderDelayMinutes, 120);
 
         return WorkSession::create([
             'user_id' => $dto->userId,
             'work_date' => $dto->workDate->toDateString(),
             'started_at' => $startedAt,
-            'reminder_due_at' => $startedAt->copy()->addMinutes($delayMinutes),
+            'reminder_due_at' => $reminderEnabled ? $startedAt->copy()->addMinutes($delayMinutes) : null,
         ]);
     }
 }

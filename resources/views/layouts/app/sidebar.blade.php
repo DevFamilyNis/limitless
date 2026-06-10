@@ -174,11 +174,11 @@
                         <flux:sidebar.item class="ps-9" icon="tag" :href="route('settings.issue-categories.index')" :current="request()->routeIs('settings.issue-categories.*')" wire:navigate>
                             @lang('messages.menu.catIssues')
                         </flux:sidebar.item>
-                        @can('manage-settings')
+                        @role('super-admin')
                             <flux:sidebar.item class="ps-9" icon="clock" :href="route('settings.work-session')" :current="request()->routeIs('settings.work-session')" wire:navigate>
                                 Radni dan
                             </flux:sidebar.item>
-                        @endcan
+                        @endrole
                     </div>
                 </div>
             </flux:sidebar.nav>
