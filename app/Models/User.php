@@ -109,4 +109,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(WorkSession::class);
     }
+
+    public function workSessionUserSetting(): HasOne
+    {
+        return $this->hasOne(WorkSessionUserSetting::class);
+    }
 }
