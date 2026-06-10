@@ -7,12 +7,17 @@ namespace App\Livewire\Admin\WorkSessions;
 use App\Domain\WorkSessions\Actions\ForceDeleteWorkSessionAction;
 use App\Domain\WorkSessions\Actions\ForceFinishWorkSessionAction;
 use App\Domain\WorkSessions\Actions\GenerateWorkSessionReportPdfAction;
+use App\Domain\WorkSessions\Actions\UpsertWorkSessionUserSettingAction;
 use App\Domain\WorkSessions\DTO\ForceDeleteWorkSessionData;
 use App\Domain\WorkSessions\DTO\ForceFinishWorkSessionData;
 use App\Domain\WorkSessions\DTO\GenerateWorkSessionReportData;
+use App\Domain\WorkSessions\DTO\UpsertWorkSessionUserSettingData;
+use App\Enums\AppSettingKey;
 use App\Enums\RoleKey;
+use App\Models\AppSetting;
 use App\Models\User;
 use App\Models\WorkSession;
+use App\Models\WorkSessionUserSetting;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
@@ -40,6 +45,16 @@ class Index extends Component
     public string $reportDateFrom = '';
 
     public string $reportDateTo = '';
+
+    public bool $showUserSettingsModal = false;
+
+    public ?int $userSettingsUserId = null;
+
+    public string $userSettingsUserName = '';
+
+    public bool $userSettingsReminderEnabled = true;
+
+    public int $userSettingsReminderDelayMinutes = 120;
 
     public function updatedSelectedUserId(): void
     {
@@ -93,6 +108,43 @@ class Index extends Component
 
         $this->pendingDeleteId = null;
         $this->showDeleteConfirm = false;
+    }
+
+    public function openUserSettings(int $userId): void
+    {
+        abort_unless(Auth::user()?->hasRole(RoleKey::SuperAdmin->value), 403);
+
+        $user = User::query()->findOrFail($userId);
+        $userSetting = WorkSessionUserSetting::query()->where('user_id', $userId)->first();
+
+        $this->userSettingsUserId = $userId;
+        $this->userSettingsUserName = $user->name;
+        $this->userSettingsReminderEnabled = $userSetting?->reminder_enabled
+            ?? (bool) AppSetting::getValue(AppSettingKey::WorkSessionReminderEnabled, true);
+        $this->userSettingsReminderDelayMinutes = $userSetting?->reminder_delay_minutes
+            ?? (int) AppSetting::getValue(AppSettingKey::WorkSessionReminderDelayMinutes, 120);
+        $this->showUserSettingsModal = true;
+    }
+
+    public function saveUserSettings(): void
+    {
+        abort_unless(Auth::user()?->hasRole(RoleKey::SuperAdmin->value), 403);
+
+        $this->validate([
+            'userSettingsReminderEnabled' => ['required', 'boolean'],
+            'userSettingsReminderDelayMinutes' => ['exclude_if:userSettingsReminderEnabled,false', 'required', 'integer', 'min:15', 'max:480'],
+        ]);
+
+        app(UpsertWorkSessionUserSettingAction::class)->execute(
+            UpsertWorkSessionUserSettingData::fromArray([
+                'user_id' => $this->userSettingsUserId,
+                'reminder_enabled' => $this->userSettingsReminderEnabled,
+                'reminder_delay_minutes' => $this->userSettingsReminderDelayMinutes,
+            ])
+        );
+
+        $this->userSettingsUserId = null;
+        $this->showUserSettingsModal = false;
     }
 
     public function downloadReport(): BinaryFileResponse

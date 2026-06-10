@@ -9,6 +9,7 @@ use App\Domain\WorkSessions\Exceptions\WorkSessionAlreadyStartedException;
 use App\Enums\AppSettingKey;
 use App\Models\AppSetting;
 use App\Models\WorkSession;
+use App\Models\WorkSessionUserSetting;
 
 final class StartWorkSessionAction
 {
@@ -24,8 +25,14 @@ final class StartWorkSessionAction
         }
 
         $startedAt = now();
-        $reminderEnabled = (bool) AppSetting::getValue(AppSettingKey::WorkSessionReminderEnabled, true);
-        $delayMinutes = (int) AppSetting::getValue(AppSettingKey::WorkSessionReminderDelayMinutes, 120);
+
+        $userSetting = WorkSessionUserSetting::query()->where('user_id', $dto->userId)->first();
+
+        $reminderEnabled = $userSetting?->reminder_enabled
+            ?? (bool) AppSetting::getValue(AppSettingKey::WorkSessionReminderEnabled, true);
+
+        $delayMinutes = $userSetting?->reminder_delay_minutes
+            ?? (int) AppSetting::getValue(AppSettingKey::WorkSessionReminderDelayMinutes, 120);
 
         return WorkSession::create([
             'user_id' => $dto->userId,

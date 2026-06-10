@@ -1,8 +1,11 @@
 <?php
 
+use App\Enums\AppSettingKey;
 use App\Livewire\Admin\WorkSessions\Index;
+use App\Models\AppSetting;
 use App\Models\User;
 use App\Models\WorkSession;
+use App\Models\WorkSessionUserSetting;
 use Livewire\Livewire;
 
 beforeEach(function () {
@@ -265,4 +268,94 @@ test('index filters by date', function () {
     Livewire::test(Index::class)
         ->set('selectedDate', '2026-06-08')
         ->assertSee('Nema pronađenih sesija.');
+});
+
+test('super-admin can open user reminder settings prefilled with global defaults', function () {
+    AppSetting::setValue(AppSettingKey::WorkSessionReminderEnabled, true);
+    AppSetting::setValue(AppSettingKey::WorkSessionReminderDelayMinutes, 120);
+
+    $admin = User::factory()->create();
+    $admin->assignRole('super-admin');
+    $this->actingAs($admin);
+
+    $user = User::factory()->create();
+
+    Livewire::test(Index::class)
+        ->call('openUserSettings', $user->id)
+        ->assertSet('showUserSettingsModal', true)
+        ->assertSet('userSettingsUserId', $user->id)
+        ->assertSet('userSettingsReminderEnabled', true)
+        ->assertSet('userSettingsReminderDelayMinutes', 120);
+});
+
+test('super-admin can open user reminder settings prefilled with existing override', function () {
+    $admin = User::factory()->create();
+    $admin->assignRole('super-admin');
+    $this->actingAs($admin);
+
+    $user = User::factory()->create();
+    WorkSessionUserSetting::create([
+        'user_id' => $user->id,
+        'reminder_enabled' => true,
+        'reminder_delay_minutes' => 480,
+    ]);
+
+    Livewire::test(Index::class)
+        ->call('openUserSettings', $user->id)
+        ->assertSet('userSettingsReminderDelayMinutes', 480);
+});
+
+test('super-admin can save a per-user reminder override', function () {
+    $admin = User::factory()->create();
+    $admin->assignRole('super-admin');
+    $this->actingAs($admin);
+
+    $user = User::factory()->create();
+
+    Livewire::test(Index::class)
+        ->call('openUserSettings', $user->id)
+        ->set('userSettingsReminderEnabled', true)
+        ->set('userSettingsReminderDelayMinutes', 480)
+        ->call('saveUserSettings')
+        ->assertHasNoErrors()
+        ->assertSet('showUserSettingsModal', false);
+
+    $this->assertDatabaseHas('work_session_user_settings', [
+        'user_id' => $user->id,
+        'reminder_enabled' => true,
+        'reminder_delay_minutes' => 480,
+    ]);
+});
+
+test('super-admin can disable reminder for a specific user', function () {
+    $admin = User::factory()->create();
+    $admin->assignRole('super-admin');
+    $this->actingAs($admin);
+
+    $user = User::factory()->create();
+
+    Livewire::test(Index::class)
+        ->call('openUserSettings', $user->id)
+        ->set('userSettingsReminderEnabled', false)
+        ->set('userSettingsReminderDelayMinutes', 5)
+        ->call('saveUserSettings')
+        ->assertHasNoErrors();
+
+    $this->assertDatabaseHas('work_session_user_settings', [
+        'user_id' => $user->id,
+        'reminder_enabled' => false,
+        'reminder_delay_minutes' => null,
+    ]);
+});
+
+test('non-super-admin cannot open user reminder settings', function () {
+    $admin = User::factory()->create();
+    $admin->givePermissionTo('manage-users');
+    $this->actingAs($admin);
+
+    $user = User::factory()->create();
+
+    Livewire::test(Index::class)
+        ->call('openUserSettings', $user->id)
+        ->assertForbidden();
 });
