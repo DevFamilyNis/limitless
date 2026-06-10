@@ -11,30 +11,33 @@ beforeEach(function () {
     (new \Database\Seeders\RolesAndPermissionsSeeder)->run();
 });
 
-test('settings form loads with default delay when not configured', function () {
-    $user = User::factory()->create();
-    $user->givePermissionTo('manage-settings');
-    $this->actingAs($user);
+test('settings form loads with default values when not configured', function () {
+    $admin = User::factory()->create();
+    $admin->assignRole('super-admin');
+    $this->actingAs($admin);
 
     Livewire::test(WorkSessionSettings::class)
+        ->assertSet('reminderEnabled', true)
         ->assertSet('reminderDelayMinutes', 120);
 });
 
-test('settings form loads configured delay', function () {
+test('settings form loads configured values', function () {
     AppSetting::setValue(AppSettingKey::WorkSessionReminderDelayMinutes, 60);
+    AppSetting::setValue(AppSettingKey::WorkSessionReminderEnabled, false);
 
-    $user = User::factory()->create();
-    $user->givePermissionTo('manage-settings');
-    $this->actingAs($user);
+    $admin = User::factory()->create();
+    $admin->assignRole('super-admin');
+    $this->actingAs($admin);
 
     Livewire::test(WorkSessionSettings::class)
+        ->assertSet('reminderEnabled', false)
         ->assertSet('reminderDelayMinutes', 60);
 });
 
 test('save persists reminder delay to app settings', function () {
-    $user = User::factory()->create();
-    $user->givePermissionTo('manage-settings');
-    $this->actingAs($user);
+    $admin = User::factory()->create();
+    $admin->assignRole('super-admin');
+    $this->actingAs($admin);
 
     Livewire::test(WorkSessionSettings::class)
         ->set('reminderDelayMinutes', 90)
@@ -45,12 +48,35 @@ test('save persists reminder delay to app settings', function () {
 });
 
 test('save validates minimum delay of 15 minutes', function () {
-    $user = User::factory()->create();
-    $user->givePermissionTo('manage-settings');
-    $this->actingAs($user);
+    $admin = User::factory()->create();
+    $admin->assignRole('super-admin');
+    $this->actingAs($admin);
 
     Livewire::test(WorkSessionSettings::class)
         ->set('reminderDelayMinutes', 5)
         ->call('save')
         ->assertHasErrors(['reminderDelayMinutes']);
+});
+
+test('save can disable reminder without validating delay', function () {
+    $admin = User::factory()->create();
+    $admin->assignRole('super-admin');
+    $this->actingAs($admin);
+
+    Livewire::test(WorkSessionSettings::class)
+        ->set('reminderEnabled', false)
+        ->set('reminderDelayMinutes', 5)
+        ->call('save')
+        ->assertHasNoErrors();
+
+    expect((bool) AppSetting::getValue(AppSettingKey::WorkSessionReminderEnabled))->toBeFalse();
+});
+
+test('non-super-admin cannot view work session settings', function () {
+    $user = User::factory()->create();
+    $user->givePermissionTo('manage-settings');
+    $this->actingAs($user);
+
+    Livewire::test(WorkSessionSettings::class)
+        ->assertForbidden();
 });
