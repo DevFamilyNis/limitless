@@ -74,7 +74,7 @@ test('continueSession closes modal and sets session flag', function () {
         ->call('continueSession')
         ->assertSet('show', false);
 
-    expect(session('work_session_resumed_' . today()->toDateString()))->toBeTrue();
+    expect(session('work_session_resumed_'.today()->toDateString()))->toBeTrue();
 });
 
 test('show stays false on remount after continueSession acknowledged', function () {
@@ -87,7 +87,7 @@ test('show stays false on remount after continueSession acknowledged', function 
         'started_at' => now(),
     ]);
 
-    session(['work_session_resumed_' . today()->toDateString() => true]);
+    session(['work_session_resumed_'.today()->toDateString() => true]);
 
     Livewire::test(StartWorkSessionModal::class)
         ->assertSet('show', false);
