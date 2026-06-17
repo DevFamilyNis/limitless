@@ -284,6 +284,7 @@
 
         @auth
             <livewire:work-sessions.start-work-session-modal />
+            <livewire:work-sessions.work-session-pause-modal />
             <livewire:work-sessions.work-session-reminder-modal />
         @endauth
 

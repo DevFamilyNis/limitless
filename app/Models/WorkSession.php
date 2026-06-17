@@ -15,6 +15,7 @@ class WorkSession extends Model
         'work_date',
         'started_at',
         'ended_at',
+        'paused_at',
         'duration_minutes',
         'reminder_due_at',
         'reminder_acknowledged_at',
@@ -26,6 +27,7 @@ class WorkSession extends Model
             'work_date' => 'date',
             'started_at' => 'datetime',
             'ended_at' => 'datetime',
+            'paused_at' => 'datetime',
             'reminder_due_at' => 'datetime',
             'reminder_acknowledged_at' => 'datetime',
         ];
@@ -44,5 +46,10 @@ class WorkSession extends Model
     public function isFinished(): bool
     {
         return $this->ended_at !== null;
+    }
+
+    public function isPaused(): bool
+    {
+        return $this->paused_at !== null && $this->ended_at === null;
     }
 }

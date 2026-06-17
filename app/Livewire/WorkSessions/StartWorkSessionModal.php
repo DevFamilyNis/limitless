@@ -74,6 +74,9 @@ class StartWorkSessionModal extends Component
         if ($session === null) {
             $this->mode = 'start';
             $this->show = true;
+        } elseif ($session->isPaused()) {
+            // WorkSessionPauseModal handles the paused state
+            $this->show = false;
         } elseif (! $session->isFinished()) {
             $this->mode = 'resume';
             $this->show = true;

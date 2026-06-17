@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Domain\WorkSessions\Actions;
 
-use App\Domain\WorkSessions\DTO\FinishWorkSessionData;
+use App\Domain\WorkSessions\DTO\PauseWorkSessionData;
 use App\Domain\WorkSessions\Exceptions\WorkSessionNotStartedException;
 use App\Models\WorkSession;
 
-final class FinishWorkSessionAction
+final class PauseWorkSessionAction
 {
-    public function execute(FinishWorkSessionData $dto): WorkSession
+    public function execute(PauseWorkSessionData $dto): WorkSession
     {
         $session = WorkSession::query()
             ->where('user_id', $dto->userId)
@@ -21,14 +21,11 @@ final class FinishWorkSessionAction
             throw new WorkSessionNotStartedException;
         }
 
-        if ($session->isFinished()) {
+        if ($session->isFinished() || $session->isPaused()) {
             return $session;
         }
 
-        $endTime = $session->paused_at ?? now();
-        $session->ended_at = $endTime;
-        $session->duration_minutes = (int) $session->started_at->diffInMinutes($endTime);
-        $session->paused_at = null;
+        $session->paused_at = now();
         $session->save();
 
         return $session;
