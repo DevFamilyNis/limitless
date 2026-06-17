@@ -59,7 +59,7 @@ test('startSession creates a work session and closes modal', function () {
     )->toBeTrue();
 });
 
-test('continueSession closes modal without changes', function () {
+test('continueSession closes modal and sets session flag', function () {
     $user = User::factory()->create();
     $this->actingAs($user);
 
@@ -72,6 +72,24 @@ test('continueSession closes modal without changes', function () {
     Livewire::test(StartWorkSessionModal::class)
         ->assertSet('mode', 'resume')
         ->call('continueSession')
+        ->assertSet('show', false);
+
+    expect(session('work_session_resumed_'.today()->toDateString()))->toBeTrue();
+});
+
+test('show stays false on remount after continueSession acknowledged', function () {
+    $user = User::factory()->create();
+    $this->actingAs($user);
+
+    WorkSession::create([
+        'user_id' => $user->id,
+        'work_date' => today()->toDateString(),
+        'started_at' => now(),
+    ]);
+
+    session(['work_session_resumed_'.today()->toDateString() => true]);
+
+    Livewire::test(StartWorkSessionModal::class)
         ->assertSet('show', false);
 });
 
