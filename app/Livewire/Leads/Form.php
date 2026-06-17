@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Livewire\Leads;
 
+use App\Domain\Leads\Actions\AddLeadCommentAction;
 use App\Domain\Leads\Actions\UpsertLeadAction;
+use App\Domain\Leads\DTO\AddLeadCommentData;
 use App\Domain\Leads\DTO\UpsertLeadData;
 use App\Enums\PermissionKey;
 use App\Models\Lead;
@@ -29,6 +31,16 @@ class Form extends Component
     public string $leadStatusId = '';
 
     public string $leadCampaignId = '';
+
+    public string $commentBody = '';
+
+    public string $commentContactMethod = 'phone';
+
+    public string $commentContactedAt = '';
+
+    public string $commentRespondedAt = '';
+
+    public string $commentNextFollowUpAt = '';
 
     public function mount(LeadCampaign $campaign, ?Lead $lead = null): void
     {
@@ -60,6 +72,11 @@ class Form extends Component
             'phone' => ['nullable', 'string', 'max:255'],
             'leadStatusId' => ['required', 'exists:lead_statuses,id'],
             'leadCampaignId' => ['required', 'exists:lead_campaigns,id'],
+            'commentBody' => ['nullable', 'string', 'min:2'],
+            'commentContactMethod' => ['nullable', 'string', 'max:255'],
+            'commentContactedAt' => ['nullable', 'date'],
+            'commentRespondedAt' => ['nullable', 'date'],
+            'commentNextFollowUpAt' => ['nullable', 'date'],
         ];
     }
 
@@ -69,7 +86,7 @@ class Form extends Component
 
         $validated = $this->validate();
 
-        app(UpsertLeadAction::class)->execute(
+        $lead = app(UpsertLeadAction::class)->execute(
             UpsertLeadData::fromArray([
                 'user_id' => Auth::id(),
                 'lead_id' => $this->leadId,
@@ -80,6 +97,23 @@ class Form extends Component
                 'phone' => $validated['phone'] ?? null,
             ])
         );
+
+        if ($this->leadId === null && trim($validated['commentBody'] ?? '') !== '') {
+            app(AddLeadCommentAction::class)->execute(
+                AddLeadCommentData::fromArray([
+                    'user_id' => Auth::id(),
+                    'lead_id' => $lead->id,
+                    'lead_status_id' => (int) $validated['leadStatusId'],
+                    'event_type' => 'note',
+                    'contact_method' => $validated['commentContactMethod'] ?? null,
+                    'outcome' => null,
+                    'body' => $validated['commentBody'],
+                    'contacted_at' => $validated['commentContactedAt'] ?? null,
+                    'responded_at' => $validated['commentRespondedAt'] ?? null,
+                    'next_follow_up_at' => $validated['commentNextFollowUpAt'] ?? null,
+                ])
+            );
+        }
 
         session()->flash(
             'status',

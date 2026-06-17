@@ -119,7 +119,9 @@
                         @endif
                     </x-ui.table.td>
                     <x-ui.table.td>
-                        @if ($session->reminder_acknowledged_at)
+                        @if ($session->ended_at)
+                            —
+                        @elseif ($session->reminder_acknowledged_at)
                             <flux:badge color="zinc" size="sm">Potvrđen</flux:badge>
                         @elseif ($session->reminder_due_at)
                             @if ($session->reminder_due_at->isPast())

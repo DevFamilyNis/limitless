@@ -140,6 +140,7 @@ return [
         'sort' => 'Sort',
         'key' => 'Key',
         'currency' => 'Valuta',
+        'optional' => 'opciono',
     ],
     'status_labels' => [
         'active_m' => 'Aktivan',
@@ -191,7 +192,7 @@ return [
         'company_name' => 'Naziv kompanije',
         'search_placeholder' => 'Naziv kompanije, email ili telefon',
         'details_subtitle' => 'Istorija kontakata, statusi i osnovni podaci o klijentu.',
-        'stats_total' => 'Ukupno klijnata',
+        'stats_total' => 'Ukupno klijenata',
         'stats_responded' => 'Odgovorili',
         'stats_converted' => 'Konvertovani',
         'stats_conversion_rate' => 'Stopa konverzije',

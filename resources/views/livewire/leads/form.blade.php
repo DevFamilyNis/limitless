@@ -30,6 +30,29 @@
             @endforeach
         </flux:select>
 
+        @if (!$isEditing)
+            <hr class="border-zinc-200 dark:border-zinc-700">
+
+            <flux:heading size="md">@lang('messages.actions.add_comment') <span class="text-sm font-normal text-zinc-400">(@lang('messages.common.optional'))</span></flux:heading>
+
+            <flux:textarea wire:model="commentBody" :label="__('messages.form.note')" rows="4" />
+
+            @if (trim($commentBody) !== '')
+                <div class="grid gap-4 sm:grid-cols-2">
+                    <flux:select wire:model="commentContactMethod" :label="__('messages.leads.contact_method')">
+                        <option value="phone">@lang('messages.leads.phone_method')</option>
+                        <option value="email">@lang('messages.leads.email_method')</option>
+                    </flux:select>
+                    <flux:input wire:model="commentContactedAt" :label="__('messages.leads.contacted_at')" type="datetime-local" />
+                </div>
+
+                <div class="grid gap-4 sm:grid-cols-2">
+                    <flux:input wire:model="commentRespondedAt" :label="__('messages.leads.responded_at')" type="datetime-local" />
+                    <flux:input wire:model="commentNextFollowUpAt" :label="__('messages.leads.next_follow_up_at')" type="datetime-local" />
+                </div>
+            @endif
+        @endif
+
         <div class="flex items-center gap-3">
             <flux:button variant="primary" type="submit">
                 @lang('messages.buttons.save')

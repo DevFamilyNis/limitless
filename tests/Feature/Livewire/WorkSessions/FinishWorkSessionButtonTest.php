@@ -67,6 +67,58 @@ test('finishSession closes the session and sets status to finished', function ()
         ->and($session->duration_minutes)->toBeGreaterThan(0);
 });
 
+test('status is paused when session has paused_at set', function () {
+    $user = User::factory()->create();
+    $this->actingAs($user);
+
+    WorkSession::create([
+        'user_id' => $user->id,
+        'work_date' => today()->toDateString(),
+        'started_at' => now()->subHours(2),
+        'paused_at' => now()->subMinutes(15),
+    ]);
+
+    Livewire::test(FinishWorkSessionButton::class)
+        ->assertSet('status', 'paused');
+});
+
+test('pauseSession sets paused_at and dispatches event', function () {
+    $user = User::factory()->create();
+    $this->actingAs($user);
+
+    WorkSession::create([
+        'user_id' => $user->id,
+        'work_date' => today()->toDateString(),
+        'started_at' => now()->subHours(2),
+    ]);
+
+    Livewire::test(FinishWorkSessionButton::class)
+        ->assertSet('status', 'open')
+        ->call('pauseSession')
+        ->assertSet('status', 'paused')
+        ->assertDispatched('work-session-paused');
+
+    $session = WorkSession::query()->where('user_id', $user->id)->whereDate('work_date', today())->first();
+    expect($session->paused_at)->not->toBeNull();
+});
+
+test('onResumed listener sets status back to open', function () {
+    $user = User::factory()->create();
+    $this->actingAs($user);
+
+    WorkSession::create([
+        'user_id' => $user->id,
+        'work_date' => today()->toDateString(),
+        'started_at' => now()->subHours(2),
+        'paused_at' => now()->subMinutes(15),
+    ]);
+
+    Livewire::test(FinishWorkSessionButton::class)
+        ->assertSet('status', 'paused')
+        ->dispatch('work-session-resumed')
+        ->assertSet('status', 'open');
+});
+
 test('finishSession sets status to finished when called on already-finished session', function () {
     $user = User::factory()->create();
     $this->actingAs($user);
