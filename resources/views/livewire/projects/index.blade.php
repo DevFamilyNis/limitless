@@ -37,7 +37,7 @@
                 @php($projectColor = ProjectColorPalette::for($project))
 
                 <flux:card
-                        class="flex h-full flex-col gap-4 bg-zinc-50"
+                        class="flex h-full flex-col gap-4 bg-zinc-50 {{ $project->is_active ? '' : 'opacity-60' }}"
                         wire:key="project-card-{{ $project->id }}"
                         style="border-color: {{ $projectColor['border'] }};"
                 >

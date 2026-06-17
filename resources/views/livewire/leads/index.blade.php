@@ -88,7 +88,18 @@
                     </x-ui.table.td>
                         <x-ui.table.td>
                             @if ($lead->status?->name)
-                                <x-ui.badge color="lime">
+                                @php
+                                    $statusColor = match ($lead->status->key) {
+                                        'responded'      => 'lime',
+                                        'not_available'  => 'amber',
+                                        'new'            => 'sky',
+                                        'contacted'      => 'blue',
+                                        'interested'     => 'teal',
+                                        'converted'      => 'emerald',
+                                        default          => 'zinc',
+                                    };
+                                @endphp
+                                <x-ui.badge :color="$statusColor">
                                     {{ $lead->status->name }}
                                 </x-ui.badge>
                             @endif
