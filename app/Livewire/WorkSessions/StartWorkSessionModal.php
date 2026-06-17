@@ -42,6 +42,7 @@ class StartWorkSessionModal extends Component
 
     public function continueSession(): void
     {
+        session(['work_session_resumed_'.today()->toDateString() => true]);
         $this->show = false;
     }
 
@@ -78,8 +79,12 @@ class StartWorkSessionModal extends Component
             // WorkSessionPauseModal handles the paused state
             $this->show = false;
         } elseif (! $session->isFinished()) {
-            $this->mode = 'resume';
-            $this->show = true;
+            if (session('work_session_resumed_'.today()->toDateString())) {
+                $this->show = false;
+            } else {
+                $this->mode = 'resume';
+                $this->show = true;
+            }
         } else {
             $this->show = false;
         }
