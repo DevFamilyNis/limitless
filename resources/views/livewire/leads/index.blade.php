@@ -86,19 +86,9 @@
                             <div class="text-xs text-zinc-500">{{ $lead->phone }}</div>
                         @endif
                     </x-ui.table.td>
+                    @php($statusColor = match ($lead->status?->key) { 'responded' => 'lime', 'not_available' => 'amber', 'new' => 'sky', 'contacted' => 'blue', 'interested' => 'teal', 'converted' => 'emerald', default => 'zinc' })
                         <x-ui.table.td>
                             @if ($lead->status?->name)
-                                @php
-                                    $statusColor = match ($lead->status->key) {
-                                        'responded'      => 'lime',
-                                        'not_available'  => 'amber',
-                                        'new'            => 'sky',
-                                        'contacted'      => 'blue',
-                                        'interested'     => 'teal',
-                                        'converted'      => 'emerald',
-                                        default          => 'zinc',
-                                    };
-                                @endphp
                                 <x-ui.badge :color="$statusColor">
                                     {{ $lead->status->name }}
                                 </x-ui.badge>

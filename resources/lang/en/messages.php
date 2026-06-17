@@ -140,6 +140,7 @@ return [
         'sort' => 'Sort',
         'key' => 'Key',
         'currency' => 'Valuta',
+        'optional' => 'opciono',
     ],
     'status_labels' => [
         'active_m' => 'Aktivan',
