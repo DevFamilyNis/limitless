@@ -98,7 +98,12 @@ class Form extends Component
             ])
         );
 
-        if ($this->leadId === null && trim($validated['commentBody'] ?? '') !== '') {
+        $hasCommentData = trim($validated['commentBody'] ?? '') !== ''
+            || trim($validated['commentContactedAt'] ?? '') !== ''
+            || trim($validated['commentRespondedAt'] ?? '') !== ''
+            || trim($validated['commentNextFollowUpAt'] ?? '') !== '';
+
+        if ($this->leadId === null && $hasCommentData) {
             app(AddLeadCommentAction::class)->execute(
                 AddLeadCommentData::fromArray([
                     'user_id' => Auth::id(),
