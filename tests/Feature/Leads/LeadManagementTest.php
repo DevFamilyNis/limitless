@@ -83,6 +83,32 @@ test('user can create lead', function () {
     ]);
 });
 
+test('user can create lead with contacted date but no comment text', function () {
+    app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+    (new \Database\Seeders\RolesAndPermissionsSeeder)->run();
+
+    $user = User::factory()->create();
+    $user->givePermissionTo('manage-leads');
+    $campaign = LeadCampaign::factory()->create();
+    $interestedStatusId = LeadStatus::query()->where('key', 'interested')->value('id');
+
+    Livewire::actingAs($user)->test(Form::class, ['campaign' => $campaign])
+        ->set('companyName', 'Acme DOO')
+        ->set('leadStatusId', (string) $interestedStatusId)
+        ->set('leadCampaignId', (string) $campaign->id)
+        ->set('commentContactMethod', 'phone')
+        ->set('commentContactedAt', '2026-04-01 10:00')
+        ->call('save')
+        ->assertRedirect(route('leads.campaign', $campaign, absolute: false));
+
+    $lead = Lead::query()->where('company_name', 'Acme DOO')->firstOrFail();
+
+    $this->assertDatabaseHas('lead_comments', [
+        'lead_id' => $lead->id,
+        'contact_method' => 'phone',
+    ]);
+});
+
 test('user can search leads within a campaign', function () {
     $user = User::factory()->create();
     $campaign = LeadCampaign::factory()->create();

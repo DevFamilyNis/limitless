@@ -37,20 +37,18 @@
 
             <flux:textarea wire:model="commentBody" :label="__('messages.form.note')" rows="4" />
 
-            @if (trim($commentBody) !== '')
-                <div class="grid gap-4 sm:grid-cols-2">
-                    <flux:select wire:model="commentContactMethod" :label="__('messages.leads.contact_method')">
-                        <option value="phone">@lang('messages.leads.phone_method')</option>
-                        <option value="email">@lang('messages.leads.email_method')</option>
-                    </flux:select>
-                    <flux:input wire:model="commentContactedAt" :label="__('messages.leads.contacted_at')" type="datetime-local" />
-                </div>
+            <div class="grid gap-4 sm:grid-cols-2">
+                <flux:select wire:model="commentContactMethod" :label="__('messages.leads.contact_method')">
+                    <option value="phone">@lang('messages.leads.phone_method')</option>
+                    <option value="email">@lang('messages.leads.email_method')</option>
+                </flux:select>
+                <flux:input wire:model="commentContactedAt" :label="__('messages.leads.contacted_at')" type="datetime-local" />
+            </div>
 
-                <div class="grid gap-4 sm:grid-cols-2">
-                    <flux:input wire:model="commentRespondedAt" :label="__('messages.leads.responded_at')" type="datetime-local" />
-                    <flux:input wire:model="commentNextFollowUpAt" :label="__('messages.leads.next_follow_up_at')" type="datetime-local" />
-                </div>
-            @endif
+            <div class="grid gap-4 sm:grid-cols-2">
+                <flux:input wire:model="commentRespondedAt" :label="__('messages.leads.responded_at')" type="datetime-local" />
+                <flux:input wire:model="commentNextFollowUpAt" :label="__('messages.leads.next_follow_up_at')" type="datetime-local" />
+            </div>
         @endif
 
         <div class="flex items-center gap-3">
